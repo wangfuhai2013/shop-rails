@@ -1,0 +1,33 @@
+<h1>Listing property_values</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>Value</th>
+      <th>The order</th>
+      <th>Is enabled</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @property_values.each do |property_value| %>
+      <tr>
+        <td><%= property_value.property %></td>
+        <td><%= property_value.value %></td>
+        <td><%= property_value.the_order %></td>
+        <td><%= property_value.is_enabled %></td>
+        <td><%= link_to 'Show', property_value %></td>
+        <td><%= link_to 'Edit', edit_property_value_path(property_value) %></td>
+        <td><%= link_to 'Destroy', property_value, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Property value', new_property_value_path %>

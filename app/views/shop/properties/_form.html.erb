@@ -1,0 +1,80 @@
+<%= form_for(@property) do |f| %>
+  <% if @property.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@property.errors.count, "error") %> prohibited this property from being saved:</h2>
+
+      <ul>
+      <% @property.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :name,'属性名称' %>
+    <%= f.text_field :name %>
+  </div>
+  <div class="field">
+    <%= f.label :category_id ,'所属类别'%>
+    <%= f.select :category_id,@shop_categories.collect {|p| [ p.name, p.id ]}, prompt: "全局属性"%>
+  </div>
+  <div class="field">
+    <%= f.label :data_type,'数据类型' %>
+    <%= f.select :data_type,Shop::Property.data_type_options %>
+  </div>
+<div id="enum_field">
+  <div class="field">
+    <%= f.label :is_multiple,'是否多选' %>
+    <%= f.check_box :is_multiple %>
+  </div>  
+  <div class="field">
+    <%= f.label :is_sku,'是否SKU属性' %>
+    <%= f.check_box :is_sku %>
+  </div> 
+</div> 
+
+  <div class="field">
+    <%= f.label :is_required,'是否必填' %>
+    <%= f.check_box :is_required %>
+  </div>
+  <div class="field">
+    <%= f.label :the_order,'排列顺序' %>
+    <%= f.number_field :the_order %>
+  </div>
+  <div class="field">
+    <%= f.label :is_enabled,'是否可用' %>
+    <%= f.check_box :is_enabled %>
+  </div>
+  <div class="actions">
+    <%= f.submit ' 保存 ',:class => 'btn btn-primary',data: { disable_with: "正在保存..."} %>
+    &nbsp;&nbsp;
+    <%= link_to ' 返回 ', shop.properties_path,:class => "btn btn-default" %>
+  </div>
+<% end %>
+
+<script type="text/javascript">
+ function check_data_type(){
+   if ($("#property_data_type").val() == 'E'){
+     $("#enum_field").show();
+   }else{
+     $("#enum_field").hide();
+     $("#property_is_sku").prop('checked', false);     
+     $("#property_is_multiple").prop('checked', false);
+   }
+ }
+
+ $(document).ready(function() { 
+   check_data_type();
+ });
+
+$("#property_data_type").change(function() {
+   check_data_type();
+ });
+$("#property_is_sku").click(function() {
+   if($("#property_is_sku").is(':checked')){
+      $("#property_is_required").prop('checked', true);
+      $("#property_is_multiple").prop('checked', true);
+   }
+ });
+</script>

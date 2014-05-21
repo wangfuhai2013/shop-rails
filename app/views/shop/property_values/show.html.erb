@@ -1,0 +1,24 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Property:</strong>
+  <%= @property_value.property %>
+</p>
+
+<p>
+  <strong>Value:</strong>
+  <%= @property_value.value %>
+</p>
+
+<p>
+  <strong>The order:</strong>
+  <%= @property_value.the_order %>
+</p>
+
+<p>
+  <strong>Is enabled:</strong>
+  <%= @property_value.is_enabled %>
+</p>
+
+<%= link_to 'Edit', edit_property_value_path(@property_value) %> |
+<%= link_to 'Back', property_values_path %>

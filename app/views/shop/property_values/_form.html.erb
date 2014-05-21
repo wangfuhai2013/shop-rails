@@ -1,0 +1,37 @@
+<%= form_for(@property_value) do |f| %>
+  <% if @property_value.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@property_value.errors.count, "error") %> prohibited this property_value from being saved:</h2>
+
+      <ul>
+      <% @property_value.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+<%= f.hidden_field :property_id %>
+
+  <div class="field">
+    <%= f.label :value,'属性值' %>
+    <%= f.text_field :value %>
+  </div>
+  <div class="field">
+    <%= f.label :code,'编码' %>
+    <%= f.text_field :code %>
+  </div>  
+  <div class="field">
+    <%= f.label :the_order,'排列顺序' %>
+    <%= f.number_field :the_order %>
+  </div>
+  <div class="field">
+    <%= f.label :is_enabled,'是否可用' %>
+    <%= f.check_box :is_enabled %>
+  </div>
+  <div class="actions">
+    <%= f.submit ' 保存 ',:class => 'btn btn-primary',data: { disable_with: "正在保存..."} %>
+    &nbsp;&nbsp;
+    <%= link_to ' 返回 ', @property_value.property,:class => "btn btn-default" %>
+  </div>
+<% end %>
+

@@ -1,0 +1,27 @@
+<%= form_for(@shop_picture) do |f| %>
+  <% if @shop_picture.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@shop_picture.errors.count, "error") %> prohibited this shop_picture from being saved:</h2>
+
+      <ul>
+      <% @shop_picture.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+ <%= f.hidden_field :product_id %>
+  <div class="field">
+    <%= f.label :path ,'产品图片'%>
+    <%= f.file_field :path %>
+  </div>
+  <div class="field">
+    <%= f.label :description ,'图片描述'%>
+    <%= f.text_area :description %>
+  </div>
+  <div class="actions">
+    <%= f.submit ' 保存 ',:class => 'btn btn-primary',data: { disable_with: "正在保存..."} %>
+    &nbsp;&nbsp;
+    <%= link_to ' 返回 ', @shop_picture.product,:class => "btn btn-default" %>
+  </div>
+<% end %>

@@ -1,0 +1,127 @@
+<% if flash[:notice] || flash[:error]  %>
+<div class="alert <%= "alert-success" if flash[:notice] %> <%= "alert-danger" if flash[:error] %>">
+  <a class="close" data-dismiss="alert">×</a>
+  <%= flash[:notice] %><%= flash[:error] %>
+</div>
+<% end %>
+<%= form_for(@shop_product) do |f| %>
+  <% if @shop_product.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@shop_product.errors.count, "error") %> prohibited this shop_product from being saved:</h2>
+
+      <ul>
+      <% @shop_product.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+  <div class="field">
+    <%= f.label :category_id ,'所属类别'%>
+    <%= f.select :category_id,@shop_categories.collect {|p| [ p.name, p.id ]}%>
+  </div>  
+  <div class="field">
+    <%= f.label :name ,'产品名称'%>
+    <%= f.text_field :name %>
+  </div>
+  <div class="field">
+    <%= f.label :code ,'产品编码'%>
+    <%= f.text_field :code %>
+  </div>
+  <% @shop_properties.each do |property|
+      field_name = "property_" + property.id.to_s
+      field_name +="[]" if property.is_multiple
+      #获取原有产品属性值
+      field_value = ''
+      product_properties = @shop_product.product_properties.where(property:property)
+      product_properties.each do |product_property|
+        if property.data_type == 'E' #枚举值可能有多个
+           field_value += product_property.property_value.id.to_s + ";" if product_property.property_value 
+        else
+           field_value = product_property.input_value 
+        end
+      end
+   %>
+    <div class="field">
+       <%= f.label field_name, property.name %>
+       <% if property.data_type == 'E' %>
+         <% property.property_values.each do |property_value|
+            #遍历可用的枚举型属性值
+          %>   
+            <% if property.is_multiple 
+               #多选值使用check_box
+            %>
+             <%= check_box_tag field_name,property_value.id, !!field_value.match(property_value.id.to_s + ";") %> <%= property_value.value%>
+            <% else %>
+             <%= radio_button_tag field_name, property_value.id,!!field_value.match(property_value.id.to_s + ";") %> <%= property_value.value%>
+            <% end %>
+         <% end %>
+       <% else %>
+         <% if property.data_type == 'I' 
+            #整型属性number_field
+          %>
+            <%= number_field_tag field_name,field_value %>
+         <% else %>
+            <%= text_field_tag field_name,field_value %>
+         <% end %>
+       <% end %>
+    </div>
+  <% end %>
+  
+  <div class="field">
+    <%= f.label :price ,'产品价格'%>
+    <%= f.number_field :price %> 分
+  </div>
+  <div class="field">
+    <%= f.label :discount ,'产品折扣'%>
+    <%= f.number_field :discount %> %
+  </div>
+  <div class="field">
+    <%= f.label :transport_fee ,'产品运费'%>
+    <%= f.number_field :transport_fee %>分
+  </div>
+  <div class="field">
+    <%= f.label :quantity ,'产品数量'%>
+    <%= f.number_field :quantity %>
+  </div>
+  <div class="field">
+    <%= f.label :description ,'产品描述'%>
+    <%= f.text_area :description %>
+  </div>
+  <div class="field">
+    <%= f.label :the_order ,'排列顺序'%>
+    <%= f.number_field :the_order %>
+  </div>
+  <div class="field">
+    <%= f.label :is_recommend ,'是否推荐'%>
+    <%= f.check_box :is_recommend %>
+  </div>    
+  <div class="field">
+    <%= f.label :is_enabled ,'是否可用'%>
+    <%= f.check_box :is_enabled %>
+  </div>
+ <div class="field">
+    <%= f.label 'auto_create_sku' ,'自动生成SKU记录'%>
+    <%= check_box_tag "auto_create_sku",true,params["auto_create_sku"] %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit ' 保存 ',:class => 'btn btn-primary',data: { disable_with: "正在保存..."} %>
+    &nbsp;&nbsp;
+    <%= link_to ' 返回 ', shop.products_path,:class => "btn btn-default" %>
+  </div>
+<% end %>
+
+<script type="text/javascript">
+$("#product_category_id").change(function() {
+   category_id = $("#product_category_id").val();
+  url = $(location).attr('href') 
+  if (url.indexOf('?') == -1){
+    url = url + "?"
+  } else {
+    url = url + "&"
+  }
+  url = url + "category_id=" + category_id
+  location.href = url
+ });
+</script>

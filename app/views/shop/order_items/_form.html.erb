@@ -1,0 +1,38 @@
+<%= form_for(@shop_order_item) do |f| %>
+  <% if @shop_order_item.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@shop_order_item.errors.count, "error") %> prohibited this shop_order_item from being saved:</h2>
+
+      <ul>
+      <% @shop_order_item.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+ <%= f.hidden_field :order_id %>
+  <div class="field">
+    <%= f.label :product_sku_id ,'产品名称'%>
+    <%= f.select :product_sku_id,@shop_product_skus.collect {|p| [ p.product.name + 
+      "(" + p.product_sku_property_list + ")", p.id ]} %>
+  </div>
+
+  <div class="field">
+    <%= f.label :quantity ,'产品数量'%>
+    <%= f.number_field :quantity %>
+  </div>
+  <div class="field">
+    <%= f.label :price ,'产品价格'%>
+    <%= f.number_field :price %>分
+  </div>
+  <div class="field">
+    <%= f.label :discount ,'产品折扣'%>
+    <%= f.number_field :discount %>%
+  </div>
+  <div class="actions">
+    <%= f.submit ' 保存 ',:class => 'btn btn-primary',data: { disable_with: "正在保存..."} %>
+    &nbsp;&nbsp;
+    <%= link_to ' 返回 ', @shop_order_item.order,:class => "btn btn-default" %>
+  </div>
+<% end %>

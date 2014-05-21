@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  product_id: 
+  property_id: 
+  property_value_id: 
+  input_value: MyString
+  product_sku_id: 
+
+two:
+  product_id: 
+  property_id: 
+  property_value_id: 
+  input_value: MyString
+  product_sku_id: 

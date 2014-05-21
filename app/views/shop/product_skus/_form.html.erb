@@ -1,0 +1,63 @@
+<%= form_for(@product_sku) do |f| %>
+  <% if @product_sku.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@product_sku.errors.count, "error") %> prohibited this product_sku from being saved:</h2>
+
+      <ul>
+      <% @product_sku.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+    <%= f.hidden_field :product_id %>
+
+  <div class="field">
+    <%= f.label :code,'SKU编码' %>
+    <%= f.text_field :code %>
+  </div>
+  <div class="field">
+    <%= f.label :price,'价格' %>
+    <%= f.number_field :price %> 分
+  </div>
+  <div class="field">
+    <%= f.label :quantity,'数量' %>
+    <%= f.number_field :quantity %>
+  </div>
+  <div class="field">
+    <%= f.label :is_enabled,'是否可用' %>
+    <%= f.check_box :is_enabled %>
+  </div>  
+ <% 
+   #已有SKU产品属性值
+   field_value = ''
+   @product_sku.product_sku_properties.each do |product_sku_property|
+      field_value += product_sku_property.property_value.id.to_s + ";"
+   end
+   #可用产品属性值，按属性分组选择
+   @sku_properties.each do |property| 
+     field_name = "property_" + property.id.to_s
+  %>
+    <div class="field">
+      <%= f.label field_name, property.name %>
+      <% @product_sku.product.product_properties.where(property:property).each do |product_property| %>
+      <%= radio_button_tag field_name, product_property.id,
+         !!field_value.match(product_property.property_value.id.to_s + ";"),
+          options= {:onclick =>"set_code('" + product_property.property_value.code + "')"} %>
+          <%= product_property.property_value.value%>
+          (code:<%= product_property.property_value.code%>)
+      <% end %>
+    </div>
+ <% end %>
+
+  <div class="actions">
+    <%= f.submit ' 保存 ',:class => 'btn btn-primary',data: { disable_with: "正在保存..."} %>
+    &nbsp;&nbsp;
+    <%= link_to ' 返回 ', @product_sku.product,:class => "btn btn-default" %>
+  </div>
+<% end %>
+<script type="text/javascript">
+ function set_code(code) {
+    $("#product_sku_code").val($("#product_sku_code").val() + "-" + code);
+ }
+</script>

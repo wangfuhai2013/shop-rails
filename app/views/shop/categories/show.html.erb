@@ -1,0 +1,24 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @shop_category.name %>
+</p>
+
+<p>
+  <strong>Code:</strong>
+  <%= @shop_category.code %>
+</p>
+
+<p>
+  <strong>Picture:</strong>
+  <%= @shop_category.picture %>
+</p>
+
+<p>
+  <strong>Is enabled:</strong>
+  <%= @shop_category.is_enabled %>
+</p>
+
+<%= link_to 'Edit', shop.edit_category_path(@shop_category) %> |
+<%= link_to 'Back', shop.categories_path %>
