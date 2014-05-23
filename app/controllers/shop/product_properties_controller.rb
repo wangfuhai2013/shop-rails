@@ -3,7 +3,7 @@
     before_action :set_properties, only: [:new,:edit,:create,:update]
     # GET /product_properties
     def index
-      @product_properties = Shop::ProductProperty.all
+     # @product_properties = Shop::ProductProperty.all
     end
 
     # GET /product_properties/1

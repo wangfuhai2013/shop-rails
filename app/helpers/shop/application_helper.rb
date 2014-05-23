@@ -109,7 +109,7 @@ module Shop
        if image_file?(file_name)
          image = MiniMagick::Image.open(file_name)
          image.format "jpg"
-         thumb_size = "150x150^" 
+         thumb_size = "300x300^" 
          thumb_size = Rails.configuration.image_thumb_size unless Rails.configuration.image_thumb_size.blank?
          image.resize thumb_size
          #image.combine_options do |i|           

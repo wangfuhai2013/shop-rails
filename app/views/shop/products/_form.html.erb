@@ -48,23 +48,23 @@
          <% property.property_values.each do |property_value|
             #遍历可用的枚举型属性值
           %>   
-            <% if property.is_multiple 
-               #多选值使用check_box
-            %>
+            <% if property.is_multiple #多选值使用check_box  %>                          
              <%= check_box_tag field_name,property_value.id, !!field_value.match(property_value.id.to_s + ";") %> <%= property_value.value%>
             <% else %>
              <%= radio_button_tag field_name, property_value.id,!!field_value.match(property_value.id.to_s + ";") %> <%= property_value.value%>
             <% end %>
          <% end %>
-       <% else %>
-         <% if property.data_type == 'I' 
-            #整型属性number_field
-          %>
-            <%= number_field_tag field_name,field_value %>
-         <% else %>
-            <%= text_field_tag field_name,field_value %>
-         <% end %>
        <% end %>
+       <% if property.data_type == 'I'  #整型属性number_field %>                      
+          <%= number_field_tag field_name,field_value %>
+        <% end %>  
+       <% if property.data_type == 'T'  #文本类型 %>  
+            <%= text_field_tag field_name,field_value %>         
+       <% end %>
+       <% if property.data_type == 'B'  #布尔类型 %>  
+           <%= radio_button_tag field_name, 'T', field_value == 'T' %> 是
+           <%= radio_button_tag field_name, 'F', field_value == 'F' %> 否        
+       <% end %>       
     </div>
   <% end %>
   
@@ -104,7 +104,15 @@
     <%= f.label 'auto_create_sku' ,'自动生成SKU记录'%>
     <%= check_box_tag "auto_create_sku",true,params["auto_create_sku"] %>
   </div>
-
+ <% if @shop_tags.size > 0 %>
+  <div class="field">
+    <%= f.label 'tags' ,'所属标签'%>
+    <% @shop_tags.each do |tag| %>
+      <%= check_box_tag "product[tag_ids][]", tag.id, @shop_product.tags.include?(tag) %>
+      <%= tag.name %>
+    <% end %>
+  </div>
+<% end %>
   <div class="actions">
     <%= f.submit ' 保存 ',:class => 'btn btn-primary',data: { disable_with: "正在保存..."} %>
     &nbsp;&nbsp;

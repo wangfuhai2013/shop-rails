@@ -9,6 +9,10 @@
   <%= @property.name %>
 </p>
 <p>
+  <strong>属性编码:</strong>
+  <%= @property.code %>
+</p>
+<p>
   <strong>所属类别:</strong>
   <%= @property.category.name if @property.category %>
   <%= '全局属性' unless @property.category %>

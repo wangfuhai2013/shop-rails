@@ -4,7 +4,8 @@
 
     # GET /properties
     def index
-      @properties = Shop::Property.all
+      @properties = Shop::Property.where(account_id: session[:account_id]).
+                                   order("the_order ASC,id DESC")
     end
 
     # GET /properties/1
@@ -25,7 +26,7 @@
     # POST /properties
     def create
       @property = Shop::Property.new(property_params)    
-
+      @property.account_id = session[:account_id]
       if @property.save
         redirect_to @property, notice: '属性已创建.'
       else
@@ -44,8 +45,13 @@
 
     # DELETE /properties/1
     def destroy
-      @property.destroy
-      redirect_to properties_url, notice: '属性已删除.'
+      if Shop::ProductProperty.where(property_id:@property.id).size > 0
+         flash[:error] = "已有产品绑定该属性，不可删除"
+      else
+         @property.destroy
+         flash[:notice] = "属性已删除"
+      end
+      redirect_to properties_url
     end
 
     private
@@ -58,7 +64,7 @@
     end
       # Only allow a trusted parameter "white list" through.
       def property_params
-        params.require(:property).permit(:name, :category_id, :data_type, :is_multiple, 
+        params.require(:property).permit(:name,:code, :category_id, :data_type, :is_multiple, 
                                          :is_required, :is_sku, :the_order, :is_enabled)
       end
   end

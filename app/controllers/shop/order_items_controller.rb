@@ -3,7 +3,7 @@ class Shop::OrderItemsController < ApplicationController
   before_action :set_shop_product_skus, only: [:index,:new,:edit,:create,:update]
   # GET /shop/order_items
   def index
-    @shop_order_items = Shop::OrderItem.all
+    #@shop_order_items = Shop::OrderItem.all
   end
 
   # GET /shop/order_items/1

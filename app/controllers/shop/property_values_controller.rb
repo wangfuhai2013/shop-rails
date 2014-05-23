@@ -3,7 +3,7 @@
 
     # GET /property_values
     def index
-      @property_values = Shop::PropertyValue.all
+     # @property_values = Shop::PropertyValue.all
     end
 
     # GET /property_values/1
@@ -45,8 +45,13 @@
     # DELETE /property_values/1
     def destroy
       property = @property_value.property
-      @property_value.destroy
-      redirect_to property, notice: '属性值已删除.'
+      if Shop::ProductProperty.where(property_value_id:@property_value.id).size > 0
+         flash[:error] = "已有产品绑定该属性值，不可删除"
+      else
+         @property_value.destroy
+         flash[:notice] = "属性值已删除"
+      end
+      redirect_to property
     end
 
     private

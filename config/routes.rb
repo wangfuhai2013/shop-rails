@@ -1,4 +1,6 @@
 Shop::Engine.routes.draw do
+  resources :tags
+
   resources :product_skus
 
   resources :product_properties

@@ -2,6 +2,8 @@ class Shop::ProductsController < ApplicationController
   before_action :set_shop_product, only: [:show, :edit, :update, :destroy]
   before_action :set_shop_categories, only: [:index,:new,:edit,:create,:update]
   before_action :set_shop_properties, only: [:new,:edit,:create,:update]
+  before_action :set_shop_tags, only: [:new,:edit,:create,:update]
+  before_action :init_tag_ids, only: [:create, :update]
 
   after_action  :create_product_sku, only: [:create,:update] #排在前面的后执行 
   after_action  :save_product_properties, only: [:create,:update]
@@ -74,7 +76,13 @@ class Shop::ProductsController < ApplicationController
     def set_shop_categories
       @shop_categories = Shop::Category.where(account_id: session[:account_id]).order(the_order: :asc)
     end
-    
+    def set_shop_tags
+      @shop_tags = Shop::Tag.where(account_id: session[:account_id]).order(the_order: :asc)
+    end
+
+    def init_tag_ids 
+      params[:product][:tag_ids] ||= [] 
+    end
     #设置可用属性集合
     def set_shop_properties
         category_id = 0
@@ -182,7 +190,8 @@ class Shop::ProductsController < ApplicationController
     end
     # Only allow a trusted parameter "white list" through.
     def shop_product_params
-      params.require(:product).permit(:name, :code, :category_id, :price, :discount, :transport_fee,
-                                           :quantity, :description,:the_order,:is_recommend,:is_enabled)
+      params.require(:product).permit(:name, :code, :category_id, :price, :discount, 
+                                      :transport_fee,:quantity, :description,:the_order,
+                                      :is_recommend,:is_enabled,{:tag_ids => []})
     end
 end

@@ -7,7 +7,7 @@
 
     # GET /product_skus
     def index
-      @product_skus = Shop::ProductSku.all
+      #@product_skus = Shop::ProductSku.all
     end
 
     # GET /product_skus/1
@@ -29,7 +29,7 @@
     # POST /product_skus
     def create
       @product_sku = Shop::ProductSku.new(product_sku_params)
-
+      @product_sku.account_id = session[:account_id]
       if @product_sku.save
         redirect_to @product_sku.product, notice: '产品SKU已创建.'
       else

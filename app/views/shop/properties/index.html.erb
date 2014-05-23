@@ -11,6 +11,7 @@
   <thead>
     <tr>
       <th>属性名称</th>
+      <th>属性编码</th>      
       <th>所属类别</th>
       <th>数据类型</th>
       <th>是否多选</th>
@@ -28,6 +29,7 @@
     <% @properties.each do |property| %>
       <tr>
         <td><%= property.name %></td>
+        <td><%= property.code %></td>        
         <td>
             <%= property.category.name if property.category %>
             <%= '全局属性' unless property.category %>

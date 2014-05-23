@@ -1,9 +1,11 @@
 class Shop::PicturesController < ApplicationController
+  
   before_action :set_shop_picture, only: [:set_cover_picture,:show, :edit, :update, :destroy]
+  after_action  :create_thumb_image, only: [:create,:update]
 
   # GET /shop/pictures
   def index
-    @shop_pictures = Shop::Picture.all
+    #@shop_pictures = Shop::Picture.all
   end
 
   # GET /shop/pictures/1
@@ -76,6 +78,12 @@ class Shop::PicturesController < ApplicationController
   end
 
   private
+
+   def create_thumb_image
+      if upload_file_is_permitted && params[:picture][:path]
+        thumb_image (Rails.root.join("public",@shop_picture.path).to_s) 
+      end
+    end
 
     def upload_file_is_permitted
         picture_forbid = !check_ext(params[:picture][:path]) 

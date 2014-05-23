@@ -1,0 +1,31 @@
+<%= form_for(@tag) do |f| %>
+  <% if @tag.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@tag.errors.count, "error") %> prohibited this tag from being saved:</h2>
+
+      <ul>
+      <% @tag.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :name,"标签名称" %>
+    <%= f.text_field :name %>
+  </div>
+  <div class="field">
+    <%= f.label :the_order,'排列顺序' %>
+    <%= f.number_field :the_order %>
+  </div>  
+  <div class="field">
+    <%= f.label :is_enabled,'是否可用' %>
+    <%= f.check_box :is_enabled %>
+  </div>  
+  <div class="actions">
+       <%= f.submit ' 保存 ',:class => 'btn btn-primary',data: { disable_with: "正在保存..."} %>
+    &nbsp;&nbsp;
+    <%= link_to ' 返回 ', shop.tags_path,:class => "btn btn-default" %>
+  </div>
+<% end %>

@@ -16,6 +16,10 @@
     <%= f.text_field :name %>
   </div>
   <div class="field">
+    <%= f.label :code,'属性编码' %>
+    <%= f.text_field :code %>
+  </div>    
+  <div class="field">
     <%= f.label :category_id ,'所属类别'%>
     <%= f.select :category_id,@shop_categories.collect {|p| [ p.name, p.id ]}, prompt: "全局属性"%>
   </div>
