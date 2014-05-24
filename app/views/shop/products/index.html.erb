@@ -1,6 +1,27 @@
+
+<%= form_tag nil,method: :get do %>  
+<div class="row">
+<div class="col-sm-4">
 <h1>产品列表
-  <small><%= link_to '新建产品', shop.new_product_path ,:class => "btn btn-primary" %></small>
+ <small><%= link_to '新建产品', shop.new_product_path ,:class => "btn btn-primary" %></small>
 </h1>
+</div>
+  <div class="col-sm-2" style="margin-top: 30px;margin-bottom: 0px;padding-left: 80px;line-height:34px;">
+     <%= select_tag :category_id, options_from_collection_for_select(@shop_categories, "id", "name",params[:category_id]), prompt: "选择产品类别" %>
+  </div>
+  <div class="col-sm-2" style="margin-top: 30px;margin-bottom: 0px;padding-right: 0px;">
+     <%= text_field_tag :code,params[:code],class:"form-control",placeholder:"输入产品编码"%>
+  </div>
+  <div class="col-sm-2" style="margin-top: 30px;margin-bottom: 0px;padding-right: 0px;">
+      <%= text_field_tag :name,params[:name],class:"form-control",placeholder:"输入产品名称" %>
+  </div>
+    <div class="col-sm-1" style="margin-top: 30px;margin-bottom: 0px; padding-left: 15px;">
+     <%= submit_tag "搜索" ,:class => "btn btn-info" %>
+  </div>
+</div>
+<% end %> 
+
+
 <% if flash[:notice] || flash[:error]  %>
 <div class="alert <%= "alert-success" if flash[:notice] %> <%= "alert-danger" if flash[:error] %>">
   <a class="close" data-dismiss="alert">×</a>

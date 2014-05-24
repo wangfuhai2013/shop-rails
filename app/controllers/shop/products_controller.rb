@@ -11,7 +11,12 @@ class Shop::ProductsController < ApplicationController
 
   # GET /shop/products
   def index
-    @shop_products = Shop::Product.where(account_id: session[:account_id]).
+    where = "1"
+    where += " AND code like '%#{params[:code].upcase}%'" unless params[:code].blank?
+    where += " AND name like '%#{params[:name]}%'" unless params[:name].blank?
+    where += " AND category_id = #{params[:category_id]} " unless params[:category_id].blank?
+
+    @shop_products = Shop::Product.where(account_id: session[:account_id]).where(where).
                                    order("the_order ASC,id DESC").page(params[:page])
   end
 
