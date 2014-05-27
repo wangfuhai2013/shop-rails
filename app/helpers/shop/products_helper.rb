@@ -10,7 +10,8 @@ module Shop::ProductsHelper
 
 	def product_list
 		product_categories
-		@product_category = Shop::Category.where(id:params[:id]).take
+		@product_category = Shop::Category.where(id:params[:id]).take if !!(params[:id] =~ /\A[0-9]+\z/)
+		@product_category = Shop::Category.where(name:params[:id]).take unless !!(params[:id] =~ /\A[0-9]+\z/)
 		where = " 1 "
 		where += " AND category_id = " + @product_category.id.to_s if @product_category
         where += " AND name like '%#{params[:name]}%'" unless params[:name].blank?
