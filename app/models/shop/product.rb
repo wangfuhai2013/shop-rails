@@ -14,7 +14,8 @@ class Shop::Product < ActiveRecord::Base
   has_many :pictures
   has_many :product_properties,dependent: :destroy
   has_many :product_skus,dependent: :destroy
-  
+  has_many :product_relations,dependent: :destroy
+
   has_and_belongs_to_many :tags
 
   before_validation :capitalize_code

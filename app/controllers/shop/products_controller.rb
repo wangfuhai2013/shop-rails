@@ -1,5 +1,5 @@
 class Shop::ProductsController < ApplicationController
-  before_action :set_shop_product, only: [:show, :edit, :update, :destroy]
+  before_action :set_shop_product, only: [:show, :edit, :update, :destroy,:add_relation]
   before_action :set_shop_categories, only: [:index,:new,:edit,:create,:update]
   before_action :set_shop_properties, only: [:new,:edit,:create,:update]
   before_action :set_shop_tags, only: [:new,:edit,:create,:update]
@@ -72,6 +72,31 @@ class Shop::ProductsController < ApplicationController
     @shop_product.destroy
     redirect_to shop.products_url, notice: '产品已删除.'
   end
+
+  def add_relation
+    proudct_codes = []
+    proudct_codes = params[:proudct_codes].split(",") if params[:proudct_codes]
+    proudct_codes.each do |code|
+       code.upcase!
+       product = Shop::Product.where(code:code).take
+       if product
+          product_relation = Shop::ProductRelation.new
+          product_relation.product = @shop_product
+          product_relation.relation_product = product
+          product_relation.the_order = 10
+          product_relation.save
+       else
+          flash[:error] = '未找到产品编码:' + code + ",不能添加相关产品"
+       end
+    end
+    redirect_to @shop_product, notice: '相关产品已添加.' 
+  end
+  def del_relation
+       product_relation = Shop::ProductRelation.find(params[:id])
+       product = product_relation.product
+       product_relation.destroy
+       redirect_to product, notice: '相关产品已删除.'    
+  end  
 
   private
     # Use callbacks to share common setup or constraints between actions.
