@@ -32,12 +32,14 @@ module Shop::ProductsHelper
 	def product_show
 		product_categories
 		@product = Shop::Product.where("id =? AND is_enabled = ? ",params[:id],true).take
-		view_count = @product.view_count
-		view_count = 0 if @product.view_count.nil?
-		view_count +=1
-		@product.record_timestamps=false
-		@product.update_attributes(:view_count => view_count)
-		@product.record_timestamps=true
+		if @product
+			view_count = @product.view_count
+			view_count = 0 if @product.view_count.nil?
+			view_count +=1
+			@product.record_timestamps=false
+			@product.update_attributes(:view_count => view_count)
+			@product.record_timestamps=true
+		end
 	end
 
 	def product_categories

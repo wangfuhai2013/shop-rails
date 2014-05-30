@@ -1,6 +1,6 @@
 class Shop::Product < ActiveRecord::Base
   validates_presence_of :name,:category,:code
-  validates :code,:name,uniqueness: { scope: :account_id, message: "产品名称的编码不可重复" }
+  validates :code,uniqueness: { scope: :account_id, message: "产品编码不可重复" }
   validates :code, format: { with: /\A[A-Z0-9\-_]+\z/,message: "编码只能是大写字母、数字、横线、下划线" }
 
   validates :price, numericality: { only_integer: true ,greater_than_or_equal_to: 0}
