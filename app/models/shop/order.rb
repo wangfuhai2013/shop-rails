@@ -1,6 +1,7 @@
 class Shop::Order < ActiveRecord::Base
 
 has_many :order_items
+belongs_to :customer
 
 def pay_way_name
   case self.pay_way

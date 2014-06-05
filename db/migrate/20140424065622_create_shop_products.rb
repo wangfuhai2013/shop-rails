@@ -14,6 +14,7 @@ class CreateShopProducts < ActiveRecord::Migration
       t.references :picture, index: true
       t.integer :view_count
       t.integer :the_order
+      t.integer :tag_order      
       t.boolean :is_recommend
       t.boolean :is_enabled      
 

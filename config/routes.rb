@@ -1,13 +1,12 @@
 Shop::Engine.routes.draw do
-  resources :tags
+    resources :customer_types
+    resources :customers
 
-  resources :product_skus
-
-  resources :product_properties
-
-  resources :property_values
-
-  resources :properties
+    resources :tags
+    resources :product_skus
+    resources :product_properties
+    resources :property_values
+    resources :properties
 
     get "pictures/set_cover_picture/:id" , to: "pictures#set_cover_picture", as: 'pictures_set_cover_picture'
     get "products/add_relation/:id" , to: "products#add_relation", as: 'products_add_relation'

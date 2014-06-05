@@ -1,0 +1,58 @@
+<%= form_for(@shop_customer) do |f| %>
+  <% if @shop_customer.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@shop_customer.errors.count, "error") %> prohibited this shop_customer from being saved:</h2>
+
+      <ul>
+      <% @shop_customer.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+  <div class="field">
+    <%= f.label :email ,'客户邮箱'%>
+    <%= f.text_field :email %>
+  </div>  
+  <div class="field">
+    <%= f.label :password ,'登录密码'%>
+    <%= f.password_field :password %>
+  </div>    
+  <div class="field">
+    <%= f.label :name ,'客户姓名'%>
+    <%= f.text_field :name %>
+  </div>
+  <div class="field">
+    <%= f.label :gender ,'客户性别'%>
+    <%= f.select :gender, Shop::Customer.gender_options%>
+  </div>
+  <div class="field">
+    <%= f.label :company ,'公司名称'%>
+    <%= f.text_field :company %>
+  </div>  
+  <div class="field">
+    <%= f.label :telephone ,'联系电话'%>
+    <%= f.text_field :telephone %>
+  </div>
+  <div class="field">
+    <%= f.label :address ,'收货地址'%>
+    <%= f.text_field :address,size:'35' %>
+  </div>
+  <div class="field">
+    <%= f.label :zip ,'邮政编码'%>
+    <%= f.text_field :zip %>
+  </div>  
+  <div class="field">
+    <%= f.label :customer_type_id ,'客户类型'%>
+        <%= f.select :customer_type_id, @customer_types.collect {|p| [p.name, p.id ]}%>
+  </div>
+  <div class="field">
+    <%= f.label :is_enabled ,'是否可用'%>
+    <%= f.check_box :is_enabled %>
+  </div>
+  <div class="actions">
+    <%= f.submit ' 保存 ',:class => 'btn btn-primary',data: {disable_with:'正在保存...'}%>
+    &nbsp;&nbsp;
+    <%= link_to ' 返回 ', shop.customers_path,:class => "btn btn-default" %>
+  </div>
+<% end %>

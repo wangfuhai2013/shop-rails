@@ -89,9 +89,13 @@
     <%= f.text_area :description %>
   </div>
   <div class="field">
-    <%= f.label :the_order ,'排列顺序'%>
+    <%= f.label :the_order ,'类别排序'%>
     <%= f.number_field :the_order %>
   </div>
+  <div class="field">
+    <%= f.label :tag_order ,'标签排序'%>
+    <%= f.number_field :tag_order %>
+  </div>  
   <div class="field">
     <%= f.label :is_recommend ,'是否推荐'%>
     <%= f.check_box :is_recommend %>

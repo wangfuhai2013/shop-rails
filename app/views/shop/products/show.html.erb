@@ -61,8 +61,12 @@
   <%= thumbnail @shop_product.picture.path if @shop_product.picture%>
 </p>
 <p>
-  <strong>排列顺序:</strong>
+  <strong>类别排序:</strong>
   <%= @shop_product.the_order %>
+</p>
+<p>
+  <strong>标签排序:</strong>
+  <%= @shop_product.tag_order %>
 </p>
 <p>
   <strong>是否推荐:</strong>

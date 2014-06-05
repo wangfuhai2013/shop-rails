@@ -2,6 +2,7 @@ class CreateShopOrders < ActiveRecord::Migration
   def change
     create_table :shop_orders do |t|
       t.references :account, index: true
+      t.references :customer, index: true      
       t.string :order_no
       t.string :pay_way
       t.integer :total_fee

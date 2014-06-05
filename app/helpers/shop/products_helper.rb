@@ -25,7 +25,7 @@ module Shop::ProductsHelper
 		@tag = Shop::Tag.find(params[:id])
 		@tag_products = Shop::Product.joins(:tags).where(is_enabled:true).
 		                  where(shop_products_tags:{tag_id:@tag.id}).
-		                  order("the_order ASC,id DESC").page(params[:page]).per_page(15)
+		                  order("tag_order ASC,id DESC").page(params[:page]).per_page(15)
 		                                  
         render json: @category_products if request.format.json?
 	end	

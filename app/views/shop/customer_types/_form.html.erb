@@ -1,0 +1,31 @@
+<%= form_for(@customer_type) do |f| %>
+  <% if @customer_type.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@customer_type.errors.count, "error") %> prohibited this customer_type from being saved:</h2>
+
+      <ul>
+      <% @customer_type.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :name ,'类型名称'%>
+    <%= f.text_field :name %>
+  </div>
+  <div class="field">
+    <%= f.label :discount ,'类型折扣'%>
+    <%= f.number_field :discount %> %
+  </div>
+  <div class="field">
+    <%= f.label :remark ,'类型描述'%>
+    <%= f.text_area :remark,:cols=>"35", :rows=>"5" %>
+  </div>
+  <div class="actions">
+    <%= f.submit ' 保存 ',:class => 'btn btn-primary'%>
+    &nbsp;&nbsp;
+    <%= link_to ' 返回 ', customer_types_path,:class => "btn btn-default" %>
+  </div>
+<% end %>

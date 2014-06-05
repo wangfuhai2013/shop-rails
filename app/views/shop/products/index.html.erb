@@ -39,7 +39,8 @@
       <th>产品运费</th>
       <th>产品数量</th>
       <th>封面图片</th>
-      <th>排列顺序</th>     
+      <th>类别排序</th>     
+      <th>标签排序</th>           
       <th>是否推荐</th>          
       <th>是否可用</th>
       <th></th>
@@ -60,6 +61,7 @@
         <td><%= shop_product.quantity %></td>        
         <td><%= thumbnail shop_product.picture.path if shop_product.picture %></td>
         <td><%= shop_product.the_order %></td>             
+        <td><%= shop_product.tag_order %></td>           
         <td><%= bool_label(shop_product.is_recommend) %></td>        
         <td><%= bool_label(shop_product.is_enabled) %></td>
         <td><%= link_to '查看', shop_product %></td>
