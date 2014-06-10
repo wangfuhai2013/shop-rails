@@ -26,6 +26,7 @@ module Shop::CustomersHelper
      	#logger.debug("errors:"+site_feedback.errors[:content].to_s)
 
         flash.now[:error] += "邮箱已存在或格式不正确;" unless @customer.errors[:email].blank?
+        flash.now[:error] += "会员类型不存在;" unless @customer.errors[:customer_type].blank?
         flash.now[:error] += "未填写公司名称;" unless @customer.errors[:company].blank?
         flash.now[:error] += "未填写用户名称;" unless @customer.errors[:name].blank?
         flash.now[:error] += "未填写联系电话;" unless @customer.errors[:telephone].blank?

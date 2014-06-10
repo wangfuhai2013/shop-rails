@@ -1,6 +1,58 @@
 class Shop::OrdersController < ApplicationController
   before_action :set_shop_order, only: [:show, :edit, :update, :destroy]
 
+  skip_before_filter :authorize,:verify_authenticity_token,
+                 only: [:add_to_cart,:remove_from_cart,:empty_cart,:change_product_quantity]
+  #layout  false, only: [:add_to_cart]
+
+  #加入购物车
+  def add_to_cart
+    if request.post? && params[:product_id] && params[:property_value]
+       @cart = session[:cart] ||= Shop::Cart.new
+       #TODO 支持多个属性选sku
+       product_sku = Shop::ProductSku.joins(:product_sku_properties).
+                                      where(product_id:params[:product_id],
+                                      :shop_product_sku_properties => {property_value_id:params[:property_value]}).take
+      if product_sku
+        quantity = params[:quantity].to_i if params[:quantity]
+        quantity = 1 if quantity < 1
+        @cart.add_product_sku(product_sku,quantity)
+        render json: {is_success:"true",message:"添加成功",cart_item_count:@cart.items.size}
+      else
+        #商品不存存或已下架
+        render json: {is_success:"false",message:"商品不存存或已下架"}
+      end
+    else
+       render json: {is_success:"false",message:"参数不全"}
+    end
+  end
+
+  #改变购物车中商品数量
+  def change_product_quantity
+    @cart = session[:cart] ||= Shop::Cart.new
+    product_sku = Shop::ProductSku.find(params[:id]) if params[:id]
+    if product_sku
+       @cart.change_product_sku(product_sku,params[:quantity])
+    end
+    render json: {is_success:"true",message:"已从购物车移出商品" }
+  end
+
+  #从购物车移出商品
+  def remove_from_cart
+    @cart = session[:cart] ||= Shop::Cart.new
+    product_sku = Shop::ProductSku.find(params[:id]) if params[:id]
+    if product_sku
+       @cart.remove_product_sku(product_sku)
+    end
+    render json: {is_success:"true",message:"已从购物车移出商品" }
+  end
+
+  #清空购物车
+  def empty_cart
+    session[:cart] = nil
+    render json: {is_success:"true",message:"购物车已清空" }
+  end
+
   # GET /shop/orders
   def index
     @shop_orders = Shop::Order.where(account_id: session[:account_id]).order("id DESC").page(params[:page])
