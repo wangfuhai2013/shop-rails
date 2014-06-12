@@ -133,6 +133,7 @@ class Shop::OrdersController < ApplicationController
         # 交易被关闭
       end
       order.trade_no = params[:trade_no] if order
+      order.paid_date = Time.now if order
       order.save if order
 
       render :text => 'success' # 成功接收消息后，需要返回纯文本的 ‘success’，否则支付宝会定时重发消息，最多重试7次。 

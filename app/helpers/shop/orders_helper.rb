@@ -9,7 +9,7 @@ module Shop::OrdersHelper
     @is_paid = false
     callback_params = params.except(*request.path_parameters.keys)
     if callback_params.any? && Alipay::Sign.verify?(callback_params)
-       logger.info(callback_params.inspect)
+         #logger.info(callback_params.inspect)
          #TODO 增加account_id条件，支会多站点使用
 	     @order = Shop::Order.where(order_no:params[:out_trade_no]).take
 	     if @order.is_paid
@@ -17,6 +17,7 @@ module Shop::OrdersHelper
 	     elsif params[:trade_status] == 'TRADE_SUCCESS' || params[:trade_status] == 'TRADE_FINISHED'
 	     	@order.trade_no = params[:trade_no]
 	     	@order.is_paid = true
+	     	@order.paid_date = Time.now
 	     	@order.save
 	     	@is_paid = true 
 	     end	     
