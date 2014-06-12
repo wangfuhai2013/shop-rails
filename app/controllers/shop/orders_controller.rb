@@ -101,7 +101,7 @@ class Shop::OrdersController < ApplicationController
       subject = params[:subject] unless params[:subject].blank?
       return_url = ""
       return_url = params[:return_url] unless params[:return_url].blank?
-      notify_url = "http://"+request.host_with_port + "/" +  "orders/alipay_notify"
+      notify_url = "http://"+request.host_with_port + "/shop/orders/alipay_notify"
       redirect_to order.alipay_url(subject,return_url,notify_url)
     else
        render text: '支付失败，支付不方式不支持:' + order.pay_way
