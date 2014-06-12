@@ -1,9 +1,10 @@
 class Shop::OrdersController < ApplicationController
   before_action :set_shop_order, only: [:show, :edit, :update, :destroy]
 
-  skip_before_filter :authorize,:verify_authenticity_token,
-                 only: [:add_to_cart,:remove_from_cart,:empty_cart,:change_product_quantity,:create_order]
-  layout  false, only: [:add_to_cart,:remove_from_cart,:empty_cart,:change_product_quantity,:create_order]
+  skip_before_filter :authorize,:verify_authenticity_token, only: [:add_to_cart,
+                     :remove_from_cart,:empty_cart,:change_product_quantity,:create_order,:alipay_notify]
+  layout  false, only: [:add_to_cart,:remove_from_cart,:empty_cart,
+                        :change_product_quantity,:create_order,:alipay_notify]
 
   #加入购物车
   def add_to_cart
