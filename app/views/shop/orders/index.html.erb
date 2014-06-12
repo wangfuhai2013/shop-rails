@@ -13,12 +13,13 @@
       <th>订单编号</th>
       <th>支付方式</th>
       <th>订单总价</th>
-      <th>产品费用</th>
+      <th>产品费用</th>    
       <th>订单运费</th>
       <th>是否支付</th>
       <th>支付时间</th>      
       <th>是否发货</th>
       <th>发货时间</th>
+      <th>相关客户</th>      
       <th>Openid</th>
       <th></th>
       <th></th>      
@@ -30,7 +31,7 @@
     <% @shop_orders.each do |shop_order| %>
       <tr>
         <td><%= shop_order.order_no %></td>
-        <td><%= shop_order.pay_way %></td>
+        <td><%= shop_order.pay_way_name %></td>
         <td><%= format("%.2f",shop_order.total_fee / 100.0) %>元</td>
         <td><%= format("%.2f",shop_order.product_fee / 100.0) %>元</td>
         <td><%= format("%.2f",shop_order.transport_fee / 100.0) %>元</td>
@@ -38,6 +39,7 @@
         <td><%= shop_order.paid_date.strftime('%Y-%m-%d %H:%M') if shop_order.paid_date %></td>        
         <td><%= bool_label(shop_order.is_delivered) %></td>
         <td><%= shop_order.delivery_date.strftime('%Y-%m-%d %H:%M') if shop_order.delivery_date %></td>
+        <td><%= link_to shop_order.customer.name,shop_order.customer if shop_order.customer %></td>
         <td><%= shop_order.openid %></td>
         <td><%= link_to '查看', shop_order %></td>
         <td><%= link_to '修改', shop.edit_order_path(shop_order) unless shop_order.is_paid %></td>        

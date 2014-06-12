@@ -15,6 +15,13 @@ class CreateShopOrders < ActiveRecord::Migration
       t.text :delivery_address
       t.text :remark
       t.string :openid
+      
+      t.string :trade_no      
+      t.integer :discount
+      t.string :receiver_name
+      t.string :receiver_mobile      
+      t.string :receiver_address      
+      t.string :receiver_zip             
 
       t.timestamps
     end

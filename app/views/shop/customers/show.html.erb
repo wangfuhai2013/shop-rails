@@ -1,0 +1,45 @@
+<h1>查看客户</h1>
+<p id="notice"><%= notice %></p>
+<p>
+  <strong>客户编号:</strong>
+  <%= @shop_customer.customer_no %>
+</p>
+<p>
+  <strong>邮箱地址:</strong>
+  <%= @shop_customer.email %>
+</p>
+<p>
+  <strong>客户姓名:</strong>
+  <%= @shop_customer.name %>
+</p>
+<p>
+  <strong>客户性别:</strong>
+  <%= @shop_customer.gender_name %>
+</p>
+<p>
+  <strong>公司名称:</strong>
+  <%= @shop_customer.company %>
+</p>
+<p>
+  <strong>联系电话:</strong>
+  <%= @shop_customer.mobile %>
+</p>
+<p>
+  <strong>收货地址:</strong>
+  <%= @shop_customer.address %>
+</p>
+<p>
+  <strong>邮政编码:</strong>
+  <%= @shop_customer.zip %>
+</p>
+<p>
+  <strong>客户类型:</strong>
+  <%= @shop_customer.customer_type.name %>
+</p>
+<p>
+  <strong>是否可用:</strong>
+  <%= bool_label(@shop_customer.is_enabled) %>
+</p>
+
+<%= link_to '修改', shop.edit_customer_path(@shop_customer) %> |
+<%= link_to '返回', shop.customers_path %>

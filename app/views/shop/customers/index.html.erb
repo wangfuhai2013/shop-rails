@@ -13,7 +13,7 @@
      <%= text_field_tag :name,params[:name],class:"form-control",placeholder:"输入客户姓名"%>
   </div>  
   <div class="col-sm-2" style="margin-top: 30px;margin-bottom: 0px;padding-right: 0px;">
-     <%= text_field_tag :telephone,params[:telephone],class:"form-control",placeholder:"输入客户电话"%>
+     <%= text_field_tag :mobile,params[:mobile],class:"form-control",placeholder:"输入客户电话"%>
   </div>    
     <div class="col-sm-1" style="margin-top: 30px;margin-bottom: 0px; padding-left: 15px;">
      <%= submit_tag "搜索" ,:class => "btn btn-info" %>
@@ -53,7 +53,7 @@
         <td><%= shop_customer.name %></td>           
         <td><%= shop_customer.gender_name %></td>
         <td><%= shop_customer.company %></td>             
-        <td><%= shop_customer.telephone %></td>
+        <td><%= shop_customer.mobile %></td>
         <td><%= shop_customer.address %></td>
         <td><%= shop_customer.zip %></td>        
         <td><%= shop_customer.customer_type.name %></td>

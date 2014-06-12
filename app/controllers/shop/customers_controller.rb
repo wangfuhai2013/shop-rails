@@ -7,7 +7,7 @@ class Shop::CustomersController < ApplicationController
     where = "1"
     where += " AND customer_no like '%#{params[:customer_no].upcase}%'" unless params[:customer_no].blank?
     where += " AND name like '%#{params[:name]}%'" unless params[:name].blank?   
-    where += " AND telephone like '%#{params[:telephone]}%'" unless params[:telephone].blank?    
+    where += " AND mobile like '%#{params[:mobile]}%'" unless params[:mobile].blank?    
     where += " AND account_id = #{account_id} " unless account_id.blank?
 
     @shop_customers = Shop::Customer.where(where).page(params[:page]).order("id DESC")
@@ -72,7 +72,7 @@ class Shop::CustomersController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def crm_customer_params
-      params.require(:customer).permit(:name, :gender, :telephone, :address, :zip,:company,
+      params.require(:customer).permit(:name, :gender, :mobile, :address, :zip,:company,
                                        :email,:password,:customer_type_id,:is_enabled)
 
     end

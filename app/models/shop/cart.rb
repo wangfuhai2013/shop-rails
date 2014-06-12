@@ -4,15 +4,16 @@ class Shop::Cart
 
    def initialize
    	 @items = [] 
-       @discount = 100  	
    end
 
-   def discount
-      @discount = 100 if @discount.nil?
-      @discount
-   end
-   def discount=(discount)
-      @discount = discount
+   #计算总金额（不含折扣）
+   def total
+     total = 0
+     @items.each do |item|
+       product = item.product_sku.product
+       total += item.subtotal
+     end
+     total 
    end
 
    def add_product_sku(product_sku,quantity=1)
