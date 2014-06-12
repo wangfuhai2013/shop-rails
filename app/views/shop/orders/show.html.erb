@@ -82,14 +82,16 @@
   <strong>相关客户:</strong>
   <%= link_to @shop_order.customer.name,@shop_order.customer if @shop_order.customer %>
 </p>
-
+<!--
 <%= link_to ' 修改 ', shop.edit_order_path(@shop_order) ,:class => 'btn btn-primary' unless @shop_order.is_paid%> 
+-->
 <%= link_to ' 返回 ', shop.orders_path ,:class => 'btn btn-default'%>
 
 <h2>订单条目列表 
+  <!--
   <small>
 <%= link_to '新增条目', shop.new_order_item_path(:order_id => @shop_order) ,:class => 'btn btn-primary' unless @shop_order.is_paid %>
-
+-->
 <small>
 </h1>
 
@@ -102,8 +104,10 @@
       <th>产品单价</th>     
       <th>产品折扣</th> 
       <th>小计金额</th>  
+      <!--
       <th></th>
       <th></th>
+    -->
     </tr>
   </thead>
 
@@ -120,9 +124,11 @@
         <td><%= item.quantity %></td>      
         <td><%= format("%.2f",item.price/100.0) %> 元</td>   
         <td><%= item.discount %>%</td>   
-        <td><%= format("%.2f",subtotal/100.0) %> 元</td>                  
+        <td><%= format("%.2f",subtotal/100.0) %> 元</td>         
+        <!--        
         <td><%= link_to '修改', shop.edit_order_item_path(item) unless @shop_order.is_paid %></td>
         <td><%= link_to '删除', item, method: :delete, data: { confirm: '您确定要删除吗?' } unless @shop_order.is_paid %></td>
+      -->
       </tr>
     <% end %>
     <tr>

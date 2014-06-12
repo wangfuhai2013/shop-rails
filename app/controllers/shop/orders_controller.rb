@@ -1,5 +1,5 @@
 class Shop::OrdersController < ApplicationController
-  before_action :set_shop_order, only: [:show, :edit, :update, :destroy]
+  before_action :set_shop_order, only: [:delivery,:show, :edit, :update, :destroy]
 
   skip_before_filter :authorize,:verify_authenticity_token, only: [:add_to_cart,
                      :remove_from_cart,:empty_cart,:change_product_quantity,:alipay_notify]
@@ -88,6 +88,19 @@ class Shop::OrdersController < ApplicationController
     end
   end
 
+ #发货
+  def delivery
+    if @shop_order.is_delivered || !@shop_order.is_paid 
+      flash[:error] = "该订单已是发货状态，不能再次发货" if @shop_order.is_delivered
+      flash[:error] = "该订单还未付款，不能发货" unless @shop_order.is_paid
+    else
+      @shop_order.is_delivered = true
+      @shop_order.delivery_date = Time.now
+      @shop_order.save
+      flash[:notice] = "发货完成"
+    end
+    redirect_to shop.orders_url
+  end
   # GET /shop/orders
   def index
     @shop_orders = Shop::Order.where(account_id: session[:account_id]).order("id DESC").page(params[:page])
@@ -100,10 +113,12 @@ class Shop::OrdersController < ApplicationController
   # GET /shop/orders/new
   def new
     @shop_order = Shop::Order.new
+    render text: '后台不可新建订单'
   end
 
   # GET /shop/orders/1/edit
   def edit
+    render text: '后台不可修改订单'
   end
 
   # POST /shop/orders

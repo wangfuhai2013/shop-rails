@@ -1,5 +1,5 @@
 <h1>订单列表
-  <small><%= link_to '新建订单', shop.new_order_path ,:class => "btn btn-primary" %></small>
+ <!-- <small><%= link_to '新建订单', shop.new_order_path ,:class => "btn btn-primary" %></small> -->
 </h1>
 <% if flash[:notice] || flash[:error]  %>
 <div class="alert <%= "alert-success" if flash[:notice] %> <%= "alert-danger" if flash[:error] %>">
@@ -38,7 +38,7 @@
         <td><%= shop_order.delivery_date.strftime('%Y-%m-%d %H:%M') if shop_order.delivery_date %></td>
         <td><%= link_to shop_order.customer.name,shop_order.customer if shop_order.customer %></td>
         <td><%= link_to '查看', shop_order %></td>
-        <td><%= link_to '修改', shop.edit_order_path(shop_order) unless shop_order.is_paid %></td>        
+        <td><%= link_to '发货', shop.order_delivery_path(shop_order),  data: { confirm: '您确定要发货?' } if shop_order.is_paid && !shop_order.is_delivered%></td>        
         <td><%= link_to '删除', shop_order, method: :delete, data: { confirm: '您确定要删除?' } unless shop_order.is_paid %></td>
       </tr>
     <% end %>

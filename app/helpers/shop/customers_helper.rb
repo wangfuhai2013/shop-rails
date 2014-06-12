@@ -1,7 +1,17 @@
 module Shop::CustomersHelper
 
   def customer
+    @customer = Shop::Customer.find(session[:customer_id])
   end
+  
+  def customer_order_list
+    @customer = Shop::Customer.find(session[:customer_id])
+  end
+
+  def customer_order_show
+    @order = Shop::Order.find(params[:order_id])
+  end  
+
   def customer_register
 	if request.post?
 	  @is_success = false

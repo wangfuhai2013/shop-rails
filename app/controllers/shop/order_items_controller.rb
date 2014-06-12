@@ -14,10 +14,12 @@ class Shop::OrderItemsController < ApplicationController
   def new
     @shop_order_item = Shop::OrderItem.new
     @shop_order_item.order = Shop::Order.find(params[:order_id])
+    render text: '后台不可新建订单条目'
   end
 
   # GET /shop/order_items/1/edit
   def edit
+    render text: '后台不可修改订单条目'
   end
 
   # POST /shop/order_items
