@@ -4,7 +4,7 @@ class Shop::Order < ActiveRecord::Base
   belongs_to :customer
 
   def pay_way_name
-    name = "未知:" + self.pay_way
+    name = "未知:" + self.pay_way.to_s
     case self.pay_way
     	when 'weixin'
     		name = '微信支付'
