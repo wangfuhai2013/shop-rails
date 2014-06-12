@@ -10,7 +10,7 @@ Shop::Engine.routes.draw do
 
     post "orders/add_to_cart"
     post "orders/create_order"
-    get "orders/alipay_notify"
+    post "orders/alipay_notify"
     get "orders/empty_cart"
     get "orders/remove_from_cart/:id",to: "orders#remove_from_cart"
     get "orders/change_product_quantity/:id",to: "orders#change_product_quantity"

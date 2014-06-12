@@ -122,13 +122,17 @@ class Shop::OrdersController < ApplicationController
       when 'WAIT_BUYER_PAY'
         # 交易开启
       when 'WAIT_SELLER_SEND_GOODS'
-        # 买家完成支付
+        # 买家完成支付,等发货
+      when 'TRADE_SUCCESS'
+        # 交易完成(直接收款)
+        order.is_paid = true if order
       when 'TRADE_FINISHED'
-        # 交易完成
+        # 交易成功并且完成
         order.is_paid = true if order
       when 'TRADE_CLOSED'
         # 交易被关闭
       end
+      order.trade_no = params[:trade_no] if order
       order.save if order
 
       render :text => 'success' # 成功接收消息后，需要返回纯文本的 ‘success’，否则支付宝会定时重发消息，最多重试7次。 
