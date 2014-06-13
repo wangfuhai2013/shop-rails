@@ -31,16 +31,18 @@
   <thead>
     <tr>
       <th>客户编号</th>
+      <th>客户类型</th>      
       <th>邮箱地址</th>      
       <th>客户姓名</th>
-      <th>客户性别</th>
       <th>公司名称</th>      
       <th>联系电话</th>
-      <th>收货地址</th>
-      <th>邮政编码</th>      
-      <th>客户类型</th>
+      <th>登录次数</th>            
+      <th>上次登录IP</th>
+      <th>上次登录时间</th>      
+      <th>注册时间</th>            
       <th>是否可用</th>      
       <th></th>
+      <th></th>      
       <th></th>
     </tr>
   </thead>
@@ -49,16 +51,18 @@
     <% @shop_customers.each do |shop_customer| %>
       <tr>
         <td><%= shop_customer.customer_no %></td>
+        <td><%= shop_customer.customer_type.name %></td>        
         <td><%= shop_customer.email %></td>   
         <td><%= shop_customer.name %></td>           
-        <td><%= shop_customer.gender_name %></td>
         <td><%= shop_customer.company %></td>             
         <td><%= shop_customer.mobile %></td>
-        <td><%= shop_customer.address %></td>
-        <td><%= shop_customer.zip %></td>        
-        <td><%= shop_customer.customer_type.name %></td>
+        <td><%= shop_customer.login_count %></td>
+        <td><%= shop_customer.last_login_ip %></td>        
+        <td><%= shop_customer.last_login_time.strftime("%Y-%m-%d %H:%M") if shop_customer.last_login_time %></td> 
+        <td><%= shop_customer.created_at.strftime("%Y-%m-%d %H:%M") %></td>  
         <td><%= bool_label(shop_customer.is_enabled) %></td>
-        <td><%= link_to '修改', shop.edit_customer_path(shop_customer) %></td>
+        <td><%= link_to '查看', shop_customer %></td>
+        <td><%= link_to '修改', shop.edit_customer_path(shop_customer) %></td>        
         <td><%= link_to '删除', shop_customer, method: :delete, data: { confirm: '您确定要删除?' } %></td>
       </tr>
     <% end %>
