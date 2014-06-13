@@ -19,9 +19,29 @@ class Shop::Product < ActiveRecord::Base
   has_and_belongs_to_many :tags
 
   before_validation :capitalize_code
- #编码自动转换成大写
- def capitalize_code
-  self.code.upcase! if self.code
- end
+  #编码自动转换成大写
+  def capitalize_code
+    self.code.upcase! if self.code
+  end
+  #SKU属性列表
+  def sku_properties_list
+     sku_properties = product_properties.joins(:property).where(shop_properties:{is_sku:true}).
+                                         order(:property_id)
+     list = ""
+     last_property_id = 0
+     sku_properties.each_with_index  do |sku_property,index|
+       list += sku_property.property.name + ":" if last_property_id == 0 #开始属性
+       if  last_property_id != 0 && last_property_id != sku_property.property.id
+          #更换属性
+          list.chop! #删除多余的,
+          list +=";" + sku_property.property.name + ":" 
+       end
+       last_property_id = sku_property.property.id 
 
+       list += sku_property.property_value.value
+       list += "," if index + 1 < sku_properties.size      
+     end 
+     list
+  end
+ 
 end
