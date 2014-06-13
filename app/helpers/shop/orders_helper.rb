@@ -21,7 +21,7 @@ module Shop::OrdersHelper
     if customer
       discount = customer.customer_type.discount    
     end
-    total = cart.total * discount / 100
+    total = (cart.total * discount / 100.0).round 
     #创建订单
     @order = Shop::Order.new
     @order.generate_order_no
