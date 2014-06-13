@@ -44,7 +44,7 @@ module Shop::OrdersHelper
       order_item = Shop::OrderItem.new
       order_item.order = @order
       order_item.product_sku = item.product_sku
-      order_item.quantity = item.product_sku.quantity
+      order_item.quantity = item.quantity
       order_item.price = item.product_sku.price
       order_item.discount = discount
       order_item.save
