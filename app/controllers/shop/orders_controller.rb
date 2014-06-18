@@ -14,14 +14,14 @@ class Shop::OrdersController < ApplicationController
        product_sku = Shop::ProductSku.joins(:product_sku_properties).
                                       where(product_id:params[:product_id],
                                       :shop_product_sku_properties => {property_value_id:params[:property_value]}).take
-      if product_sku
+      if product_sku && product_sku.price.to_i > 0
         quantity = params[:quantity].to_i if params[:quantity]
         quantity = 1 if quantity < 1
         @cart.add_product_sku(product_sku,quantity)
         render json: {is_success:"true",message:"添加成功",cart_item_count:@cart.items.size}
       else
         #商品不存存或已下架
-        render json: {is_success:"false",message:"商品不存存或已下架"}
+        render json: {is_success:"false",message:"商品不存在或已下架"}
       end
     else
        render json: {is_success:"false",message:"参数不全"}
