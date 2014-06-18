@@ -19,7 +19,7 @@ module Shop::CustomersHelper
 	  	flash.now[:error] = "两次密码输入不一样"
 	  	return
 	  end
-	  @customer = Shop::Customer.new(params.permit(:email,:name,:gender,:telephone, :address, :zip,
+	  @customer = Shop::Customer.new(params.permit(:email,:name,:gender,:mobile, :address, :zip,
 	  	                                           :company,:password))
 	  @customer.customer_type = Shop::CustomerType.all.take
 	  @customer.is_enabled = true

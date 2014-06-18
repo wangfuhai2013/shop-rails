@@ -27,8 +27,8 @@ class Shop::ProductsController < ApplicationController
   # GET /shop/products/new
   def new
     @shop_product = Shop::Product.new
-    @shop_product.the_order = 10
-    @shop_product.tag_order = 10    
+    @shop_product.the_order = 100
+    @shop_product.tag_order = 100    
     @shop_product.price = 0        
     @shop_product.quantity = 0
     @shop_product.transport_fee = 0    
