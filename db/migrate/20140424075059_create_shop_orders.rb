@@ -21,7 +21,10 @@ class CreateShopOrders < ActiveRecord::Migration
       t.string :receiver_name
       t.string :receiver_mobile      
       t.string :receiver_address      
-      t.string :receiver_zip             
+      t.string :receiver_zip       
+
+      t.boolean :require_invoice
+      t.string  :invoice_title   
 
       t.timestamps
     end

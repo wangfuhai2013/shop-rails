@@ -70,6 +70,14 @@
   <%= @shop_order.receiver_zip %>
 </p>
 <p>
+  <strong>是否需要发票:</strong>
+  <%= bool_label(@shop_order.require_invoice) %>
+</p>
+<p>
+  <strong>发票抬头:</strong>
+  <%= @shop_order.invoice_title %>
+</p>
+<p>
   <strong>备注:</strong>
   <%= @shop_order.remark %>
 </p>

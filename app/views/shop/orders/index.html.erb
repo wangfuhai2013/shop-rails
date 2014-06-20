@@ -15,7 +15,8 @@
       <th>交易编号</th>      
       <th>订单总价</th>
       <th>是否支付</th>
-      <th>支付时间</th>      
+      <th>支付时间</th>
+      <th>是否要发票</th>
       <th>是否发货</th>
       <th>发货时间</th>
       <th>相关客户</th>      
@@ -34,6 +35,7 @@
         <td><%= format("%.2f",shop_order.total_fee / 100.0) %>元</td>
         <td><%= bool_label(shop_order.is_paid)%></td>
         <td><%= shop_order.paid_date.strftime('%Y-%m-%d %H:%M') if shop_order.paid_date %></td>        
+        <td><%= bool_label(shop_order.require_invoice) %></td>
         <td><%= bool_label(shop_order.is_delivered) %></td>
         <td><%= shop_order.delivery_date.strftime('%Y-%m-%d %H:%M') if shop_order.delivery_date %></td>
         <td><%= link_to shop_order.customer.name,shop_order.customer if shop_order.customer %></td>

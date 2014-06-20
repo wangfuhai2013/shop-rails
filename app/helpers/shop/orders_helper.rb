@@ -27,6 +27,8 @@ module Shop::OrdersHelper
     @order.generate_order_no
     @order.is_paid = false
     @order.is_delivered = false
+    @order.require_invoice = false
+
     @order.pay_way = params[:pay_way]
     @order.transport_fee = 0   
     @order.product_fee = total     
@@ -38,6 +40,10 @@ module Shop::OrdersHelper
     @order.receiver_mobile = params[:mobile]    
     @order.receiver_address = params[:address]
     @order.receiver_zip = params[:zip]    
+    #发票信息
+    @order.require_invoice = true  if params[:require_invoice]
+    @order.invoice_title = params[:invoice_title]    
+
     @order.save
     #订单条目
     cart.items.each do |item|

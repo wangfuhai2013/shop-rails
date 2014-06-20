@@ -1,15 +1,15 @@
 module Shop::CustomersHelper
 
   def customer
-    @customer = Shop::Customer.find(session[:customer_id])
+    @customer = Shop::Customer.where(session[:customer_id]) if session[:customer_id]
   end
   
   def customer_order_list
-    @customer = Shop::Customer.find(session[:customer_id])
+    @customer = Shop::Customer.find(session[:customer_id]) if session[:customer_id]
   end
 
   def customer_order_show
-    @order = Shop::Order.find(params[:order_id])
+    @order = Shop::Order.find(params[:order_id]) if session[:customer_id]
   end  
 
   def customer_register
