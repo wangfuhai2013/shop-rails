@@ -1,0 +1,23 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  account_id: 
+  product_id: 
+  issue_no: 1
+  price: 1
+  join_person_time: 1
+  result_code: 1
+  result_member_id: 
+  result_time: 
+  is_closed: false
+
+two:
+  account_id: 
+  product_id: 
+  issue_no: 1
+  price: 1
+  join_person_time: 1
+  result_code: 1
+  result_member_id: 
+  result_time: 
+  is_closed: false

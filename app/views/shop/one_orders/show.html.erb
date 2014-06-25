@@ -1,0 +1,49 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>One product:</strong>
+  <%= @shop_one_order.one_product %>
+</p>
+
+<p>
+  <strong>customer:</strong>
+  <%= @shop_one_order.customer %>
+</p>
+
+<p>
+  <strong>Order person time:</strong>
+  <%= @shop_one_order.order_person_time %>
+</p>
+
+<p>
+  <strong>Pay way:</strong>
+  <%= @shop_one_order.pay_way %>
+</p>
+
+<p>
+  <strong>Pay time:</strong>
+  <%= @shop_one_order.pay_time %>
+</p>
+
+<p>
+  <strong>Is paid:</strong>
+  <%= @shop_one_order.is_paid %>
+</p>
+
+<p>
+  <strong>Trade no:</strong>
+  <%= @shop_one_order.trade_no %>
+</p>
+
+<p>
+  <strong>Got code quantity:</strong>
+  <%= @shop_one_order.got_code_quantity %>
+</p>
+
+<p>
+  <strong>Is got all code:</strong>
+  <%= @shop_one_order.is_got_all_code %>
+</p>
+
+<%= link_to 'Edit', edit_shop_one_order_path(@shop_one_order) %> |
+<%= link_to 'Back', shop_one_orders_path %>

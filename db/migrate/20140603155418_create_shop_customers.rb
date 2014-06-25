@@ -18,7 +18,12 @@ class CreateShopCustomers < ActiveRecord::Migration
       t.references :customer_type, index: true
       t.references :account, index: true
 
+      t.string :birth_date
+      t.string :forgot_pwd_code
+      t.datetime :forgot_pwd_time
+
       t.timestamps
+
     end
   end
 end

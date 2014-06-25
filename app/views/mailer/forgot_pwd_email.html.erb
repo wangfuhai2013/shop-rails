@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body>
+  	<p>
+  	<%= @customer.name %>您好！<br/>
+    您在<%= @customer.forgot_pwd_time.strftime("%Y-%m-%d %H:%M:%S") %>使用了找回密码功能，请点击下面的链接完成密码找回流程，如果无法正确打开页面，请将完整地址复制到浏览器地址栏。 
+注意：该链接将在1小时后失效，请及时完成找回密码流程。 
+谢谢<br/>
+<a href="http://www.mchomeconcept.com.cn/member/forgot_pwd?email=<%= @customer.email %>&code=<%= @customer.forgot_pwd_code %>">http://www.mchomeconcept.com.cn/member/forgot_pwd/?email=<%= @customer.email %>&code=<%= @customer.forgot_pwd_code %></a>
+</p>
+  </body>
+</html>

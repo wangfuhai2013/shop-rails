@@ -1,0 +1,55 @@
+<%= form_for(@shop_one_order) do |f| %>
+  <% if @shop_one_order.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@shop_one_order.errors.count, "error") %> prohibited this shop_one_order from being saved:</h2>
+
+      <ul>
+      <% @shop_one_order.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :one_product_id %>
+    <%= f.text_field :one_product_id %>
+  </div>
+  <div class="field">
+    <%= f.label :customer_id %>
+    <%= f.text_field :customer_id %>
+  </div>
+  <div class="field">
+    <%= f.label :order_person_time %>
+    <%= f.number_field :order_person_time %>
+  </div>
+  <div class="field">
+    <%= f.label :pay_way %>
+    <%= f.text_field :pay_way %>
+  </div>
+  <div class="field">
+    <%= f.label :pay_time %>
+    <%= f.datetime_select :pay_time %>
+  </div>
+  <div class="field">
+    <%= f.label :is_paid %>
+    <%= f.check_box :is_paid %>
+  </div>
+  <div class="field">
+    <%= f.label :trade_no %>
+    <%= f.text_field :trade_no %>
+  </div>
+  <div class="field">
+    <%= f.label :got_code_quantity %>
+    <%= f.number_field :got_code_quantity %>
+  </div>
+  <div class="field">
+    <%= f.label :is_got_all_code %>
+    <%= f.check_box :is_got_all_code %>
+  </div>
+  <div class="actions">
+    <%= f.submit ' 保存 ',:class => 'btn btn-primary',data: {disable_with:'正在保存...'}%>
+    &nbsp;&nbsp;
+    <%= link_to ' 返回 ', shop.one_orders_path,:class => "btn btn-default" %>
+  </div>
+<% end %>

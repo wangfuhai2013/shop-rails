@@ -1,0 +1,24 @@
+<%= form_for(@shop_one_product) do |f| %>
+  <% if @shop_one_product.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@shop_one_product.errors.count, "error") %> prohibited this shop_one_product from being saved:</h2>
+
+      <ul>
+      <% @shop_one_product.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :product_id ,'商品名称'%>
+    <%= f.select :product_id,@shop_products.collect {|p| [ p.name, p.id ]}%>
+  </div>
+
+  <div class="actions">
+    <%= f.submit ' 保存 ',:class => 'btn btn-primary',data: {disable_with:'正在保存...'}%>
+    &nbsp;&nbsp;
+    <%= link_to ' 返回 ', shop.one_products_path,:class => "btn btn-default" %>
+  </div>
+<% end %>

@@ -1,4 +1,8 @@
 Shop::Engine.routes.draw do
+
+    resources :one_orders
+    resources :one_products
+
     resources :customer_types
     resources :customers
 

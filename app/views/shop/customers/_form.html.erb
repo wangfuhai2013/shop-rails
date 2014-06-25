@@ -26,6 +26,10 @@
     <%= f.label :gender ,'客户性别'%>
     <%= f.select :gender, Shop::Customer.gender_options%>
   </div>
+    <div class="field">
+    <%= f.label :birth_date ,'客户生日'%>
+    <%= f.text_field :birth_date %>
+  </div>
   <div class="field">
     <%= f.label :company ,'公司名称'%>
     <%= f.text_field :company %>

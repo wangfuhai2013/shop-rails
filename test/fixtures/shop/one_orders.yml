@@ -1,0 +1,23 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  one_product_id: 
+  member_id: 
+  order_person_time: 1
+  pay_way: MyString
+  pay_time: 2014-06-22 18:46:08
+  is_paid: false
+  trade_no: MyString
+  got_code_quantity: 1
+  is_got_all_code: false
+
+two:
+  one_product_id: 
+  member_id: 
+  order_person_time: 1
+  pay_way: MyString
+  pay_time: 2014-06-22 18:46:08
+  is_paid: false
+  trade_no: MyString
+  got_code_quantity: 1
+  is_got_all_code: false

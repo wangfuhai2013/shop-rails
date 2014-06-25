@@ -72,7 +72,7 @@ class Shop::CustomersController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def crm_customer_params
-      params.require(:customer).permit(:name, :gender, :mobile, :address, :zip,:company,
+      params.require(:customer).permit(:name, :gender, :mobile, :address, :zip,:company,:birth_date,
                                        :email,:password,:customer_type_id,:is_enabled)
 
     end
