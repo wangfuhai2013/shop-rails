@@ -89,8 +89,7 @@ module Shop
     def resize_image_file(src_file,desc_file)
        image = MiniMagick::Image.open(src_file)
        max_width = 720
-       max_width = Rails.configuration.image_max_width.to_i unless Rails.configuration.image_max_width.blank?
-
+       max_width = Rails.configuration.image_max_width.to_i if Rails.configuration.respond_to?('image_max_width')
        if image[:width] > max_width
           image.resize max_width            
        end               
@@ -110,7 +109,7 @@ module Shop
          image = MiniMagick::Image.open(file_name)
          image.format "jpg"
          thumb_size = "300x300^" 
-         thumb_size = Rails.configuration.image_thumb_size unless Rails.configuration.image_thumb_size.blank?
+         thumb_size = Rails.configuration.image_thumb_size if Rails.configuration.respond_to?("image_thumb_size")
          image.resize thumb_size
          #image.combine_options do |i|           
          #  i.resize "150x150^"

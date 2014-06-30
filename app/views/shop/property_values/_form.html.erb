@@ -21,6 +21,10 @@
     <%= f.text_field :code %>
   </div>  
   <div class="field">
+    <%= f.label :picture_path,'相关图片' %>
+    <%= f.file_field :picture_path %>
+  </div>    
+  <div class="field">
     <%= f.label :the_order,'排列顺序' %>
     <%= f.number_field :the_order %>
   </div>

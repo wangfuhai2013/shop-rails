@@ -7,5 +7,6 @@ module Shop
     has_many :one_codes
 
     validates_presence_of :account_id,:product
+    validates :price, numericality: { only_integer: true ,greater_than: 0}  
   end
 end

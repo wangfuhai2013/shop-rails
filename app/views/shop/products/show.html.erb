@@ -100,6 +100,7 @@
   <thead>
     <tr>
       <th>图片</th>
+      <th>相关产品属性</th>      
       <th>描述</th>     
       <th></th>
       <th></th>
@@ -111,8 +112,8 @@
     <% @shop_product.pictures.each do |picture| %>
       <tr>
         <td><%= thumbnail(picture.path,150) %></td>
+        <td><%= picture.product_sku_property.property_value.value if picture.product_sku_property %></td>    
         <td><%= picture.description %></td>      
-
         <td><%= link_to '设为封面图片', shop.pictures_set_cover_picture_path(picture) %></td>
         <td><%= link_to '修改', shop.edit_picture_path(picture) %></td>
         <td><%= link_to '删除', picture, method: :delete, data: { confirm: '您确定要删除吗?' } %></td>

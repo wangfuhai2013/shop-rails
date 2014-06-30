@@ -16,6 +16,10 @@
     <%= f.file_field :path %>
   </div>
   <div class="field">
+    <%= f.label :product_sku_property_id ,'相关产品属性'%>
+   <%= f.select :product_sku_property_id,@shop_product_sku_properties.collect {|p| [ p.property_value.value, p.id ]},{:include_blank => "无相关产品属性"}%>
+  </div> 
+  <div class="field">
     <%= f.label :description ,'图片描述'%>
     <%= f.text_area :description %>
   </div>

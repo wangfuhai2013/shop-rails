@@ -1,6 +1,7 @@
 class Shop::PicturesController < ApplicationController
   
   before_action :set_shop_picture, only: [:set_cover_picture,:show, :edit, :update, :destroy]
+  before_action :set_shop_product_sku_properties, only: [:new,:create, :edit, :update]
   after_action  :create_thumb_image, only: [:create,:update]
 
   # GET /shop/pictures
@@ -100,8 +101,15 @@ class Shop::PicturesController < ApplicationController
       @shop_picture = Shop::Picture.find(params[:id])
     end
 
+    def set_shop_product_sku_properties            
+      product_id = params[:product_id] if params[:product_id]
+      product_id = @shop_picture.product_id if @shop_picture
+      @shop_product_sku_properties = Shop::ProductSkuProperty.joins(:product_sku).
+                                     where(shop_product_skus:{product_id:product_id})
+    end
+ 
     # Only allow a trusted parameter "white list" through.
     def shop_picture_params
-      params.require(:picture).permit(:product_id, :description)
+      params.require(:picture).permit(:product_id, :product_sku_property_id,:description)
     end
 end

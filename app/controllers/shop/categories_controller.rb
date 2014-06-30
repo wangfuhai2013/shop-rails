@@ -37,7 +37,7 @@ class Shop::CategoriesController < ApplicationController
 
   # PATCH/PUT /shop/categories/1
   def update
-    if @shop_category.update(shop_category_params) && upload_file_is_permitted
+    if upload_file_is_permitted && @shop_category.update(shop_category_params)
       if params[:category][:picture_path]
          delete_file(@shop_category.picture_path) if !@shop_category.picture_path.blank?
          @shop_category.picture_path = upload(params[:category][:picture_path]) 

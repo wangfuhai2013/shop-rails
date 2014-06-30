@@ -60,7 +60,8 @@
   <thead>
     <tr>
       <th>属性值</th>
-      <th>编码</th>      
+      <th>编码</th>
+      <th>相关图片</th>      
       <th>排列顺序</th>     
       <th>是否可用</th>
       <th></th>
@@ -73,6 +74,7 @@
       <tr>
         <td><%= value.value %></td>
         <td><%= value.code %></td>
+        <td><%= thumbnail value.picture_path %></td>
         <td><%= value.the_order %></td>      
 
         <td><%= bool_label(value.is_enabled) %></td>

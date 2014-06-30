@@ -1,5 +1,6 @@
 class Shop::Picture < ActiveRecord::Base
   belongs_to :product
+  belongs_to :product_sku_property
 
   def thumb_path
     thumb_name = ""

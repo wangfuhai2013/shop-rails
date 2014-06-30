@@ -7,6 +7,8 @@ class CreateShopPropertyValues < ActiveRecord::Migration
       t.integer :the_order
       t.boolean :is_enabled
 
+      t.string :picture_path
+
       t.timestamps
     end
   end
