@@ -24,41 +24,9 @@
 
     # POST /shop/one_products
     def create
-      @shop_one_product = Shop::OneProduct.new(shop_one_product_params)
-      @shop_one_product.account_id = session[:account_id]
-      @shop_one_product.join_person_time = 0
-      @shop_one_product.result_code = 0
-      @shop_one_product.is_closed = false
-      
-      max_issue_no = Shop::OneProduct.where(product:@shop_one_product.product).maximum(:issue_no)
-      max_issue_no = 0 unless max_issue_no
-      @shop_one_product.issue_no = max_issue_no + 1
-      @shop_one_product.price = @shop_one_product.product.price / 100
+      @shop_one_product = Shop::OneProduct.new_one_product(params[:one_product][:product_id],session[:account_id])
 
-      #预先随机生成微购码
-      codes = []
-      until codes.size == @shop_one_product.price
-        code = rand(@shop_one_product.price) + 1
-        codes.push(code) unless codes.include?(code)
-      end
-      codes.each do |code|
-         one_code = Shop::OneCode.new()
-         one_code.one_product = @shop_one_product
-         one_code.code = 10000000 + code
-         one_code.save        
-      end
-=begin      
-     #顺序生成
-      i = 0
-      @shop_one_product.price.times do 
-         i += 1
-         one_code = Shop::OneCode.new()
-         one_code.one_product = @shop_one_product
-         one_code.code = 10000000 + i
-         one_code.save
-      end
-=end
-      if @shop_one_product.save
+      if @shop_one_product.persisted?
         redirect_to shop.one_products_url, notice: '微购商品已创建'
       else
         render action: 'new'

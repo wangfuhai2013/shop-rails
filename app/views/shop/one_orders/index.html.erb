@@ -22,7 +22,6 @@
       <th>是否获得全部微码</th>
       <th></th>
       <th></th>
-      <th></th>
     </tr>
   </thead>
 
@@ -31,13 +30,13 @@
       <tr>
         <td><%= shop_one_order.one_product.product.name %>(第<%= shop_one_order.one_product.issue_no %>期)</td>
         <td><%= shop_one_order.customer.name %></td>
-        <td><%= shop_one_order.order_person_time %>人次</td>
-        <td><%= shop_one_order.pay_way %></td>
-        <td><%= shop_one_order.pay_time %></td>
+        <td><%= shop_one_order.order_person_time %></td>
+        <td><%= shop_one_order.pay_way_name %></td>
+        <td><%= shop_one_order.pay_time.strftime("%Y-%m-%d %H:%M:%S.%3N") if shop_one_order.pay_time %></td>
         <td><%= bool_label(shop_one_order.is_paid) %></td>
         <td><%= shop_one_order.trade_no %></td>
         <td><%= shop_one_order.got_code_quantity %></td>
-        <td><%= shop_one_order.is_got_all_code %></td>
+        <td><%= bool_label(shop_one_order.is_got_all_code) %></td>
         <td><%= link_to '查看', shop_one_order %></td>
         <td><%= link_to '删除', shop_one_order, method: :delete, data: { confirm: '确定删除?' } unless shop_one_order.is_paid %></td>
       </tr>

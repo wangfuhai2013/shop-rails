@@ -35,8 +35,8 @@
         <td><%= shop_one_product.price %> 元</td>
         <td><%= shop_one_product.join_person_time %>人次</td>
         <td><%= shop_one_product.result_code %></td>
-        <td><%= shop_one_product.result_customer %></td>
-        <td><%= shop_one_product.result_time %></td>
+        <td><%= shop_one_product.result_customer.name if shop_one_product.result_customer%></td>
+        <td><%= shop_one_product.result_time.strftime("%Y-%m-%d %H:%M:%S") if  shop_one_product.result_time%></td>
         <td><%= bool_label(shop_one_product.is_closed) %></td>
         <td><%= link_to '查看', shop_one_product %></td>
         <td><%= link_to '修改', shop.edit_one_product_path(shop_one_product) %></td>

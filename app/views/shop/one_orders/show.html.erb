@@ -1,49 +1,69 @@
 <p id="notice"><%= notice %></p>
 
 <p>
-  <strong>One product:</strong>
-  <%= @shop_one_order.one_product %>
+  <strong>微购商品:</strong>
+  <%= @shop_one_order.one_product.product.name %>(第<%= @shop_one_order.one_product.issue_no %>期)
+</p>
+<p>
+  <strong>下单用户:</strong>
+  <%= @shop_one_order.customer.name  %>
 </p>
 
 <p>
-  <strong>customer:</strong>
-  <%= @shop_one_order.customer %>
-</p>
-
-<p>
-  <strong>Order person time:</strong>
+  <strong>下单人次:</strong>
   <%= @shop_one_order.order_person_time %>
 </p>
 
 <p>
-  <strong>Pay way:</strong>
-  <%= @shop_one_order.pay_way %>
+  <strong>支付方式:</strong>
+  <%= @shop_one_order.pay_way_name %>
 </p>
 
 <p>
-  <strong>Pay time:</strong>
-  <%= @shop_one_order.pay_time %>
+  <strong>支付时间:</strong>
+  <%= @shop_one_order.pay_time.strftime("%Y-%m-%d %H:%M:%S") if @shop_one_order.pay_time  %>
 </p>
 
 <p>
-  <strong>Is paid:</strong>
-  <%= @shop_one_order.is_paid %>
+  <strong>是否已付款:</strong>
+  <%= bool_label(@shop_one_order.is_paid) %>
 </p>
 
 <p>
-  <strong>Trade no:</strong>
+  <strong>交易编号:</strong>
   <%= @shop_one_order.trade_no %>
 </p>
 
 <p>
-  <strong>Got code quantity:</strong>
+  <strong>已获得微码数量:</strong>
   <%= @shop_one_order.got_code_quantity %>
 </p>
 
 <p>
-  <strong>Is got all code:</strong>
-  <%= @shop_one_order.is_got_all_code %>
+  <strong>是否获得全部微码:</strong>
+  <%= bool_label(@shop_one_order.is_got_all_code) %>
 </p>
 
-<%= link_to 'Edit', edit_shop_one_order_path(@shop_one_order) %> |
-<%= link_to 'Back', shop_one_orders_path %>
+<%= link_to '返回', shop.one_orders_path,:class => 'btn btn-default' %>
+
+<h3>微购码列表</h3>
+<table class="table table-striped table-bordered table-condensed">
+  <thead>
+    <tr>
+      <th>微购商品</th>            
+      <th>微购码号</th>
+      <th>获得时间</th>           
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @shop_one_order.one_codes.each do |code| %>
+      <tr>
+        <td><%= code.one_product.product.name %>(第<%= code.one_product.issue_no %>期)</td>  
+        <td><%= code.code %></td>  
+        <td><%= code.updated_at.strftime("%Y-%m-%d %H:%M:%S") %></td>    
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<br>

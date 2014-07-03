@@ -3,6 +3,10 @@ class Shop::Order < ActiveRecord::Base
   has_many :order_items
   belongs_to :customer
 
+  def pay_success(pay_way,trade_no)
+    
+  end
+  
   def pay_way_name
     name = "未知:" + self.pay_way.to_s
     case self.pay_way

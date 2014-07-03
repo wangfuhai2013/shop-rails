@@ -6,7 +6,7 @@
 </p>
 <p>
   <strong>客户类型:</strong>
-  <%= @shop_customer.customer_type.name %>
+  <%= @shop_customer.customer_type.name if @shop_customer.customer_type%>
 </p>
 <p>
   <strong>邮箱地址:</strong>

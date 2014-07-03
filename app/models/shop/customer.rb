@@ -68,6 +68,11 @@ class Shop::Customer < ActiveRecord::Base
      [['男', 'M'], ['女', 'F']]
   end
 
+  def get_headimgurl(blank_headimg="")
+     return self.headimgurl unless self.headimgurl.blank?
+     return blank_headimg  if  self.headimgurl.blank?
+  end
+
   def generate_customer_no
 =begin
     #生成规则：门店前缀+7位全局序号

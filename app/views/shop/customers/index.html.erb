@@ -51,7 +51,7 @@
     <% @shop_customers.each do |shop_customer| %>
       <tr>
         <td><%= shop_customer.customer_no %></td>
-        <td><%= shop_customer.customer_type.name %></td>        
+        <td><%= shop_customer.customer_type.name if shop_customer.customer_type %></td>        
         <td><%= shop_customer.email %></td>   
         <td><%= shop_customer.name %></td>           
         <td><%= shop_customer.company %></td>             

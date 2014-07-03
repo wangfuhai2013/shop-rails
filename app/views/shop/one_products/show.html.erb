@@ -59,7 +59,7 @@
       <tr>
         <td><%= code.code %></td>
         <td><%= code.customer.name  if code.customer %></td>       
-        <td><%= code.updated_at.stftime("%Y-%M-%D %H:%M:%S") if code.customer %></td>    
+        <td><%= code.updated_at.strftime("%Y-%m-%d %H:%M:%S") if code.customer %></td>    
         <td><%= link_to '查看相关订单', code.one_order if code.one_order%></td>
       </tr>
     <% end %>
