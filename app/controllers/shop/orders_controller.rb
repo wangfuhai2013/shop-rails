@@ -168,6 +168,7 @@ class Shop::OrdersController < ApplicationController
       params.require(:order).permit(:order_no, :pay_way, :total_fee, :product_fee, :transport_fee,
                                     :is_paid, :paid_date,:is_delivered, :delivery_date, :remark, 
                                     :receiver_name,:receiver_mobile,:receiver_address, :receiver_zip,
-                                    :require_invoice,:invoice_title,:openid)
+                                    :require_invoice,:invoice_title,:openid,:receiver_province_id,
+                                    :receiver_city_id,:receiver_area_id)
     end
 end

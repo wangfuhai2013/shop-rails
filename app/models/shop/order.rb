@@ -3,6 +3,10 @@ class Shop::Order < ActiveRecord::Base
   has_many :order_items
   belongs_to :customer
 
+  belongs_to :receiver_province, class_name:"Shop::District"
+  belongs_to :receiver_city, class_name:"Shop::District"
+  belongs_to :receiver_area, class_name:"Shop::District"
+
   def pay_success(pay_way,trade_no)
     
   end

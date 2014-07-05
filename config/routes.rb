@@ -1,10 +1,14 @@
 Shop::Engine.routes.draw do
 
+    resources :district_transports
+    get "district_transports/get_price/:id",to: "district_transports#get_price"
+
     resources :one_orders
     resources :one_products
 
     resources :customer_types
     resources :customers
+    get "customers/get_districts/:id",to: "customers#get_districts"
 
     resources :tags
     resources :product_skus

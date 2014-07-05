@@ -1,3 +1,7 @@
+<%
+  cities = {}
+  areas = {}    
+%>
 <%= form_for(@shop_customer) do |f| %>
   <% if @shop_customer.errors.any? %>
     <div id="error_explanation">
@@ -12,7 +16,11 @@
   <% end %>
   <div class="field">
     <%= f.label :email ,'客户邮箱'%>
+    <% if @shop_customer.email.blank? %>
     <%= f.text_field :email %>
+    <% else %>
+    <%= @shop_customer.email %>(不可修改)
+    <% end %>
   </div>  
   <div class="field">
     <%= f.label :password ,'登录密码'%>
@@ -39,7 +47,20 @@
     <%= f.text_field :mobile %>
   </div>
   <div class="field">
-    <%= f.label :address ,'收货地址'%>
+    <%= f.label :province_id ,'所在地区'%>
+    <% provinces = Shop::District.where(level:1) %>
+    <%= f.select :province_id,provinces.collect {|p| [p.name, p.id ]},prompt: "请选择省份" %>
+    <% 
+    cities = Shop::District.where(parent_id:@shop_customer.city.parent_id,level:2) if @shop_customer.city 
+    %> 
+    <%= f.select :city_id,cities.collect {|p| [p.name, p.id ]},prompt: "请选择城市" %>
+    <%     
+     areas = Shop::District.where(parent_id:@shop_customer.area.parent_id,level:3) if @shop_customer.area
+    %> 
+    <%= f.select :area_id,areas.collect {|p| [p.name, p.id ]},prompt: "请选择区域" %>    
+  </div>
+  <div class="field">
+    <%= f.label :address ,'详细地址'%>
     <%= f.text_field :address,size:'35' %>
   </div>
   <div class="field">
@@ -48,7 +69,7 @@
   </div>  
   <div class="field">
     <%= f.label :customer_type_id ,'客户类型'%>
-        <%= f.select :customer_type_id, @customer_types.collect {|p| [p.name, p.id ]}%>
+    <%= f.select :customer_type_id, @customer_types.collect {|p| [p.name, p.id ]}%>
   </div>
   <div class="field">
     <%= f.label :is_enabled ,'是否可用'%>
@@ -60,3 +81,86 @@
     <%= link_to ' 返回 ', shop.customers_path,:class => "btn btn-default" %>
   </div>
 <% end %>
+
+<script type="text/javascript">
+$(function() {
+  <% if cities.size == 0 %>
+    $("#customer_city_id").hide();
+  <% end %>
+  <% if areas.size == 0 %>
+    $("#customer_area_id").hide();
+  <% end %>
+});
+$("#customer_province_id").change(function() {
+   province_id = $("#customer_province_id").val();
+   if (province_id == '') {
+      alert("请选择省份");
+      return;
+   };
+
+   $.ajax({
+        type: "GET",
+        url: "/shop/customers/get_districts/"+ province_id +".json",      
+
+        success: function (msg) {
+          if (msg == null){
+            alert('没有找到相关数据')
+          }else{
+            $("#customer_city_id").empty();
+            for (var i = msg.length - 1; i >= 0; i--) {              
+                $("#customer_city_id").append('<option value="'+ msg[i].id+'">'+msg[i].name+'</option>')
+            };
+          }
+            //var result = $.parseJSON(msg);   
+            if (msg.length > 0) {
+              $("#customer_city_id").show();
+              $("#customer_city_id").val(msg[0].id);
+              $("#customer_city_id").change();
+            }else{
+              $("#customer_city_id").append('<option value="">无</option>')
+              $("#customer_area_id").empty();
+              $("#customer_area_id").append('<option value="">无</option>')
+              $("#customer_city_id").hide();
+              $("#customer_area_id").hide();
+            }; 
+
+        },
+        error: function (XMLHttpRequest, textStatus, thrownError) {
+          alert(textStatus+","+thrownError);
+        }
+  });
+
+});
+$("#customer_city_id").change(function() {
+   city_id = $("#customer_city_id").val();
+   if (city_id == '') {
+      alert("请选择城市");
+      return;
+   };
+  $.ajax({
+        type: "GET",
+        url: "/shop/customers/get_districts/"+ city_id +".json",      
+
+        success: function (msg) {
+          if (msg == null){
+            alert('没有找到相关数据')
+          }else{
+            $("#customer_area_id").empty();
+            for (var i = msg.length - 1; i >= 0; i--) {              
+                $("#customer_area_id").append('<option value="'+ msg[i].id+'">'+msg[i].name+'</option>')
+            };
+            if (msg.length > 0) {
+              $("#customer_area_id").show();
+            }else{
+              $("#customer_area_id").append('<option value="">无</option>')
+              $("#customer_area_id").hide();
+            }
+          }
+            //var result = $.parseJSON(msg);                        
+        },
+        error: function (XMLHttpRequest, textStatus, thrownError) {
+          alert(textStatus+","+thrownError);
+        }
+  });
+});
+</script>

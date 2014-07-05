@@ -19,10 +19,12 @@ class Shop::Product < ActiveRecord::Base
   has_and_belongs_to_many :tags
 
   before_validation :capitalize_code
+
   #编码自动转换成大写
   def capitalize_code
     self.code.upcase! if self.code
   end
+
   #SKU属性列表
   def sku_properties_list
      sku_properties = product_properties.joins(:property).where(shop_properties:{is_sku:true}).
@@ -44,4 +46,42 @@ class Shop::Product < ActiveRecord::Base
      list
   end
  
+  #商品体积
+  def volume
+    volume = 0
+    diameter = depth = height = width = length = 0
+    product_properties = self.product_properties.joins(:property).
+                                   where("shop_properties.code like 'SIZE%'")
+    product_properties.each do |product_property|
+       unless product_property.input_value.to_i == 0
+         case product_property.property.code
+         when 'SIZE-DIAMETER'
+           diameter = product_property.input_value.to_i
+         when 'SIZE-DEPTH'
+           depth = product_property.input_value.to_i
+         when 'SIZE-HEIGHT'
+           height = product_property.input_value.to_i
+         when 'SIZE-WIDTH'
+           width = product_property.input_value.to_i
+         when 'SIZE-LENGTH'
+           length = product_property.input_value.to_i
+         end         
+       end
+    end
+    logger.debug("diameter:" + diameter.to_s + ",depth:" + depth.to_s + 
+                 ",height:" + height.to_s + ",width:" + width.to_s + ",length:" + length.to_s)
+    if length != 0 && width != 0 && height != 0  #长宽高有值
+      volume = length * width * height
+    end
+    if depth != 0 && width != 0 && height != 0 #深宽高有值
+      volume = depth * width * height
+    end
+    if diameter != 0  && height != 0 #直径高有值
+      r = diameter / 2.0 
+      volume = round(PI * r * r * height)
+    end    
+    logger.debug("volume:" + volume.to_s)
+    volume
+  end
+
 end

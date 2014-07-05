@@ -25,6 +25,10 @@ class CreateShopCustomers < ActiveRecord::Migration
 
       t.string :headimgurl
 
+      t.references :province
+      t.references :city
+      t.references :area
+
       t.timestamps
 
     end

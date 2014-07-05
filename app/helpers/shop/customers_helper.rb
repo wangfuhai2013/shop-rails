@@ -20,8 +20,9 @@ module Shop::CustomersHelper
   	  	return
   	  end
   	  @customer = Shop::Customer.new(params.permit(:email,:name,:gender,:mobile, :address, :zip,
-  	  	                                           :company,:password))
-  	  @customer.customer_type = Shop::CustomerType.all.take
+  	  	                                           :company,:password,:province_id,:city_id,:area_id))
+  	  @customer.customer_type = Shop::CustomerType.where(account_id: @site.account_id).
+                                order(level: :asc).take
   	  @customer.is_enabled = true
   	  @customer.generate_customer_no 
       birth_date = ""
@@ -59,7 +60,7 @@ module Shop::CustomersHelper
   def customer_login
     if request.post?
      @is_success = false
-      customer = Shop::Customer.authenticate(params[:email],params[:password])
+      customer = Shop::Customer.authenticate(@site.account_id,params[:email],params[:password])
       if customer 
         update_customer_session(customer)
         @is_success = true
@@ -99,7 +100,7 @@ module Shop::CustomersHelper
   def customer_forgot_pwd_apply
     if request.post?
       @is_success = false
-      customer = Shop::Customer.where(email:params[:email]).take
+      customer = Shop::Customer.where(account_id:@site.account_id,email:params[:email]).take
       if customer 
          if customer.forgot_pwd_time && customer.forgot_pwd_time + 3600 > Time.now 
           logger.debug("customer.forgot_pwd_time:" + customer.forgot_pwd_time.to_s)
@@ -123,7 +124,7 @@ module Shop::CustomersHelper
   def customer_forgot_pwd_change
     @is_success = false
     @is_invalid = true
-    customer = Shop::Customer.where(email:params[:email]).take
+    customer = Shop::Customer.where(account_id:@site.account_id,email:params[:email]).take
     if customer  
       if customer.forgot_pwd_code != params[:code]
         flash.now[:error] = "此找回密码链接无效"

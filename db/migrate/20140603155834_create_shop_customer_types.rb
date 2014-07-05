@@ -6,6 +6,8 @@ class CreateShopCustomerTypes < ActiveRecord::Migration
       t.text :remark
       t.references :account, index: true     
 
+      t.integer :level
+
       t.timestamps
     end
   end

@@ -1,6 +1,8 @@
 class Shop::CustomersController < ApplicationController
   before_action :set_shop_customer, only: [:show, :edit, :update, :destroy]
   before_action :set_customer_types,only: [:new,:edit,:update,:create]
+
+  skip_before_filter :authorize, :only => [:get_districts]
   # GET /shop/customers
   def index
     account_id = session[:account_id]
@@ -13,10 +15,14 @@ class Shop::CustomersController < ApplicationController
     @shop_customers = Shop::Customer.where(where).page(params[:page]).order("id DESC")
   end
 
+  def get_districts
+    districts = Shop::District.where(parent_id:params[:id]).order(id: :desc)
+    render :json => districts.to_json(only:[:id,:name])
+  end
   # GET /shop/customers/1
   def show
   end
-
+   
   # GET /shop/customers/new
   def new
     @shop_customer = Shop::Customer.new
@@ -73,7 +79,7 @@ class Shop::CustomersController < ApplicationController
     # Only allow a trusted parameter "white list" through.
     def crm_customer_params
       params.require(:customer).permit(:name, :gender, :mobile, :address, :zip,:company,:birth_date,
-                                       :email,:password,:customer_type_id,:is_enabled)
-
+                                       :email,:password,:customer_type_id,:is_enabled,:province_id,
+                                       :city_id,:area_id)  
     end
 end

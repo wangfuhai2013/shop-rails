@@ -1,0 +1,27 @@
+<%= form_for(@district_transport) do |f| %>
+  <% if @district_transport.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@district_transport.errors.count, "error") %> prohibited this district_transport from being saved:</h2>
+
+      <ul>
+      <% @district_transport.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :district_id,'省份名称' %><br>
+    <%= f.select :district_id,@district_provinces.collect {|p| [ p.name, p.id ]}%>
+  </div>
+  <div class="field">
+    <%= f.label :price,'运费单价' %><br>
+    <%= f.number_field :price %>分
+  </div>
+  <div class="actions">
+    <%= f.submit ' 保存 ',:class => 'btn btn-primary',data: { disable_with: "正在保存..."} %>
+    &nbsp;&nbsp;
+    <%= link_to ' 返回 ', shop.district_transports_path,:class => "btn btn-default" %>
+  </div>
+<% end %>

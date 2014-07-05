@@ -2,9 +2,9 @@ class Shop::CustomerTypesController < ApplicationController
   before_action :set_customer_type, only: [:show, :edit, :update, :destroy]
   # GET /shop/customer_types
   def index
-    @customer_types = Shop::CustomerType.where(account_id: session[:account_id])
+    @customer_types = Shop::CustomerType.where(account_id:session[:account_id]).order(level: :asc)
   end
-
+  
   # GET /shop/customer_types/1
   def show
   end
@@ -13,6 +13,7 @@ class Shop::CustomerTypesController < ApplicationController
   def new
     @customer_type = Shop::CustomerType.new
     @customer_type.discount = 100
+    @customer_type.level = 1
   end
 
   # GET /shop/customer_types/1/edit
@@ -59,6 +60,6 @@ class Shop::CustomerTypesController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def customer_type_params
-      params.require(:customer_type).permit(:name, :discount, :remark)
+      params.require(:customer_type).permit(:name, :discount, :remark,:level)
     end
 end

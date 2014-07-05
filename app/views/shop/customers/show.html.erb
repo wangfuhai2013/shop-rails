@@ -33,7 +33,13 @@
   <%= @shop_customer.mobile %>
 </p>
 <p>
-  <strong>收货地址:</strong>
+  <strong>所在地区:</strong>
+  <%= @shop_customer.province.name if @shop_customer.province %>
+  <%= @shop_customer.city.name if @shop_customer.city %>
+  <%= @shop_customer.area.name if @shop_customer.area %>
+</p>
+<p>
+  <strong>详细地址:</strong>
   <%= @shop_customer.address %>
 </p>
 <p>

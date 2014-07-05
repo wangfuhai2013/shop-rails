@@ -21,7 +21,7 @@ module Shop::OrdersHelper
     if customer
       discount = customer.customer_type.discount    
     end
-    total = (cart.total * discount / 100.0).round 
+    product_fee = (cart.total * discount / 100.0).round 
     #创建订单
     @order = Shop::Order.new
     @order.generate_order_no
@@ -30,8 +30,14 @@ module Shop::OrdersHelper
     @order.require_invoice = false
 
     @order.pay_way = params[:pay_way]
-    @order.transport_fee = 0   
-    @order.product_fee = total     
+
+    #运费计算
+    @order.transport_fee = 0
+    if params[:transport_price] && params[:sum_volume]
+       @order.transport_fee = (params[:transport_price].to_i * params[:sum_volume].to_i / 1000000.0).round
+    end
+     
+    @order.product_fee = product_fee     
     @order.total_fee = @order.product_fee + @order.transport_fee
     @order.discount = discount
     @order.customer = customer
@@ -40,6 +46,10 @@ module Shop::OrdersHelper
     @order.receiver_mobile = params[:mobile]    
     @order.receiver_address = params[:address]
     @order.receiver_zip = params[:zip]    
+    @order.receiver_province_id = params[:province_id]    
+    @order.receiver_city_id = params[:city_id]    
+    @order.receiver_area_id = params[:area_id]    
+
     #发票信息
     @order.require_invoice = true  if params[:require_invoice]
     @order.invoice_title = params[:invoice_title]    

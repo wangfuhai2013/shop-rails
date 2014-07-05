@@ -1,6 +1,10 @@
 class Shop::Customer < ActiveRecord::Base
   belongs_to :customer_type
 
+  belongs_to :province, class_name:"Shop::District"
+  belongs_to :city, class_name:"Shop::District"
+  belongs_to :area, class_name:"Shop::District"
+
   has_many  :orders
   
   validates_presence_of :email,:name,:customer_type,:mobile,:address
@@ -9,8 +13,8 @@ class Shop::Customer < ActiveRecord::Base
 
   validate :password_non_blank
 
-    def self.authenticate(email,password)
-      user = self.find_by_email(email)
+    def self.authenticate(account_id,email,password)
+      user = Shop::Customer.where(account_id:account_id,email:email).take
       if user
         expected_password = encrypted_password(password,user.salt)
         #logger.debug("user.hashed_password:" + user.hashed_password + ",expected_password:" + expected_password)
@@ -88,7 +92,7 @@ class Shop::Customer < ActiveRecord::Base
     #customer_no_prefx = store.code + Time.now.strftime('%Y%m%d')
     customer_no_prefx =  Time.now.strftime('%Y%m%d')
     customer_no_sn = '0001'
-    customer = Shop::Customer.where("customer_no like '#{customer_no_prefx}%'").order("customer_no DESC").take
+    customer = Shop::Customer.where(account_id:self.account_id).where("customer_no like '#{customer_no_prefx}%'").order("customer_no DESC").take
     if customer
       customer_no_sn = "0000" + (customer.customer_no[-4,4].to_i + 1).to_s
     end    

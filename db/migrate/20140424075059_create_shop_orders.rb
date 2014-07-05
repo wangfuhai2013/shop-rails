@@ -12,7 +12,6 @@ class CreateShopOrders < ActiveRecord::Migration
       t.boolean :is_delivered
       t.datetime :paid_date
       t.datetime :delivery_date
-      t.text :delivery_address
       t.text :remark
       t.string :openid
       
@@ -25,6 +24,10 @@ class CreateShopOrders < ActiveRecord::Migration
 
       t.boolean :require_invoice
       t.string  :invoice_title   
+
+      t.references :receiver_province
+      t.references :receiver_city
+      t.references :receiver_area
 
       t.timestamps
     end

@@ -18,4 +18,8 @@ class Shop::CartItem
     def subtotal
        @product_sku.price * @quantity.to_i 
     end
+
+    def volume
+      @product_sku.product.volume * @quantity.to_i 
+    end
 end

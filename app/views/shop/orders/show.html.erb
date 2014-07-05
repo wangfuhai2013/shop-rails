@@ -63,10 +63,13 @@
 </p>
 <p>
   <strong>收货地址:</strong>
+  <%= @shop_order.receiver_province.name if @shop_order.receiver_province %>
+  <%= @shop_order.receiver_city.name if @shop_order.receiver_city %>
+  <%= @shop_order.receiver_area.name if @shop_order.receiver_area %>  
   <%= @shop_order.receiver_address %>
 </p>
 <p>
-  <strong>收货邮编:</strong>
+  <strong>邮政编码:</strong>
   <%= @shop_order.receiver_zip %>
 </p>
 <p>
