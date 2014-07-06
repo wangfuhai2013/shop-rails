@@ -73,7 +73,7 @@ class Shop::CustomersController < ApplicationController
       @shop_customer = Shop::Customer.find(params[:id])
     end
     def set_customer_types
-      @customer_types = Shop::CustomerType.where(account_id:session[:account_id])
+      @customer_types = Shop::CustomerType.where(account_id:session[:account_id]).order(level: :asc)
     end    
 
     # Only allow a trusted parameter "white list" through.
