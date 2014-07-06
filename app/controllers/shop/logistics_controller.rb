@@ -42,7 +42,7 @@
     # DELETE /logistics/1
     def destroy
       if Shop::Delivery.where(logistic_id:@logistic.id).size > 0      
-        flash[:error] = "该类别还有信息数据，不可以删除"
+        flash[:error] = "该物流公司有发货数据，不可以删除"
       else
         @logistic.destroy
         flash[:notice] = '物流公司已删除'

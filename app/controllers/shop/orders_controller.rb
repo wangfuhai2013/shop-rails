@@ -113,7 +113,7 @@ class Shop::OrdersController < ApplicationController
       delivery.logistic_id = params[:logistic_id]
       delivery.invoice_no = params[:invoice_no]
       delivery.save
-      
+
       items.each do |item|
         delivery_item = Shop::DeliveryItem.new
         delivery_item.delivery = delivery
@@ -158,7 +158,7 @@ class Shop::OrdersController < ApplicationController
 
   # GET /shop/orders/1/edit
   def edit
-   # render text: '后台不可修改订单'
+    render text: '后台不可修改订单'
   end
 
   # POST /shop/orders
