@@ -1,11 +1,9 @@
-
-module Shop
-  class DeliveriesController < ApplicationController
+  class Shop::DeliveriesController < ApplicationController
     before_action :set_delivery, only: [:show, :edit, :update, :destroy]
 
     # GET /deliveries
     def index
-      @deliveries = Delivery.all
+      @deliveries = Shop::Delivery.all
     end
 
     # GET /deliveries/1
@@ -14,7 +12,7 @@ module Shop
 
     # GET /deliveries/new
     def new
-      @delivery = Delivery.new
+      @delivery = Shop::Delivery.new
     end
 
     # GET /deliveries/1/edit
@@ -23,7 +21,7 @@ module Shop
 
     # POST /deliveries
     def create
-      @delivery = Delivery.new(delivery_params)
+      @delivery = Shop::Delivery.new(delivery_params)
 
       if @delivery.save
         redirect_to @delivery, notice: 'Delivery was successfully created.'
@@ -50,7 +48,7 @@ module Shop
     private
       # Use callbacks to share common setup or constraints between actions.
       def set_delivery
-        @delivery = Delivery.find(params[:id])
+        @delivery = Shop::Delivery.find(params[:id])
       end
 
       # Only allow a trusted parameter "white list" through.
@@ -58,4 +56,3 @@ module Shop
         params.require(:delivery).permit(:order_id, :logistic_id, :invoice_no, :remark)
       end
   end
-end

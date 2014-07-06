@@ -1,10 +1,9 @@
-module Shop
-  class LogisticsController < ApplicationController
+  class Shop::LogisticsController < ApplicationController
     before_action :set_logistic, only: [:show, :edit, :update, :destroy]
 
     # GET /logistics
     def index
-      @logistics = Logistic.all
+      @logistics = Shop::Logistic.all
     end
 
     # GET /logistics/1
@@ -13,7 +12,7 @@ module Shop
 
     # GET /logistics/new
     def new
-      @logistic = Logistic.new
+      @logistic = Shop::Logistic.new
     end
 
     # GET /logistics/1/edit
@@ -22,7 +21,7 @@ module Shop
 
     # POST /logistics
     def create
-      @logistic = Logistic.new(logistic_params)
+      @logistic = Shop::Logistic.new(logistic_params)
       @logistic.account_id = session[:account_id]
       if @logistic.save
         redirect_to logistics_url, notice: '物流公司已创建'
@@ -55,7 +54,7 @@ module Shop
     private
       # Use callbacks to share common setup or constraints between actions.
       def set_logistic
-        @logistic = Logistic.find(params[:id])
+        @logistic = Shop::Logistic.find(params[:id])
       end
 
       # Only allow a trusted parameter "white list" through.
@@ -63,4 +62,3 @@ module Shop
         params.require(:logistic).permit(:name)
       end
   end
-end

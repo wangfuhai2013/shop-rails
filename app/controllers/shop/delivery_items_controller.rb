@@ -1,10 +1,9 @@
-module Shop
-  class DeliveryItemsController < ApplicationController
+  class Shop::DeliveryItemsController < ApplicationController
     before_action :set_delivery_item, only: [:show, :edit, :update, :destroy]
 
     # GET /delivery_items
     def index
-      @delivery_items = DeliveryItem.all
+      @delivery_items = Shop::DeliveryItem.all
     end
 
     # GET /delivery_items/1
@@ -13,7 +12,7 @@ module Shop
 
     # GET /delivery_items/new
     def new
-      @delivery_item = DeliveryItem.new
+      @delivery_item = Shop::DeliveryItem.new
     end
 
     # GET /delivery_items/1/edit
@@ -22,7 +21,7 @@ module Shop
 
     # POST /delivery_items
     def create
-      @delivery_item = DeliveryItem.new(delivery_item_params)
+      @delivery_item = Shop::DeliveryItem.new(delivery_item_params)
 
       if @delivery_item.save
         redirect_to @delivery_item, notice: 'Delivery item was successfully created.'
@@ -49,7 +48,7 @@ module Shop
     private
       # Use callbacks to share common setup or constraints between actions.
       def set_delivery_item
-        @delivery_item = DeliveryItem.find(params[:id])
+        @delivery_item = Shop::DeliveryItem.find(params[:id])
       end
 
       # Only allow a trusted parameter "white list" through.
@@ -57,4 +56,3 @@ module Shop
         params.require(:delivery_item).permit(:delivery_id, :product_sku_id, :quantity)
       end
   end
-end
