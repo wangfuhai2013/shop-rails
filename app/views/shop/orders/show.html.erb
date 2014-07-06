@@ -98,23 +98,36 @@
 -->
 <%= link_to ' 返回 ', shop.orders_path ,:class => 'btn btn-default'%>
 
+<%= form_tag shop.order_delivery_path(@shop_order),onsubmit:"return check_from();" do %>  
 <h2>订单条目列表 
+    <small>
   <!--
-  <small>
 <%= link_to '新增条目', shop.new_order_item_path(:order_id => @shop_order) ,:class => 'btn btn-primary' unless @shop_order.is_paid %>
 -->
-<small>
+<% if @shop_order.is_paid && !@shop_order.is_delivered  %>
+ <%= select_tag :logistic_id, options_from_collection_for_select(@logistics, "id", "name",params[:logistic_id]), prompt: "选择物流公司" %>
+ <%= text_field_tag :invoice_no, params[:invoice_no],placeholder: "输入快递单号" %>
+ <%= submit_tag "进行发货", data: { confirm: '您确定对选中的商品进行发货?' },:class => "btn btn-info" %>
+<% end %>
+</small>
 </h1>
 
 <table class="table table-striped table-bordered table-condensed">
   <thead>
     <tr>
+      <th>
+     <% if @shop_order.is_paid && !@shop_order.is_delivered  %>
+      <%= check_box_tag 'check_all', '', true %>全部选中     
+      <% end %>
+     </th>
       <th>产品SKU编码</th>
       <th>产品名称</th> 
       <th>产品数量</th>  
       <th>产品单价</th>     
       <th>产品折扣</th> 
       <th>小计金额</th>  
+      <th>是否已发货</th>      
+      <th></th>        
       <!--
       <th></th>
       <th></th>
@@ -130,21 +143,60 @@
        total += subtotal
     %>
       <tr>
+        <td>
+        <% if  @shop_order.is_paid && !@shop_order.is_delivered   %>
+          
+          <% if !item.is_delivered  %>
+             <%= check_box_tag 'item_ids[]', item.id, true ,:class=>'item_ids'%>
+          <% end %>
+          
+        <% end %>
+        </td>        
         <td><%= item.product_sku.code %></td>
         <td><%= item.product_sku.product.name + "(" + item.product_sku.product_sku_property_list +  ")" %></td>
         <td><%= item.quantity %></td>      
         <td><%= format("%.2f",item.price/100.0) %> 元</td>   
         <td><%= item.discount %>%</td>   
         <td><%= format("%.2f",subtotal/100.0) %> 元</td>         
-        <!--        
+        <th><%= bool_label(item.is_delivered) %></th>
+        <th><%= link_to '查看发货单据', item.delivery if item.delivery %> </th>        
+        <!-- 
         <td><%= link_to '修改', shop.edit_order_item_path(item) unless @shop_order.is_paid %></td>
         <td><%= link_to '删除', item, method: :delete, data: { confirm: '您确定要删除吗?' } unless @shop_order.is_paid %></td>
-      -->
+        -->
       </tr>
     <% end %>
     <tr>
-      <td colspan="5" align="right">合计金额</td>
+      <td colspan="6" align="right">合计金额</td>
       <td colspan="3" align="left"><%= format("%.2f",total/100.0) %> 元</td>
     </tr>
   </tbody>
 </table>
+
+<% end %>
+
+<script type="text/javascript"> 
+function check_from(){
+    if ($("#logistic_id").val() == "") {
+      alert("请选择物流公司");
+      return false;      
+    };
+    if ($("#invoice_no").val() == "") {
+      alert("请输入快递单号");
+      $("#invoice_no").focus();
+      return false;      
+    };
+    if ($(".item_ids:checked").size() == 0) {
+      alert("您没有选择要发货的订单条目");
+      return false;      
+    };
+
+
+    return true;
+}
+$('#check_all').click(function () {
+    is_checked = this.checked;
+    $(".item_ids").each(function(){ this.checked = is_checked; });
+});
+
+</script>

@@ -13,6 +13,7 @@ class Shop::OrderItemsController < ApplicationController
   # GET /shop/order_items/new
   def new
     @shop_order_item = Shop::OrderItem.new
+    @shop_order_item.is_delivered = false
     @shop_order_item.order = Shop::Order.find(params[:order_id])
     render text: '后台不可新建订单条目'
   end
@@ -70,6 +71,6 @@ class Shop::OrderItemsController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def shop_order_item_params
-      params.require(:order_item).permit(:order_id, :product_sku_id, :quantity, :price, :discount)
+      params.require(:order_item).permit(:order_id, :product_sku_id, :quantity, :price, :discount,:is_delivered)
     end
 end

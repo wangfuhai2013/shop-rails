@@ -1,5 +1,11 @@
 Shop::Engine.routes.draw do
 
+  resources :logistics
+
+  resources :delivery_items
+
+  resources :deliveries
+
     resources :district_transports
     get "district_transports/get_price/:id",to: "district_transports#get_price"
 
@@ -22,7 +28,7 @@ Shop::Engine.routes.draw do
     get "orders/empty_cart"
     get "orders/remove_from_cart/:id",to: "orders#remove_from_cart"
     get "orders/change_product_quantity/:id",to: "orders#change_product_quantity"
-    get "orders/delivery/:id",to: "orders#delivery",as: 'order_delivery'
+    post "orders/delivery/:id",to: "orders#delivery",as: 'order_delivery'
     
     get "pictures/set_cover_picture/:id" , to: "pictures#set_cover_picture", as: 'pictures_set_cover_picture'
     get "products/add_relation/:id" , to: "products#add_relation", as: 'products_add_relation'

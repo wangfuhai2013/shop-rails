@@ -19,9 +19,9 @@
       <th>是否要发票</th>
       <th>是否发货</th>
       <th>发货时间</th>
-      <th>相关客户</th>      
-      <th></th>
-      <th></th>      
+      <th>相关客户</th>  
+      <th></th>   
+      <!-- <th></th> -->   
       <th></th>
     </tr>
   </thead>
@@ -40,7 +40,9 @@
         <td><%= shop_order.delivery_date.strftime('%Y-%m-%d %H:%M') if shop_order.delivery_date %></td>
         <td><%= link_to shop_order.customer.name,shop_order.customer if shop_order.customer %></td>
         <td><%= link_to '查看', shop_order %></td>
+        <!--
         <td><%= link_to '发货', shop.order_delivery_path(shop_order),  data: { confirm: '您确定要发货?' } if shop_order.is_paid && !shop_order.is_delivered%></td>        
+        -->
         <td><%= link_to '删除', shop_order, method: :delete, data: { confirm: '您确定要删除?' } unless shop_order.is_paid %></td>
       </tr>
     <% end %>

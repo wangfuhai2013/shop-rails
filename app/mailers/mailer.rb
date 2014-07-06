@@ -12,7 +12,7 @@ class Mailer < ActionMailer::Base
                          authentication: Rails.configuration.email_auth.intern,
                          enable_starttls_auto: false}
 
-    mail(from: from,to: customer.email, subject: '您已成功注册成为MC美芝华网站会员',
+    mail(from: from,to: customer.email, subject: '您已成功注册成为{site_name}网站会员',
     	delivery_method_options: delivery_options)
   end
 
@@ -29,7 +29,7 @@ class Mailer < ActionMailer::Base
                          enable_starttls_auto: false}
 
     ActionMailer::Base.raise_delivery_errors = true
-    mail(from: from,to: customer.email, subject: '您在MC美芝华网站申请找回密码',
+    mail(from: from,to: customer.email, subject: '您在{site_name}网站申请找回密码',
       delivery_method_options: delivery_options)
   end
 

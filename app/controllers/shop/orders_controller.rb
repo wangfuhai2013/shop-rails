@@ -1,6 +1,5 @@
 class Shop::OrdersController < ApplicationController
   before_action :set_shop_order, only: [:delivery,:show, :edit, :update, :destroy]
-
   skip_before_filter :authorize,:verify_authenticity_token, only: [:add_to_cart,
                      :remove_from_cart,:empty_cart,:change_product_quantity,:alipay_notify]
   layout  false, only: [:add_to_cart,:remove_from_cart,:empty_cart,
@@ -90,17 +89,57 @@ class Shop::OrdersController < ApplicationController
 
  #发货
   def delivery
+
     if @shop_order.is_delivered || !@shop_order.is_paid 
       flash[:error] = "该订单已是发货状态，不能再次发货" if @shop_order.is_delivered
       flash[:error] = "该订单还未付款，不能发货" unless @shop_order.is_paid
     else
-      @shop_order.is_delivered = true
-      @shop_order.delivery_date = Time.now
-      @shop_order.save
-      flash[:notice] = "发货完成"
+      #选中的表单条目
+      item_ids = []
+      item_ids = params[:item_ids] if params[:item_ids]
+      ids = '0'
+      item_ids.each do |id|
+        ids += "," + id.to_s
+      end
+      items = Shop::OrderItem.where("ID IN (" + ids + ")").where(is_delivered:false)
+      if items.size == 0
+        flash[:error] = '申请出货操作失败，没有选中未发货的订单条目'
+        redirect_to @shop_order
+        return
+      end
+      #生成发货单
+      delivery = Shop::Delivery.new
+      delivery.order = @shop_order
+      delivery.logistic_id = params[:logistic_id]
+      delivery.invoice_no = params[:invoice_no]
+      delivery.save
+      
+      items.each do |item|
+        delivery_item = Shop::DeliveryItem.new
+        delivery_item.delivery = delivery
+        delivery_item.product_sku_id = item.product_sku_id
+        delivery_item.quantity = item.quantity
+        delivery_item.save
+        
+        item.is_delivered = true
+        item.delivery = delivery
+        item.save
+      end
+
+      #更新订单发货状态
+      if @shop_order.order_items.where(is_delivered:false).size == 0
+         @shop_order.is_delivered = true
+         @shop_order.delivery_date = Time.now
+         @shop_order.save
+         flash[:notice] = "全部商品发货完成"
+      else
+         flash[:notice] = "部分商品发货完成"
+      end
+      
     end
-    redirect_to shop.orders_url
+    redirect_to @shop_order
   end
+
   # GET /shop/orders
   def index
     @shop_orders = Shop::Order.where(account_id: session[:account_id]).order("id DESC").page(params[:page])
@@ -108,6 +147,7 @@ class Shop::OrdersController < ApplicationController
 
   # GET /shop/orders/1
   def show
+    @logistics = Shop::Logistic.where(account_id: session[:account_id])
   end
 
   # GET /shop/orders/new
@@ -118,7 +158,7 @@ class Shop::OrdersController < ApplicationController
 
   # GET /shop/orders/1/edit
   def edit
-    render text: '后台不可修改订单'
+   # render text: '后台不可修改订单'
   end
 
   # POST /shop/orders

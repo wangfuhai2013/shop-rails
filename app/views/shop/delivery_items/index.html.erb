@@ -1,0 +1,31 @@
+<h1>Listing delivery_items</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Delivery</th>
+      <th>Product sku</th>
+      <th>Quantity</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @delivery_items.each do |delivery_item| %>
+      <tr>
+        <td><%= delivery_item.delivery %></td>
+        <td><%= delivery_item.product_sku %></td>
+        <td><%= delivery_item.quantity %></td>
+        <td><%= link_to 'Show', delivery_item %></td>
+        <td><%= link_to 'Edit', edit_delivery_item_path(delivery_item) %></td>
+        <td><%= link_to 'Destroy', delivery_item, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Delivery item', new_delivery_item_path %>

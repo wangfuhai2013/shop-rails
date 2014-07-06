@@ -6,6 +6,9 @@ class CreateShopOrderItems < ActiveRecord::Migration
       t.integer :quantity
       t.integer :price
       t.integer :discount
+      
+      t.boolean :is_delivered,default:false
+      t.references :delivery
 
       t.timestamps
     end

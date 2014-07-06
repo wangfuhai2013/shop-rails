@@ -34,7 +34,7 @@ module Shop::OrdersHelper
     #运费计算
     @order.transport_fee = 0
     if params[:transport_price] && params[:sum_volume]
-       @order.transport_fee = (params[:transport_price].to_i * params[:sum_volume].to_i / 1000000.0).round
+       @order.transport_fee = (params[:transport_price].to_i * params[:sum_volume].to_i / 1000000000.0).round
     end
      
     @order.product_fee = product_fee     
@@ -53,7 +53,7 @@ module Shop::OrdersHelper
     #发票信息
     @order.require_invoice = true  if params[:require_invoice]
     @order.invoice_title = params[:invoice_title]    
-
+     
     @order.save
     #订单条目
     cart.items.each do |item|
@@ -63,6 +63,7 @@ module Shop::OrdersHelper
       order_item.quantity = item.quantity
       order_item.price = item.product_sku.price
       order_item.discount = discount
+      order_item.is_delivered = false
       order_item.save
     end
     #清空购物车
