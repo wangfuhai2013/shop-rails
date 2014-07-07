@@ -21,7 +21,7 @@
     <% @district_transports.each do |district_transport| %>
       <tr>
         <td><%= district_transport.district.name %></td>
-        <td><%= format("%.2f",district_transport.price  / 100.0) %>元</td>        
+        <td><%= district_transport.price_yuan %>元</td>        
         <td><%= link_to '修改', shop.edit_district_transport_path(district_transport) %></td>
         <td><%= link_to '删除', district_transport, method: :delete, data: { confirm: '确定删除?' } %></td>
       </tr>

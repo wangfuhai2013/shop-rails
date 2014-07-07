@@ -16,8 +16,8 @@
     <%= f.select :district_id,@district_provinces.collect {|p| [ p.name, p.id ]}%>
   </div>
   <div class="field">
-    <%= f.label :price,'运费单价' %><br>
-    <%= f.number_field :price %>分
+    <%= f.label :price_yuan,'运费单价' %><br>
+    <%= f.number_field :price_yuan,:step => 0.01 %>元
   </div>
   <div class="actions">
     <%= f.submit ' 保存 ',:class => 'btn btn-primary',data: { disable_with: "正在保存..."} %>

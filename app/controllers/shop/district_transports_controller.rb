@@ -68,6 +68,6 @@
 
       # Only allow a trusted parameter "white list" through.
       def district_transport_params
-        params.require(:district_transport).permit(:district_id, :price)
+        params.require(:district_transport).permit(:district_id, :price_yuan)
       end
   end
