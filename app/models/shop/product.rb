@@ -78,7 +78,7 @@ class Shop::Product < ActiveRecord::Base
     end
     if diameter != 0  && height != 0 #直径高有值
       r = diameter / 2.0 
-      volume = (PI * r * r * height).round
+      volume = (Math::PI * r * r * height).round
     end    
     logger.debug("volume:" + volume.to_s)
     volume
