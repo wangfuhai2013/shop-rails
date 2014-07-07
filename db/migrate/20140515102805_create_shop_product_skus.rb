@@ -6,7 +6,7 @@ class CreateShopProductSkus < ActiveRecord::Migration
       t.string :code
       t.integer :price
       t.integer :quantity
-      t.boolean :is_enaled
+      t.boolean :is_enabled
 
       t.timestamps
     end

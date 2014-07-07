@@ -24,17 +24,17 @@
 </p>
 <p>
   <strong>订单总价:</strong>
-  <%= format("%.2f",@shop_order.total_fee / 100.0) %>元
+  <%= @shop_order.total_fee_yuan %>元
 </p>
 
 <p>
   <strong>产品费用:</strong>
-  <%= format("%.2f",@shop_order.product_fee / 100.0)  %>元
+  <%= @shop_order.product_fee_yuan  %>元
 </p>
 
 <p>
   <strong>订单运费:</strong>
-  <%= format("%.2f",@shop_order.transport_fee / 100.0)  %>元
+  <%= @shop_order.transport_fee_yuan  %>元
 </p>
 
 <p>
@@ -155,7 +155,7 @@
         <td><%= item.product_sku.code %></td>
         <td><%= item.product_sku.product.name + "(" + item.product_sku.product_sku_property_list +  ")" %></td>
         <td><%= item.quantity %></td>      
-        <td><%= format("%.2f",item.price/100.0) %> 元</td>   
+        <td><%= item.price_yuan 元</td>   
         <td><%= item.discount %>%</td>   
         <td><%= format("%.2f",subtotal/100.0) %> 元</td>         
         <th><%= bool_label(item.is_delivered) %></th>

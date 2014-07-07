@@ -17,8 +17,8 @@
     <%= f.text_field :code %>
   </div>
   <div class="field">
-    <%= f.label :price,'价格' %>
-    <%= f.number_field :price %> 分
+    <%= f.label :price_yuan,'价格' %>
+    <%= f.number_field :price_yuan,:step => 0.01 %>元
   </div>
   <div class="field">
     <%= f.label :quantity,'数量' %>

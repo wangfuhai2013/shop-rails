@@ -35,7 +35,7 @@
 
 <p>
   <strong>产品价格:</strong>
-  <%= format("%.2f",@shop_product.price / 100.0) %> 元
+  <%= @shop_product.price_yuan %> 元
 </p>
 
 <p>
@@ -45,7 +45,7 @@
 
 <p>
   <strong>产品运费:</strong>
-  <%= format("%.2f",@shop_product.transport_fee / 100.0)%> 元
+  <%= @shop_product.transport_fee_yuan %> 元
 </p>
 
 <p>
@@ -180,7 +180,7 @@
       <tr>
         <td><%= sku.code %></td>
         <td><%= sku.product_sku_property_list %></td>      
-        <td><%= sku.price / 100.0 if sku.price %> 元</td>    
+        <td><%= sku.price_yuan if sku.price %> 元</td>    
         <td><%= sku.quantity %></td>    
         <td><%= bool_label(sku.is_enabled) %></td>    
         <td><%= link_to '修改', shop.edit_product_sku_path(sku) %></td>

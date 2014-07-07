@@ -92,6 +92,6 @@
 
       # Only allow a trusted parameter "white list" through.
       def product_sku_params
-        params.require(:product_sku).permit(:product_id, :code, :price, :quantity,:is_enabled)
+        params.require(:product_sku).permit(:product_id, :code, :price_yuan, :quantity,:is_enabled)
       end
   end

@@ -37,7 +37,8 @@ module Shop::OneProductsHelper
          end
          # @one_order.pay_success('weixin','200000000') #测试
          redirect_to params[:pay_url] + "?one_order_id=" + @one_order.id.to_s + 
-                                         "&site_key=" + @site.site_key
+                                         "&site_key=" + @site.site_key + 
+                                         "&return_url=" + params[:return_url]
       else
         render text:'当前访问操作不合法'  
       end

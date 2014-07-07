@@ -50,4 +50,16 @@ class Shop::Order < ActiveRecord::Base
     Alipay::Service.create_direct_pay_by_user_url(options)
   end
 
+    def total_fee_yuan
+      format("%.2f",self.total_fee.to_i / 100.00)    
+    end
+
+    def product_fee_yuan
+      format("%.2f",self.product_fee.to_i / 100.00)    
+    end
+
+    def transport_fee_yuan
+      format("%.2f",self.transport_fee.to_i / 100.00)    
+    end        
+
 end

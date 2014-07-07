@@ -32,7 +32,7 @@
         <td><%= shop_order.order_no %></td>
         <td><%= shop_order.pay_way_name %></td>
         <td><%= shop_order.trade_no %></td>        
-        <td><%= format("%.2f",shop_order.total_fee / 100.0) %>元</td>
+        <td><%= shop_order.total_fee_yuan %>元</td>
         <td><%= bool_label(shop_order.is_paid)%></td>
         <td><%= shop_order.paid_date.strftime('%Y-%m-%d %H:%M') if shop_order.paid_date %></td>        
         <td><%= bool_label(shop_order.require_invoice) %></td>

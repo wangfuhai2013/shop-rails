@@ -55,7 +55,7 @@
         <td><%= shop_product.code %></td>
         <td><%= shop_product.category.name %></td>
         <td><%= shop_product.sku_properties_list %></td>
-        <td><%= format("%.2f",shop_product.price / 100.0) %>元</td>
+        <td><%= shop_product.price_yuan %>元</td>
         <td><%= shop_product.quantity %></td>        
         <td><%= thumbnail shop_product.picture.path if shop_product.picture %></td>
         <td><%= shop_product.the_order %></td>             

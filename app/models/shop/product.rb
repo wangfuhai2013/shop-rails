@@ -78,10 +78,25 @@ class Shop::Product < ActiveRecord::Base
     end
     if diameter != 0  && height != 0 #直径高有值
       r = diameter / 2.0 
-      volume = round(PI * r * r * height)
+      volume = (PI * r * r * height).round
     end    
     logger.debug("volume:" + volume.to_s)
     volume
   end
+
+  def price_yuan
+    format("%.2f",self.price.to_i / 100.00)    
+  end
+  def price_yuan=(value)
+    self.price = (value.to_f * 100).round
+  end  
+
+  def transport_fee_yuan
+    format("%.2f",self.transport_fee.to_i / 100.00)    
+  end  
+  def transport_fee_yuan=(value)
+    self.transport_fee = (value.to_f * 100).round
+  end  
+
 
 end

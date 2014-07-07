@@ -20,7 +20,7 @@ module Shop
       max_issue_no = Shop::OneProduct.where(product:shop_one_product.product).maximum(:issue_no)
       max_issue_no = 0 unless max_issue_no
       shop_one_product.issue_no = max_issue_no + 1
-      shop_one_product.price = shop_one_product.product.price / 100
+      shop_one_product.price = shop_one_product.product.price / 100  #微购商品价格单位为元
 
       #预先随机生成微购码
       codes = []
