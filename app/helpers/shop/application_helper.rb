@@ -54,15 +54,15 @@ module Shop
     end
     
     #上传文件
-    def upload (res_file) # res_file为 ActionController::UploadedFile 对象
+    def upload (res_file,to_jpg=true,max_width=720) # res_file为 ActionController::UploadedFile 对象
        if res_file
            upload_path = get_upload_path
-           file_name   = get_upload_filename(res_file.original_filename)
+           file_name   = get_upload_filename(res_file.original_filename,to_jpg)
            abs_file_name = Rails.root.join("public",upload_path,file_name)
            logger.debug("res_file:" + res_file.original_filename)
            #所有图片自动转成jpg格式，并且宽控制在720以内，压缩质量为80，以减小文件大小
            if File.extname(file_name) == '.jpg'
-              resize_image_file(res_file.path,abs_file_name) 
+              resize_image_file(res_file.path,abs_file_name,max_width) 
            else             
              File.open(abs_file_name, 'wb') do |file|
                 file.write(res_file.read)
@@ -71,7 +71,7 @@ module Shop
 
            upload_path + "/" + file_name
        end
-    end
+    end 
 
     def get_upload_path
        upload_path = Rails.configuration.upload_path + "/"+ Time.now.strftime("%Y%m/%d")
@@ -80,15 +80,14 @@ module Shop
        end
        upload_path
     end
-    def get_upload_filename(ori_filename)
+    def get_upload_filename(ori_filename,to_jpg=true)
        file_name_main = Time.now.to_i.to_s+Digest::SHA1.hexdigest(rand(9999).to_s)[0,6]
        file_name_ext =  File.extname(ori_filename)
-       file_name_ext = ".jpg" if image_file?(ori_filename)
+       file_name_ext = ".jpg" if image_file?(ori_filename) && to_jpg
        file_name = file_name_main + file_name_ext
     end
-    def resize_image_file(src_file,desc_file)
+    def resize_image_file(src_file,desc_file,max_width=720)
        image = MiniMagick::Image.open(src_file)
-       max_width = 720
        max_width = Rails.configuration.image_max_width.to_i if Rails.configuration.respond_to?('image_max_width')
        if image[:width] > max_width
           image.resize max_width            
