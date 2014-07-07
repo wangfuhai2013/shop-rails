@@ -21,7 +21,7 @@
 
 <p>
   <strong>支付时间:</strong>
-  <%= @shop_one_order.pay_time.strftime("%Y-%m-%d %H:%M:%S") if @shop_one_order.pay_time  %>
+  <%= @shop_one_order.pay_time.strftime("%Y-%m-%d %H:%M:%S.") + @shop_one_order.pay_millisecond if @shop_one_order.pay_time  %>
 </p>
 
 <p>

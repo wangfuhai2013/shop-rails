@@ -26,6 +26,7 @@ module Shop
       end
       self.pay_way = pay_way
       self.pay_time = Time.now
+      self.pay_millisecond = self.pay_time.strftime("%3N")
       self.is_paid = true
       self.trade_no = trade_no
       self.save

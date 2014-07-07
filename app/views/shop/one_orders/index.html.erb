@@ -32,7 +32,7 @@
         <td><%= shop_one_order.customer.name %></td>
         <td><%= shop_one_order.order_person_time %></td>
         <td><%= shop_one_order.pay_way_name %></td>
-        <td><%= shop_one_order.pay_time.strftime("%Y-%m-%d %H:%M:%S.%3N") if shop_one_order.pay_time %></td>
+        <td><%= shop_one_order.pay_time.strftime("%Y-%m-%d %H:%M:%S.") + shop_one_order.pay_millisecond  if shop_one_order.pay_time %></td>
         <td><%= bool_label(shop_one_order.is_paid) %></td>
         <td><%= shop_one_order.trade_no %></td>
         <td><%= shop_one_order.got_code_quantity %></td>

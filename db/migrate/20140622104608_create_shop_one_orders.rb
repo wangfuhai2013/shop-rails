@@ -7,6 +7,7 @@ class CreateShopOneOrders < ActiveRecord::Migration
       t.integer :order_person_time
       t.string :pay_way
       t.datetime :pay_time
+      t.string   :pay_millisecond
       t.boolean :is_paid
       t.string :trade_no
       t.integer :got_code_quantity
