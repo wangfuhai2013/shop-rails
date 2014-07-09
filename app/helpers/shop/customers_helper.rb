@@ -10,7 +10,21 @@ module Shop::CustomersHelper
 
   def customer_order_show
     @order = Shop::Order.find(params[:order_id]) if session[:customer_id]
-  end  
+  end 
+
+   #删除订单
+  def customer_order_delete
+     @order = Shop::Order.find(params[:order_id])
+     if @order.is_paid
+       render text: '此订单已付款，不可删除'
+       return
+     end
+     if @order.customer_id != session[:customer_id] 
+       render text: '此订单不属于您，不可删除'
+       return
+     end
+     @order.destroy
+  end    
 
   def customer_register
   	if request.post?

@@ -1,0 +1,65 @@
+处理行政区域数据
+0.获取原始数据
+http://www.stats.gov.cn/tjsj/tjbz/xzqhdm/
+保存最新的行政区划分代码为area.txt文件
+
+1.删除空格
+sed '/^$/d' area.txt > area1.txt   
+
+2.生成sql 
+cat area1.txt | awk '{print "insert into area(id,name) value("$1",\""$2"\");"}' > area.sql
+
+3.导入数据库后，做处理级别（顺序不能错）
+update `area` set level = 3
+update `area` set  level = 2 WHERE id % 100 = 0
+update `area` set  level = 1 WHERE id % 10000 = 0
+
+4.处理父ID
+update area set parent_id =  id div 10000 *10000  where level = 2
+update area set parent_id =  id div 100*100  where level = 3
+
+5.处理直辖市名称
+SELECT a.id, a.name, a.parent_id, p.name FROM  `area` a, area p
+WHERE a.parent_id = p.id AND a.level =2 AND a.name = "市辖区”;
+update area set name = "北京" where id = 110000;
+update area set name = "北京市" where id = 110100;
+update area set name = "天津" where id = 120000;
+update area set name = "天津市" where id = 120100;
+update area set name = "上海" where id = 310000;
+update area set name = "上海市" where id = 310100;
+update area set name = "重庆" where id = 500100;
+update area set name = "重庆市" where id = 500000;
+
+delete from area where name = "市辖区” and level = 2 ;
+
+6.处理直辖县
+#省份下的直辖县（同市一级别）
+SELECT a.id, a.name, a.parent_id, p.name FROM  `area` a, area p
+WHERE a.parent_id = p.id AND a.level =2 AND a.name LIKE  "%辖%"
+
+update area set parent_id = id div 10000 *10000 and level = 2 where parent_id in (419000,429000,469000,659000);
+delete from area where id in (419000,429000,469000,659000);
+
+update `area` set level =2 WHERE parent_id % 10000 = 0 and level =3
+
+#直辖市下的县（同区）
+SELECT a.id, a.name, a.parent_id, p.name FROM  `area` a, area p
+WHERE a.parent_id = p.id AND a.level =2 AND a.name LIKE "县"
+
+update area set parent_id = id div 100 *100 where parent_id in (110200,120200,310200, 500200);
+delete from area where id in (110200,120200,310200, 500200);
+
+update `area`  set parent_id = 110100 WHERE parent_id = 110000 and level =3; 
+update `area`  set parent_id = 120100 WHERE parent_id = 120000 and level =3;
+update `area`  set parent_id = 310100 WHERE parent_id = 310000 and level =3;
+update `area`  set parent_id = 500100 WHERE parent_id = 500000 and level =3;
+
+7.检查
+SELECT * FROM `area` WHERE parent_id <> 0 and parent_id not in (select id from `area`)
+
+8.使用phpMyadmin导出json格式数据，使用vi修改字段名为符号名
+vi area.json
+:s/"id"/id/g
+:s/“name”/name/g
+:s/“level”/level/g
+:s/“parent_id"/parent_id/g
