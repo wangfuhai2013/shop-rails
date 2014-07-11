@@ -71,6 +71,9 @@
   <div class="field">
     <%= f.label :price_yuan ,'产品价格'%>
     <%= f.number_field :price_yuan ,:step => 0.01 %>元
+    <% if @shop_product.product_skus.size > 0 %>
+       &nbsp;&nbsp;<%= check_box_tag "update_sku_price",true,params["update_sku_price"] %>更新所有SKU价格
+    <% end %>
   </div>
   <div class="field">
     <%= f.label :discount ,'产品折扣'%>
@@ -78,7 +81,7 @@
   </div>
   <div class="field">
     <%= f.label :transport_fee_yuan ,'产品运费'%>
-    <%= f.number_field :transport_fee_yuan ,:step => 0.01 %>元
+    <%= f.number_field :transport_fee_yuan ,:step => 0.01 %>元    
   </div>
   <div class="field">
     <%= f.label :quantity ,'产品数量'%>

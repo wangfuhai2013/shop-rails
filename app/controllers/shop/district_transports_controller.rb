@@ -4,6 +4,7 @@
 
     skip_before_filter :authorize, :only => [:get_price]
 
+
     # GET /district_transports
     def index
       @district_transports = Shop::DistrictTransport.where(account_id: session[:account_id])
@@ -35,6 +36,7 @@
       @district_transport.account_id = session[:account_id]
 
       if @district_transport.save
+        update_district
         redirect_to district_transports_url, notice: '运费已创建.'
       else
         render action: 'new'
@@ -44,11 +46,12 @@
     # PATCH/PUT /district_transports/1
     def update
       if @district_transport.update(district_transport_params)
+        update_district
         redirect_to district_transports_url, notice: '运费已修改'
       else
         render action: 'edit'
       end
-    end
+    end    
 
     # DELETE /district_transports/1
     def destroy
@@ -57,6 +60,13 @@
     end
 
     private
+      def update_district
+        district_id = params[:province_id]
+        district_id = params[:city_id] unless params[:city_id].blank?
+        district_id = params[:area_id] unless params[:area_id].blank?
+        @district_transport.district_id = district_id
+        @district_transport.save
+      end
       # Use callbacks to share common setup or constraints between actions.
       def set_district_transport
         @district_transport = Shop::DistrictTransport.find(params[:id])

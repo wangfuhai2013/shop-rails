@@ -12,8 +12,27 @@
   <% end %>
 
   <div class="field">
-    <%= f.label :district_id,'省份名称' %><br>
-    <%= f.select :district_id,@district_provinces.collect {|p| [ p.name, p.id ]}%>
+    <%= f.label :province_id ,'所在地区'%><br>
+    <% 
+    provinces = Shop::District.where(level:1) 
+    province_id = 0
+    province_id = @district_transport.district.province.id if @district_transport.district
+    %>
+    <%= select_tag :province_id,options_from_collection_for_select(provinces,"id","name",province_id),prompt: "请选择省份" %>
+    <% 
+    city_id = 0 
+    city_id = @district_transport.district.city.id if @district_transport.district && @district_transport.district.city
+
+    cities = Shop::District.where(parent_id:province_id,level:2) 
+    %> 
+    <%= select_tag :city_id,options_from_collection_for_select(cities,"id","name",city_id),prompt: "请选择城市" %>       
+    <% 
+    area_id = 0 
+    area_id = @district_transport.district.area.id if @district_transport.district && @district_transport.district.area
+
+    areas = Shop::District.where(parent_id:city_id,level:3) 
+    %> 
+    <%= select_tag :area_id,options_from_collection_for_select(areas,"id","name",area_id),prompt: "请选择区域" %>     
   </div>
   <div class="field">
     <%= f.label :price_yuan,'运费单价' %><br>
@@ -25,3 +44,84 @@
     <%= link_to ' 返回 ', shop.district_transports_path,:class => "btn btn-default" %>
   </div>
 <% end %>
+
+<script type="text/javascript">
+
+$("#province_id").change(function() {
+   province_id = $("#province_id").val();
+   if (province_id == '') {
+      alert("请选择省份");
+      $("#city_id").empty();
+      $("#city_id").append('<option value="">请选择城市</option>')      
+      return;
+   };
+
+   $.ajax({
+        type: "GET",
+        url: "/shop/customers/get_districts/"+ province_id +".json",      
+
+        success: function (msg) {
+          if (msg == null){
+            alert('没有找到相关数据')
+          }else{
+            $("#city_id").empty();
+            $("#city_id").append('<option value="">请选择城市</option>')
+            for (var i = msg.length - 1; i >= 0; i--) {              
+                $("#city_id").append('<option value="'+ msg[i].id+'">'+msg[i].name+'</option>')
+            };
+          }
+            //var result = $.parseJSON(msg);   
+            if (msg.length > 0) {
+              $("#city_id").show();
+              $("#city_id").val(msg[0].id);
+              $("#city_id").change();
+            }else{
+              $("#city_id").append('<option value="">无</option>')
+              $("#area_id").empty();
+              $("#area_id").append('<option value="">无</option>')
+              $("#city_id").hide();
+              $("#area_id").hide();
+            }; 
+
+        },
+        error: function (XMLHttpRequest, textStatus, thrownError) {
+          alert(textStatus+","+thrownError);
+        }
+  });
+
+});
+$("#city_id").change(function() {
+   city_id = $("#city_id").val();
+   if (city_id == '') {
+      $("#area_id").empty();
+      $("#area_id").append('<option value="">请选择区域</option>')
+      return;
+   };
+  $.ajax({
+        type: "GET",
+        url: "/shop/customers/get_districts/"+ city_id +".json",      
+
+        success: function (msg) {
+          if (msg == null){
+            alert('没有找到相关数据')
+          }else{
+            $("#area_id").empty();
+            $("#area_id").append('<option value="">请选择区域</option>')
+            for (var i = msg.length - 1; i >= 0; i--) {              
+                $("#area_id").append('<option value="'+ msg[i].id+'">'+msg[i].name+'</option>')
+            };
+            if (msg.length > 0) {
+              $("#area_id").show();
+            }else{
+              $("#area_id").append('<option value="">无</option>')
+              $("#area_id").hide();
+            }
+          }
+            //var result = $.parseJSON(msg);                        
+        },
+        error: function (XMLHttpRequest, textStatus, thrownError) {
+          alert(textStatus+","+thrownError);
+        }
+  });
+});
+</script>

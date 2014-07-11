@@ -3,11 +3,11 @@ class Shop::Product < ActiveRecord::Base
   validates :code,uniqueness: { scope: :account_id, message: "产品编码不可重复" }
   validates :code, format: { with: /\A[A-Z0-9\-_]+\z/,message: "编码只能是大写字母、数字、横线、下划线" }
 
-  validates :price, numericality: { only_integer: true ,greater_than_or_equal_to: 0}
-  validates :transport_fee, numericality: { only_integer: true ,greater_than_or_equal_to: 0}
-  validates :quantity, numericality: { only_integer: true ,greater_than_or_equal_to: 0}  
+  validates :price, numericality: { only_integer: true ,greater_than_or_equal_to: 0,message:"价格必须大于等于0"}
+  validates :transport_fee, numericality: { only_integer: true ,greater_than_or_equal_to: 0,message:"运费必须大于等于0"}
+  validates :quantity, numericality: { only_integer: true ,greater_than_or_equal_to: 0,message:"数量必须大于等于0"}  
 
-  validates :discount, numericality: { only_integer: true ,greater_than_or_equal_to: 0,less_than_or_equal_to:100}
+  validates :discount, numericality: { only_integer: true ,greater_than_or_equal_to: 0,less_than_or_equal_to:100,message:"折扣必须大于等于0，小于等于100"}
 
   belongs_to :category
   belongs_to :picture

@@ -5,6 +5,7 @@ class Shop::ProductsController < ApplicationController
   before_action :set_shop_tags, only: [:new,:edit,:create,:update]
   before_action :init_tag_ids, only: [:create, :update]
 
+  after_action  :update_sku_price, only: [:update] #排在前面的后执行 
   after_action  :create_product_sku, only: [:create,:update] #排在前面的后执行 
   after_action  :save_product_properties, only: [:create,:update]
 
@@ -43,6 +44,7 @@ class Shop::ProductsController < ApplicationController
   def edit
     @shop_product.category_id = params[:category_id] if params[:category_id]
     params["auto_create_sku"] = false
+    params["udpate_sku_price"] = false
   end
 
   # POST /shop/products
@@ -167,6 +169,16 @@ class Shop::ProductsController < ApplicationController
       end
       @shop_product.product_properties = product_properies
       @shop_product.save
+    end
+
+    #更新sku价格
+    def update_sku_price
+      if params[:update_sku_price]
+        @shop_product.product_skus.each do |sku|
+          sku.price = @shop_product.price
+          sku.save
+        end
+      end
     end
 
     #自动创建产品SKU记录
