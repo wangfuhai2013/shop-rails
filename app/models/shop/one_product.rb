@@ -56,5 +56,11 @@ module Shop
 
        return shop_one_product
     end
+
+    def result_time_str
+     str = ""
+     str = self.result_time.strftime("%Y-%m-%d %H:%M:%S") if self.result_time
+     str
+    end
   end
 end

@@ -43,7 +43,7 @@ class Shop::Customer < ActiveRecord::Base
     @password = pwd
     return if pwd.blank?
     create_salt
-    self.hashed_password = Ums::User.encrypted_password(pwd,self.salt)
+    self.hashed_password = Shop::Customer.encrypted_password(pwd,self.salt)
   end
   def password_non_blank
     errors.add(:password,"missing password") if hashed_password.blank?
@@ -97,6 +97,13 @@ class Shop::Customer < ActiveRecord::Base
       customer_no_sn = "0000" + (customer.customer_no[-4,4].to_i + 1).to_s
     end    
     self.customer_no = customer_no_prefx + customer_no_sn[-4,4] 
+  end
+
+  def as_json options=nil
+    logger.debug("customer.as_json...")
+    options ||= {}
+    options[:only] = ((options[:only] || []) + [:id, :customer_no,:name,:gender])    
+    super options
   end
 
 end

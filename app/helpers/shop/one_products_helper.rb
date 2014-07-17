@@ -7,7 +7,13 @@ module Shop::OneProductsHelper
   	end
   	#商品列表
   	def one_product_list
-      @one_products = Shop::OneProduct.where(account_id:@site.account_id,is_closed:false).order("id DESC").limit(9)   
+
+      @one_products = Shop::OneProduct.where(account_id:@site.account_id,is_closed:false).
+                                       order("id DESC").page(params[:page]).per_page(5)
+      #logger.debug("request.format:" + request.format)                                       
+      if request.format == 'application/json'
+        render json: @one_products.to_json(:include => [:product => {methods: :picture_path}])
+      end
   	end
   	#商品详情
   	def one_product_detail
@@ -46,7 +52,15 @@ module Shop::OneProductsHelper
 
   	#结果列表
   	def one_result_list
-  		@one_products = Shop::OneProduct.where(account_id:@site.account_id,is_closed:true).order("id DESC").limit(9)   
+  		@one_products = Shop::OneProduct.where(account_id:@site.account_id,is_closed:true).
+      order("id DESC").page(params[:page]).per_page(5)
+      #logger.debug("request.format:" + request.format)                                       
+      if request.format == 'application/json'
+        render json: @one_products.to_json(methods: :result_time_str,
+                  :include => [:product => {methods: :picture_path}] +
+                              [:result_customer =>{methods: :get_headimgurl,
+                                   :only =>[:id, :name]}])
+      end
   	end  	
 
   	#结果详情
@@ -58,13 +72,31 @@ module Shop::OneProductsHelper
     def one_my_order_list
       @customer = get_customer
       @my_one_orders = Shop::OneOrder.where(customer_id:@customer.id,is_paid:true).
-                                      order("id DESC").limit(9) if @customer 
+                                      order("id DESC").page(params[:page]).per_page(5) if @customer 
+
+      if request.format == 'application/json'
+        render json: @my_one_orders.to_json(methods: :pay_time_str,
+            :include => [:one_product => {:include => [:product =>{methods: :picture_path}]}]) if @my_one_orders
+      end                                      
     end
+    
+    #个人订单查看
+    def one_my_order_view
+      @customer = get_customer
+      @my_one_order = Shop::OneOrder.find(params[:id])                                          
+    end
+
     #获得的商品
     def one_my_product_list
       @customer = get_customer
       @my_one_products = Shop::OneProduct.where(result_customer_id:@customer.id).
-                                          order("id DESC").limit(9) if @customer 
+                                          order("id DESC").page(params[:page]).per_page(2) if @customer 
+
+      #logger.debug("request.format:" + request.format)                                       
+      if request.format == 'application/json'
+        render json: @my_one_products.to_json(methods: :result_time_str,
+                    :include => [:product => {methods: :picture_path}]) if @my_one_products
+      end
     end
     
     #通过微信标识获取用户身份

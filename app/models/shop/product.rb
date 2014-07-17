@@ -98,5 +98,10 @@ class Shop::Product < ActiveRecord::Base
     self.transport_fee = (value.to_f * 100).round
   end  
 
+  def picture_path
+    path = ""
+    path = self.picture.path if self.picture
+    return path
+  end
 
 end

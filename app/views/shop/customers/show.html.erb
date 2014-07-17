@@ -4,6 +4,14 @@
   <strong>客户编号:</strong>
   <%= @shop_customer.customer_no %>
 </p>
+<% if @shop_customer.weixin_user_id 
+   weixin_user = Weixin::User.find(@shop_customer.weixin_user_id)
+%>
+<p>
+  <strong>微信ID:</strong>
+  <%= weixin_user.openid %>
+</p>
+<% end %>
 <p>
   <strong>客户类型:</strong>
   <%= @shop_customer.customer_type.name if @shop_customer.customer_type%>
