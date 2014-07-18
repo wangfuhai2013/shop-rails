@@ -1,5 +1,5 @@
   class Shop::OneProductsController < ApplicationController
-    before_action :set_shop_one_product, only: [:show, :edit, :update, :destroy]
+    before_action :set_shop_one_product, only: [:show, :edit, :update, :destroy,:delivery]
     before_action :set_shop_products, only: [:new, :edit, :update, :create]
 
     # GET /shop/one_products
@@ -54,6 +54,28 @@
       end      
       @shop_one_product.destroy
       redirect_to shop.one_products_url, notice: '微购商品已删除.'
+    end
+
+    #发货处理
+    def delivery
+      unless @shop_one_product.receiver_is_confirmed
+        flash.now[:error] = '收货地址没有确认，不能发货'
+      end
+      if @shop_one_product.is_delivered
+        flash.now[:error] = '访商品已发货不能重复发货'
+      end
+      flash.now[:error] = '发货失败，没有指定物流公司' if params[:logistic_id].blank?
+      flash.now[:error] = '发货失败，没有填写快递单号' if params[:express_no].blank?
+      if flash.now[:error].blank?
+        @shop_one_product.logistic_id = params[:logistic_id]
+        @shop_one_product.express_no = params[:express_no]
+        @shop_one_product.is_delivered = true
+        @shop_one_product.delivery_date = Time.now
+        @shop_one_product.save
+        flash.now[:notice] = "发货完成"
+      end
+
+      render action: 'show'
     end
 
     private

@@ -11,6 +11,7 @@ Shop::Engine.routes.draw do
 
     resources :one_orders
     resources :one_products
+    post "one_products/delivery/:id",to: "one_products#delivery",as: "one_products_delivery"
 
     resources :customer_types
     resources :customers

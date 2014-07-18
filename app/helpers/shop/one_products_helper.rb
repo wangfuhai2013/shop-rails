@@ -79,7 +79,7 @@ module Shop::OneProductsHelper
             :include => [:one_product => {:include => [:product =>{methods: :picture_path}]}]) if @my_one_orders
       end                                      
     end
-    
+
     #个人订单查看
     def one_my_order_view
       @customer = get_customer
@@ -98,7 +98,31 @@ module Shop::OneProductsHelper
                     :include => [:product => {methods: :picture_path}]) if @my_one_products
       end
     end
-    
+
+    #获得商品查看及收货地址确认
+    def one_my_product_view
+      @customer = get_customer
+      @my_one_product = Shop::OneProduct.find(params[:id]) 
+      if @my_one_product.result_customer_id != @customer.id
+        render text:'此商品不是您所获得，不可以查看或修改'
+        return
+      end
+      if request.post? #确认收货地址
+          #收货信息
+          @my_one_product.receiver_name = params[:name]
+          @my_one_product.receiver_mobile = params[:mobile]    
+          @my_one_product.receiver_address = params[:address]
+          @my_one_product.receiver_zip = params[:zip]    
+          @my_one_product.receiver_province_id = params[:province_id]    
+          @my_one_product.receiver_city_id = params[:city_id]    
+          @my_one_product.receiver_area_id = params[:area_id]  
+          @my_one_product.remark = params[:remark]    
+
+          @my_one_product.receiver_is_confirmed = true
+          @my_one_product.save                                              
+      end                                       
+    end    
+
     #通过微信标识获取用户身份
     def get_customer
       if @weixin_user.nil?

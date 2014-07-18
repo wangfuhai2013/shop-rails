@@ -21,6 +21,8 @@
       <th>幸运用户</th>
       <th>揭晓时间</th>
       <th>是否结束</th>
+      <th>是否确认收货地址</th>      
+      <th>是否已发货</th>      
       <th></th>
       <th></th>
       <th></th>
@@ -38,9 +40,11 @@
         <td><%= shop_one_product.result_customer.name if shop_one_product.result_customer%></td>
         <td><%= shop_one_product.result_time.strftime("%Y-%m-%d %H:%M:%S") if  shop_one_product.result_time%></td>
         <td><%= bool_label(shop_one_product.is_closed) %></td>
+        <td><%= bool_label(shop_one_product.receiver_is_confirmed) %></td>
+        <td><%= bool_label(shop_one_product.is_delivered) %></td>
         <td><%= link_to '查看', shop_one_product %></td>
-        <td><%= link_to '修改', shop.edit_one_product_path(shop_one_product) %></td>
-        <td><%= link_to '删除', shop_one_product, method: :delete, data: { confirm: '您确定要删除?' } %></td>
+        <td><%= link_to '修改', shop.edit_one_product_path(shop_one_product) unless shop_one_product.is_closed ||  shop_one_product.join_person_time > 0  %></td>
+        <td><%= link_to '删除', shop_one_product, method: :delete, data: { confirm: '您确定要删除?' } unless shop_one_product.is_closed ||  shop_one_product.join_person_time > 0 %></td>
       </tr>
     <% end %>
   </tbody>

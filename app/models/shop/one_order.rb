@@ -61,14 +61,6 @@ module Shop
      str = self.pay_time.strftime("%Y-%m-%d %H:%M:%S") if self.pay_time
      str
     end
-    def codes_list
-      list = ""
-      self.one_codes.each do |one_code|
-        list += one_code.code.to_s
-        list += '(第' + one_code.one_product.issue_no.to_s + '期)' unless one_code.one_product == one_code.one_order.one_product
-        list += ','        
-      end
-      list.chop
-    end
+
   end
 end

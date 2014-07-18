@@ -3,8 +3,12 @@ module Shop
 
     belongs_to :product
     belongs_to :result_customer,class_name: "Shop::Customer"
-
     has_many :one_codes
+
+    belongs_to :receiver_province, class_name:"Shop::District"
+    belongs_to :receiver_city, class_name:"Shop::District"
+    belongs_to :receiver_area, class_name:"Shop::District"
+    belongs_to :logistic
 
     validates_presence_of :account_id,:product
     validates :price, numericality: { only_integer: true ,greater_than: 0}  
@@ -62,5 +66,14 @@ module Shop
      str = self.result_time.strftime("%Y-%m-%d %H:%M:%S") if self.result_time
      str
     end
+
+    def receiver_full_address
+      address = ""
+      address += self.receiver_province.name if self.receiver_province
+      address += self.receiver_city.name if self.receiver_city
+      address += self.receiver_area.name if self.receiver_area
+      address += self.receiver_address
+      address
+    end  
   end
 end

@@ -1,6 +1,11 @@
 <h1>微购商品查看</h1>
-<p id="notice"><%= notice %></p>
-
+<% if flash[:notice] || flash[:error]  %>
+<div class="alert <%= "alert-success" if flash[:notice] %> <%= "alert-danger" if flash[:error] %>">
+  <a class="close" data-dismiss="alert">×</a>
+  <%= flash[:notice] %><%= flash[:error] %>
+</div>
+<% end %>
+<%= form_tag shop.one_products_delivery_path(@shop_one_product),method: :post do %>  
 <p>
   <strong>商品名称:</strong>
   <%= @shop_one_product.product.name %>
@@ -20,7 +25,7 @@
   <strong>已参与人次:</strong>
   <%= @shop_one_product.join_person_time %>
 </p>
-
+<% if @shop_one_product.is_closed %>
 <p>
   <strong>幸运微购码:</strong>
   <%= @shop_one_product.result_code %>
@@ -28,20 +33,76 @@
 
 <p>
   <strong>幸运用户:</strong>
-  <%= @shop_one_product.result_customer %>
+  <%= @shop_one_product.result_customer.name %>
 </p>
-
 <p>
   <strong>揭晓时间:</strong>
-  <%= @shop_one_product.result_time %>
+  <%= @shop_one_product.result_time.strftime("%Y-%m-%d %H:%M:%S") %>
 </p>
-
+<% end %>
 <p>
   <strong>是否结束:</strong>
   <%= bool_label(@shop_one_product.is_closed) %>
 </p>
+<p>
+  <strong>是否确认收货地址:</strong>
+  <%= bool_label(@shop_one_product.receiver_is_confirmed) %>
+</p>
+<% if @shop_one_product.receiver_is_confirmed %>
+  <p>
+    <strong>收货人姓名:</strong>
+    <%= @shop_one_product.receiver_name %>
+  </p>
+  <p>
+    <strong>收货人手机:</strong>
+    <%= @shop_one_product.receiver_mobile %>
+  </p>
+  <p>
+    <strong>收货地址:</strong>
+    <%= @shop_one_product.receiver_full_address %>
+  </p>
+  <p>
+    <strong>邮政编码:</strong>
+    <%= @shop_one_product.receiver_zip %>
+  </p>
+<% end %>
+<p>
+  <strong>是否已发货:</strong>
+  <%= bool_label(@shop_one_product.is_delivered) %>
+</p>
+<% if @shop_one_product.is_delivered %>
+  <p>
+    <strong>发货时间:</strong>
+    <%= @shop_one_product.delivery_date.strftime('%Y-%m-%d %H:%M') if @shop_one_product.delivery_date %>
+  </p>
+  <p>
+    <strong>快递公司:</strong>
+    <%= @shop_one_product.logistic.name if @shop_one_product.logistic %>
+  </p>
+  <p>
+    <strong>快递单号:</strong>
+    <%= @shop_one_product.express_no %>
+  </p>
+<% end %>
+
+<% if @shop_one_product.receiver_is_confirmed && !@shop_one_product.is_delivered  %>
+  <p>
+    <strong>快递公司:</strong>
+     <%
+      logistics = Shop::Logistic.all
+     %>
+     <%= select_tag :logistic_id, options_from_collection_for_select(logistics,'id','name',params[:logistic_id])  %>
+  </p>
+  <p>
+    <strong>快递单号:</strong>
+    <%= text_field_tag :express_no,params[:express_no] %>
+  </p>
+ <%= submit_tag "发货", data: { confirm: '您确定已发货?' },:class => "btn btn-success" %> 
+<% end %>
 
 <%= link_to '返回', shop.one_products_path, :class => "btn btn-default" %>
+
+<% end %>
 
 <h3>微购码列表</h3>
 <table class="table table-striped table-bordered table-condensed">
