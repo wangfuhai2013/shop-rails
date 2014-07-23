@@ -153,7 +153,7 @@ class Shop::OrdersController < ApplicationController
   end
   def email
     Mailer.order_email(@shop_order,request.host_with_port).deliver
-    flash[:notice] = "已邮件通知客户"
+    flash.now[:notice] = "已邮件通知客户"
     render action: 'show'    
   end  
   # GET /shop/orders/new

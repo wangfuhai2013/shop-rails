@@ -93,7 +93,7 @@
 </p>
 
 <%= link_to '打印订单', shop.order_print_path(@shop_order),:class => 'btn btn-info',:target => "_blank" %> 
-<%= link_to '邮件通知客户', shop.order_email_path(@shop_order),data: { confirm: '您确定要发邮件通知客户?' },:class => 'btn btn-warning' if @shop_order.customer && @shop_order.customer.email %> 
+<%= link_to '邮件通知客户', shop.order_email_path(@shop_order),data: { confirm: '您确定要发邮件通知客户?',disable_with:'正在发送中...'},:class => 'btn btn-warning' if @shop_order.customer && @shop_order.customer.email %> 
 <%= link_to ' 修改 ', shop.edit_order_path(@shop_order) ,:class => 'btn btn-primary' unless @shop_order.is_paid%> 
 <%= link_to ' 返回 ', shop.orders_path ,:class => 'btn btn-default'%>
 
