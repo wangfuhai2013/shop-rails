@@ -49,7 +49,6 @@ p { margin:0px; padding:0px;list-style:none;}
 <body>
 <br/>
 <div class="all">
-  <div class="txt">    </div>
   <div class="txt">订单
   </div>
   <div class="txt_1">
@@ -90,7 +89,7 @@ p { margin:0px; padding:0px;list-style:none;}
               picture = product.pictures.where(product_sku_property_id:color_property.id).take if color_property
               picture = product.picture unless picture
       %>
-      <img src="/<%= picture.thumb_path if picture %>" alt="<%= product.name %>" border="0" width="60"> 
+      <img src="/<%= picture.thumb_path if picture %>" alt="<%= product.name %>" border="0" width="150"> 
     </td>
       <td  class="tableStyle"><%= product.name %><br />
           (编码:<%= product.code %>)</td>
@@ -99,17 +98,15 @@ p { margin:0px; padding:0px;list-style:none;}
                  product_properties = product.product_properties.joins(:property).
                                    where("shop_properties.code like 'SIZE%'")
             %>
-            <ul>
               <% product_properties.each do |product_property|
-                                 unless product_property.input_value.to_i == 0
+                  unless product_property.input_value.to_i == 0
               %>
-              <li><%= product_property.property.name %>:
-                <%= product_property.input_value %> mm</li>
+                    <%= product_property.property.name %>:
+                    <%= product_property.input_value %> mm<br>
               <%  
                    end
                end
-               %>
-            </ul>           
+               %>        
    <td align="center"  class="tableStyle"><%= color_property.property_value.value %></td>
     <td align="center"  class="tableStyle"><%= item.quantity %> 件 </td>
     <td align="center"  class="tableStyle"><%= number_with_delimiter(item.price_yuan) %> 元 </td>
@@ -122,19 +119,19 @@ p { margin:0px; padding:0px;list-style:none;}
 <tr><td>
   <div class="txt_1">
     <div class="sum"><p>共 <font><%= item_count %></font> 种 <font><%= all_count %></font> 件产品，
-                  会员折扣<font><%= @shop_order.discount %>%</font>，运费金额<font><%= number_with_delimiter(@shop_order.transport_fee_yuan)%>元</font>，
-                  最终总价 <font><%= number_with_delimiter(@shop_order.total_fee_yuan) %>元</font> </p></div>
+                  会员折扣 <font><%= @shop_order.discount %>%</font>，运费金额 <font><%= number_with_delimiter(@shop_order.transport_fee_yuan)%></font> 元，
+                  实付金额 <font><%= number_with_delimiter(@shop_order.total_fee_yuan) %></font> 元 </p></div>
   </div>
     </td></tr>
 <tr><td>
     <div class="txt_1">
-     备注：图片仅做参考，产品颜色以实际为准。深圳市内货运不收费，货物上门时如果需要吊装或楼梯搬运至室内，货运公司会根据实际情况在现场收取相应费用。
+     备注：图片仅做参考，产品颜色以实际为准。货物上门时如果需要吊装或楼梯搬运至室内，货运公司会根据实际情况在现场收取相应费用。
     </div>
 </td></tr>
 </table>
 <table width="100%" border="1" cellpadding="0" cellspacing="0" height="80">
         <tr  valign="middle" >
-             <td rowspan="4"  width="40%" align="center">MC美芝华客户送货信息</td>
+             <td rowspan="4"  width="40%" align="center">客户收货地址信息</td>
              <td align="left" >客户名称:<%= @shop_order.receiver_name %></td></tr>
         <tr valign="middle" ><td>联系电话:<%= @shop_order.receiver_mobile %></td></tr>
         <tr valign="middle" ><td>详细地址:<%= @shop_order.receiver_full_address %></td></tr>
