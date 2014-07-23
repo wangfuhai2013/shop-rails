@@ -32,7 +32,7 @@
 
     areas = Shop::District.where(parent_id:city_id,level:3) 
     %> 
-    <%= select_tag :area_id,options_from_collection_for_select(areas,"id","name",area_id),prompt: "请选择区域" %>     
+    <%= select_tag :area_id,options_from_collection_for_select(areas,"id","name",area_id),prompt: "请选择区县" %>     
   </div>
   <div class="field">
     <%= f.label :price_yuan,'运费单价' %><br>
@@ -94,7 +94,7 @@ $("#city_id").change(function() {
    city_id = $("#city_id").val();
    if (city_id == '') {
       $("#area_id").empty();
-      $("#area_id").append('<option value="">请选择区域</option>')
+      $("#area_id").append('<option value="">请选择区县</option>')
       return;
    };
   $.ajax({
