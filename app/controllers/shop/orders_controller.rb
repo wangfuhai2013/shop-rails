@@ -186,9 +186,16 @@ class Shop::OrdersController < ApplicationController
     else    
       if @shop_order.update(shop_order_params)
         #按折扣更新产品费用、总费用
-        @shop_order.product_fee =  @shop_order.order_items.sum("price * quantity")
-        @shop_order.total_fee = @shop_order.product_fee * @shop_order.discount / 100 + @shop_order.transport_fee
+        product_fee = 0
+        @shop_order.order_items.each do |item|
+          item.discount = @shop_order.discount
+          item.save
+          product_fee += (item.price * item.quantity * item.discount / 100.0).round 
+        end
+        @shop_order.product_fee =  product_fee
+        @shop_order.total_fee = @shop_order.product_fee  + @shop_order.transport_fee
         @shop_order.save
+
         redirect_to shop.orders_url, notice: '订单已更新.'
       else
         render action: 'edit'
