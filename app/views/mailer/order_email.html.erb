@@ -1,0 +1,150 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>订单</title>
+<style type="text/css">
+
+body {
+	margin: 0px;
+	padding: 0; font-size:12px; font-family:"微软雅黑"; color:#616872;
+    overflow-y: scroll;
+    overflow-x: hidden; /* hides the horizontal scroll bar */
+   /* background: url("print_background.jpg") no-repeat;*/
+    width : 100%;
+    height: 1024px;
+}
+a:link {text-decoration:none;color:#616872;}
+p { margin:0px; padding:0px;list-style:none;}
+.all {
+	padding: 0 20px;
+}
+.txt {
+	height: 52px;
+	padding-top: 12px;
+	text-align: center;
+	color: #4f5358;
+	font-family: "微软雅黑";
+	font-size: 32px;
+	font-weight: bold;
+}
+.txt_1 {
+	padding:0 6px 6px 6px;
+}
+.dd { height:40px;font-family: "微软雅黑"; font-size:12px; color:#616872; text-align:right;
+}
+ p {padding:10px 10px 0 0;}
+ p font { color:#ff6e00;}
+.sum { height:40px;font-family: "微软雅黑"; font-size:20px; color:#616872; text-align:right;
+    }
+    
+.tableStyle { padding:5px 5px 5px 5px;height:75px;}
+.tableStyle img { border:5px #ffffff solid;}
+.txt_2 {
+    padding:0px 6px;
+}
+.page-break	{ display: block; page-break-before: always; }
+</style>
+</head>
+<body>
+<div class="all">
+	<p>
+尊敬的<%= @shop_order.customer.name %><%= '先生' if @shop_order.customer.gender == 'M' %><%= '女士' if@shop_order.customer.gender == 'F' %>，<br/>
+<br/>
+感谢您一直以来对{site_name}的热爱与支持！您于<%= @shop_order.created_at.strftime('%Y-%m-%d %H:%M') %>的时候通过MC 美芝华官网进行了货物订购，以下是您的订单信息：
+</p>	
+<br/>
+  <div class="txt_1">
+    <div class="dd"><p>
+             订单编号：<%= @shop_order.order_no %>
+       </p></div>
+  </div>
+
+<table width="100%" border="1" cellpadding="0" cellspacing="0" >
+  <tr>
+    <td width="15%" height="47" align="center" valign="middle" ><strong>产品图片</strong></td>
+    <td width="21%" align="center" valign="middle" ><strong>产品名称</strong></td>
+    <td width="12%" align="center" valign="middle" ><strong>产品尺寸</strong></td>
+    <td width="12%" align="center" valign="middle" ><strong>产品颜色</strong></td>
+    <td width="8%" align="center" valign="middle" ><strong>购买数量</strong></td>
+    <td width="12%" align="center" valign="middle" ><strong>单价 </strong></td>
+    <td width="12%" align="center" valign="middle" ><strong>小计</strong></td>
+  </tr>
+
+<% 
+     item_count = 0
+     all_count =0
+     total = 0
+     @shop_order.order_items.each do |item|
+       product = item.product_sku.product
+       subtotal = item.price * item.quantity 
+       total += subtotal
+       all_count += item.quantity
+       item_count += 1
+%>
+  
+  <tr>
+    <td align="center"  class="tableStyle">
+      <%        
+        color_property = item.product_sku.product_sku_properties.
+                         joins(:property).where(:shop_properties=>{code:"COLOR"}).take
+              picture = product.pictures.where(product_sku_property_id:color_property.id).take if color_property
+              picture = product.picture unless picture
+      %>
+      <img src="http://<%= @url_prefix %>/<%= picture.thumb_path if picture %>" alt="<%= product.name %>" border="0" width="60"> 
+    </td>
+      <td  class="tableStyle"><%= product.name %><br />
+          (编码:<%= product.code %>)</td>
+      <td  class="tableStyle">
+             <% 
+                 product_properties = product.product_properties.joins(:property).
+                                   where("shop_properties.code like 'SIZE%'")
+            %>
+            <ul>
+              <% product_properties.each do |product_property|
+                                 unless product_property.input_value.to_i == 0
+              %>
+              <li><%= product_property.property.name %>:
+                <%= product_property.input_value %> mm</li>
+              <%  
+                   end
+               end
+               %>
+            </ul>           
+   <td align="center"  class="tableStyle"><%= color_property.property_value.value %></td>
+    <td align="center"  class="tableStyle"><%= item.quantity %> 件 </td>
+    <td align="center"  class="tableStyle"><%= number_with_delimiter(item.price_yuan) %> 元 </td>
+    <td align="center"  class="tableStyle"><%= number_with_delimiter(format("%.2f",item.price * item.quantity * item.discount / 100.0 / 100.0)) %> 元 </td>
+  </tr>
+<% end %>
+
+</table>
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<tr><td>
+  <div class="txt_1">
+    <div class="sum"><p>共 <font><%= item_count %></font> 种 <font><%= all_count %></font> 件产品，
+                  会员折扣<font><%= @shop_order.discount %>%</font>，运费金额<font><%= number_with_delimiter(@shop_order.transport_fee_yuan)%>元</font>，
+                  最终总价 <font><%= number_with_delimiter(@shop_order.total_fee_yuan) %>元</font> </p></div>
+  </div>
+    </td></tr>
+<tr><td>
+    <div class="txt_1">
+     备注：图片仅做参考，产品颜色以实际为准。货物上门时如果需要吊装或楼梯搬运至室内，货运公司会根据实际情况在现场收取相应费用。
+    </div>
+</td></tr>
+</table>
+<table width="100%" border="1" cellpadding="0" cellspacing="0" height="80">
+        <tr  valign="middle" >
+             <td rowspan="4"  width="40%" align="center">MC美芝华客户送货信息</td>
+             <td align="left" >客户名称:<%= @shop_order.receiver_name %></td></tr>
+        <tr valign="middle" ><td>联系电话:<%= @shop_order.receiver_mobile %></td></tr>
+        <tr valign="middle" ><td>详细地址:<%= @shop_order.receiver_full_address %></td></tr>
+        <tr valign="middle" ><td>邮箱编码:<%= @shop_order.receiver_zip %></td></tr>
+</table>
+<br>
+<p>
+此邮件仅确认我们已收到了您的订单，但不代表我们接受您的订单。只有当我们的工作人员通过客服QQ或者致电向您确认货期后，才构成我们对您的订单的接受，我们和您之间的订购合同才成立。	
+</p>
+</div>
+</body>
+</html>

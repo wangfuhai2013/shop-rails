@@ -1,9 +1,9 @@
 class Shop::OrdersController < ApplicationController
-  before_action :set_shop_order, only: [:delivery,:show, :edit, :update, :destroy]
+  before_action :set_shop_order, only: [:delivery,:show, :edit, :update, :destroy,:print,:email]
   skip_before_filter :authorize,:verify_authenticity_token, only: [:add_to_cart,
                      :remove_from_cart,:empty_cart,:change_product_quantity,:alipay_notify]
   layout  false, only: [:add_to_cart,:remove_from_cart,:empty_cart,
-                        :change_product_quantity,:alipay_notify]
+                        :change_product_quantity,:alipay_notify,:print]
 
   #加入购物车
   def add_to_cart
@@ -149,7 +149,13 @@ class Shop::OrdersController < ApplicationController
   def show
     @logistics = Shop::Logistic.where(account_id: session[:account_id])
   end
-
+  def print    
+  end
+  def email
+    Mailer.order_email(@shop_order,request.host_with_port).deliver
+    flash[:notice] = "已邮件通知客户"
+    render action: 'show'    
+  end  
   # GET /shop/orders/new
   def new
     @shop_order = Shop::Order.new
@@ -158,7 +164,7 @@ class Shop::OrdersController < ApplicationController
 
   # GET /shop/orders/1/edit
   def edit
-    render text: '后台不可修改订单'
+    #render text: '后台不可修改订单'
   end
 
   # POST /shop/orders
@@ -179,6 +185,10 @@ class Shop::OrdersController < ApplicationController
       redirect_to shop.orders_url      
     else    
       if @shop_order.update(shop_order_params)
+        #按折扣更新产品费用、总费用
+        @shop_order.product_fee =  @shop_order.order_items.sum("price * quantity")
+        @shop_order.total_fee = @shop_order.product_fee * @shop_order.discount / 100 + @shop_order.transport_fee
+        @shop_order.save
         redirect_to shop.orders_url, notice: '订单已更新.'
       else
         render action: 'edit'
@@ -205,10 +215,9 @@ class Shop::OrdersController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def shop_order_params
-      params.require(:order).permit(:order_no, :pay_way, :total_fee, :product_fee, :transport_fee,
-                                    :is_paid, :paid_date,:is_delivered, :delivery_date, :remark, 
+      params.require(:order).permit(:remark, :discount, :transport_fee_yuan,
                                     :receiver_name,:receiver_mobile,:receiver_address, :receiver_zip,
-                                    :require_invoice,:invoice_title,:openid,:receiver_province_id,
+                                    :require_invoice,:invoice_title,:receiver_province_id,
                                     :receiver_city_id,:receiver_area_id)
     end
 end

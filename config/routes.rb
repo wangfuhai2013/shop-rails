@@ -30,7 +30,9 @@ Shop::Engine.routes.draw do
     get "orders/remove_from_cart/:id",to: "orders#remove_from_cart"
     get "orders/change_product_quantity/:id",to: "orders#change_product_quantity"
     post "orders/delivery/:id",to: "orders#delivery",as: 'order_delivery'
-    
+    get "orders/print/:id" , to: "orders#print", as: 'order_print'
+    get "orders/email/:id" , to: "orders#email", as: 'order_email'
+
     get "pictures/set_cover_picture/:id" , to: "pictures#set_cover_picture", as: 'pictures_set_cover_picture'
     get "products/add_relation/:id" , to: "products#add_relation", as: 'products_add_relation'
     delete "products/del_relation/:id" , to: "products#del_relation", as: 'products_del_relation'

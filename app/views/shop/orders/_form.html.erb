@@ -1,3 +1,7 @@
+<%
+  cities = {}
+  areas = {}    
+%>
 <%= form_for(@shop_order) do |f| %>
   <% if @shop_order.errors.any? %>
     <div id="error_explanation">
@@ -12,76 +16,153 @@
   <% end %>
 
   <div class="field">
-    <%= f.label :order_no ,'订单编号'%>
-    <%= f.text_field :order_no %>
+    <%= f.label :order_no ,'订单编号'%>:
+    <%= @shop_order.order_no %>
   </div>
   <div class="field">
-    <%= f.label :pay_way ,'支付方式'%>
-    <%= f.select :pay_way, Shop::Order.pay_way_options %>
+    <%= f.label :discount ,'会员折扣'%>:
+    <%= f.number_field :discount %> %
   </div>
   <div class="field">
-    <%= f.label :total_fee ,'订单总价'%>
-    <%= f.number_field :total_fee %>分
+    <%= f.label :product_fee ,'产品费用'%>:
+    <%= @shop_order.product_fee_yuan %>元
   </div>
   <div class="field">
-    <%= f.label :product_fee ,'产品费用'%>
-    <%= f.number_field :product_fee %>分
+    <%= f.label :transport_fee ,'订单运费'%>:
+    <%= f.number_field :transport_fee_yuan ,:step => 0.01%>元
   </div>
   <div class="field">
-    <%= f.label :transport_fee ,'订单运费'%>
-    <%= f.number_field :transport_fee %>分
+    <%= f.label :total_fee ,'订单总价'%>:
+    <%= @shop_order.total_fee_yuan %>元
   </div>
+ 
   <div class="field">
-    <%= f.label :is_paid ,'是否支付'%>
-    <%= f.check_box :is_paid %>
-  </div>
-  <div class="field">
-    <%= f.label :paid_date ,'支付时间'%>
-    <%= f.datetime_select :paid_date %>
-  </div>  
-  <div class="field">
-    <%= f.label :is_delivered ,'是否发货'%>
-    <%= f.check_box :is_delivered %>
-  </div>
-  <div class="field">
-    <%= f.label :delivery_date ,'发货时间'%>
-    <%= f.datetime_select :delivery_date %>
-  </div>    
-  <div class="field">
-    <%= f.label :receiver_name ,'收货人姓名'%>
+    <%= f.label :receiver_name ,'收货人姓名'%>:
     <%= f.text_field :receiver_name %>
   </div>
     <div class="field">
-    <%= f.label :receiver_mobile ,'收货人手机'%>
+    <%= f.label :receiver_mobile ,'收货人手机'%>:
     <%= f.text_field :receiver_mobile %>
   </div>
+  <div class="field">
+    <%= f.label :receiver_province_id ,'所在地区'%>:
+    <% provinces = Shop::District.where(level:1) %>
+    <%= f.select :receiver_province_id,provinces.collect {|p| [p.name, p.id ]},prompt: "请选择省份" %>
+    <% 
+    cities = Shop::District.where(parent_id:@shop_order.receiver_city.parent_id,level:2) if @shop_order.receiver_city 
+    %> 
+    <%= f.select :receiver_city_id,cities.collect {|p| [p.name, p.id ]},prompt: "请选择城市" %>
+    <%    
+     areas = Shop::District.where(parent_id:@shop_order.receiver_area.parent_id,level:3) if @shop_order.receiver_area
+    %> 
+    <%= f.select :receiver_area_id,areas.collect {|p| [p.name, p.id ]},prompt: "请选择区县" %>    
+  </div>
     <div class="field">
-    <%= f.label :receiver_address ,'收货地址'%>
+    <%= f.label :receiver_address ,'详细地址'%>:
     <%= f.text_field :receiver_address %>
   </div>
     <div class="field">
-    <%= f.label :receiver_zip ,'收货邮编'%>
+    <%= f.label :receiver_zip ,'收货邮编'%>:
     <%= f.text_field :receiver_zip %>
   </div>
   <div class="field">
-    <%= f.label :require_invoice ,'是否需要发票'%>
+    <%= f.label :require_invoice ,'是否需要发票'%>:
     <%= f.check_box :require_invoice %>
   </div>  
   <div class="field">
-    <%= f.label :invoice_title ,'发票抬头'%>
+    <%= f.label :invoice_title ,'发票抬头'%>:
     <%= f.text_field :invoice_title %>
   </div>    
   <div class="field">
-    <%= f.label :remark ,'备注'%>
-    <%= f.text_area :remark %>
+    <%= f.label :remark ,'订单备注'%>:
+    <%= f.text_area :remark ,:rows=>"5",:cols=>"65"%>
   </div>
-  <div class="field">
-    <%= f.label :openid ,'openid'%>
-    <%= f.text_field :openid %>
-  </div>
+
   <div class="actions">
     <%= f.submit ' 保存 ',:class => 'btn btn-primary',data: { disable_with: "正在保存..."} %>
     &nbsp;&nbsp;
     <%= link_to ' 返回 ', shop.orders_path,:class => "btn btn-default" %>
   </div>
 <% end %>
+<script type="text/javascript">
+$(function() {
+  <% if cities.size == 0 %>
+    $("#order_receiver_city_id").hide();
+  <% end %>
+  <% if areas.size == 0 %>
+    $("#order_receiver_area_id").hide();
+  <% end %>
+});
+$("#order_receiver_province_id").change(function() {
+   province_id = $("#order_receiver_province_id").val();
+   if (province_id == '') {
+      alert("请选择省份");
+      return;
+   };
+
+   $.ajax({
+        type: "GET",
+        url: "/shop/customers/get_districts/"+ province_id +".json",      
+
+        success: function (msg) {
+          if (msg == null){
+            alert('没有找到相关数据')
+          }else{
+            $("#order_receiver_city_id").empty();
+            for (var i = msg.length - 1; i >= 0; i--) {              
+                $("#order_receiver_city_id").append('<option value="'+ msg[i].id+'">'+msg[i].name+'</option>')
+            };
+          }
+            //var result = $.parseJSON(msg);   
+            if (msg.length > 0) {
+              $("#order_receiver_city_id").show();
+              $("#order_receiver_city_id").val(msg[0].id);
+              $("#order_receiver_city_id").change();
+            }else{
+              $("#order_receiver_city_id").append('<option value="">无</option>')
+              $("#order_receiver_area_id").empty();
+              $("#order_receiver_area_id").append('<option value="">无</option>')
+              $("#order_receiver_city_id").hide();
+              $("#order_receiver_area_id").hide();
+            }; 
+
+        },
+        error: function (XMLHttpRequest, textStatus, thrownError) {
+          alert(textStatus+","+thrownError);
+        }
+  });
+
+});
+$("#order_receiver_city_id").change(function() {
+   city_id = $("#order_receiver_city_id").val();
+   if (city_id == '') {
+      alert("请选择城市");
+      return;
+   };
+  $.ajax({
+        type: "GET",
+        url: "/shop/customers/get_districts/"+ city_id +".json",      
+
+        success: function (msg) {
+          if (msg == null){
+            alert('没有找到相关数据')
+          }else{
+            $("#order_receiver_area_id").empty();
+            for (var i = msg.length - 1; i >= 0; i--) {              
+                $("#order_receiver_area_id").append('<option value="'+ msg[i].id+'">'+msg[i].name+'</option>')
+            };
+            if (msg.length > 0) {
+              $("#order_receiver_area_id").show();
+            }else{
+              $("#order_receiver_area_id").append('<option value="">无</option>')
+              $("#order_receiver_area_id").hide();
+            }
+          }
+            //var result = $.parseJSON(msg);                        
+        },
+        error: function (XMLHttpRequest, textStatus, thrownError) {
+          alert(textStatus+","+thrownError);
+        }
+  });
+});
+</script>

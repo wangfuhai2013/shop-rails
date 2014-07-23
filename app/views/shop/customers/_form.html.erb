@@ -57,7 +57,7 @@
     <%     
      areas = Shop::District.where(parent_id:@shop_customer.area.parent_id,level:3) if @shop_customer.area
     %> 
-    <%= f.select :area_id,areas.collect {|p| [p.name, p.id ]},prompt: "请选择区域" %>    
+    <%= f.select :area_id,areas.collect {|p| [p.name, p.id ]},prompt: "请选择区县" %>    
   </div>
   <div class="field">
     <%= f.label :address ,'详细地址'%>

@@ -61,5 +61,15 @@ class Shop::Order < ActiveRecord::Base
     def transport_fee_yuan
       format("%.2f",self.transport_fee.to_i / 100.00)    
     end        
-
+    def transport_fee_yuan=(value)
+      self.transport_fee = (value.to_f * 100).round
+    end  
+    def receiver_full_address
+      address = ""
+      address += self.receiver_province.name if self.receiver_province
+      address += self.receiver_city.name if self.receiver_city
+      address += self.receiver_area.name if self.receiver_area
+      address += self.receiver_address
+      address
+    end      
 end
