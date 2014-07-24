@@ -35,7 +35,7 @@ class Shop::PicturesController < ApplicationController
     @shop_picture = Shop::Picture.new(shop_picture_params)
 
     if upload_file_is_permitted && @shop_picture.save
-      @shop_picture.path = upload(params[:picture][:path])
+      @shop_picture.path = Utils::FileUtil.upload(params[:picture][:path])
       @shop_picture.save
       if @shop_picture.product.picture.nil?
          @shop_picture.product.picture = @shop_picture
@@ -51,8 +51,8 @@ class Shop::PicturesController < ApplicationController
   def update
     if @shop_picture.update(shop_picture_params)&& upload_file_is_permitted
       if params[:picture][:path]
-           delete_file(@shop_picture.path) unless @shop_picture.path.blank?
-           @shop_picture.path = upload(params[:picture][:path]) 
+           Utils::FileUtil.delete_file(@shop_picture.path) unless @shop_picture.path.blank?
+           @shop_picture.path = Utils::FileUtil.upload(params[:picture][:path]) 
            @shop_picture.save
       end
       redirect_to @shop_picture.product, notice: '产品图片已更新.'
@@ -65,7 +65,7 @@ class Shop::PicturesController < ApplicationController
   def destroy
     product = @shop_picture.product
     picture_id = @shop_picture.id
-    delete_file(@shop_picture.path) if !@shop_picture.path.blank?
+    Utils::FileUtil.delete_file(@shop_picture.path) if !@shop_picture.path.blank?
     @shop_picture.destroy
 
     if product.picture_id == picture_id
@@ -82,12 +82,12 @@ class Shop::PicturesController < ApplicationController
 
    def create_thumb_image
       if upload_file_is_permitted && params[:picture][:path]
-        thumb_image (Rails.root.join("public",@shop_picture.path).to_s) 
+        Utils::FileUtil.thumb_image (Rails.root.join("public",@shop_picture.path).to_s) 
       end
     end
 
     def upload_file_is_permitted
-        picture_forbid = !check_ext(params[:picture][:path]) 
+        picture_forbid = !Utils::FileUtil.check_ext(params[:picture][:path]) 
         if picture_forbid
            @shop_picture.errors.add(:path, "无效的文件类型，只允许:" + 
                   Rails.configuration.upload_extname) 

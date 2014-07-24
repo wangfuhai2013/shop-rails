@@ -26,7 +26,7 @@
     def create
       @property_value = Shop::PropertyValue.new(property_value_params)
      if upload_file_is_permitted && @property_value.save
-        @property_value.picture_path = upload(params[:property_value][:picture_path])
+        @property_value.picture_path = Utils::FileUtil.upload(params[:property_value][:picture_path])
         @property_value.save
         redirect_to @property_value.property, notice: '属性值已新建.'
       else
@@ -38,8 +38,8 @@
     def update
       if upload_file_is_permitted && @property_value.update(property_value_params)
         if params[:property_value][:picture_path]
-           delete_file(@property_value.picture_path) if !@property_value.picture_path.blank?
-           @property_value.picture_path = upload(params[:property_value][:picture_path]) 
+           Utils::FileUtil.delete_file(@property_value.picture_path) if !@property_value.picture_path.blank?
+           @property_value.picture_path = Utils::FileUtil.upload(params[:property_value][:picture_path]) 
            @property_value.save
         end
         redirect_to @property_value.property, notice: '属性值已修改'
@@ -54,7 +54,7 @@
       if Shop::ProductProperty.where(property_value_id:@property_value.id).size > 0
          flash[:error] = "已有产品绑定该属性值，不可删除"
       else
-         delete_file(@property_value.picture_path) if !@property_value.picture_path.blank?
+         Utils::FileUtil.delete_file(@property_value.picture_path) if !@property_value.picture_path.blank?
          @property_value.destroy
          flash[:notice] = "属性值已删除"
       end
@@ -63,7 +63,7 @@
 
     private
     def upload_file_is_permitted
-        file_forbid = !check_ext(params[:property_value][:picture_path]) 
+        file_forbid = !Utils::FileUtil.check_ext(params[:property_value][:picture_path]) 
         if file_forbid
            @shop_category.errors.add(:picture_path, "无效的文件类型，只允许:" + 
                   Rails.configuration.upload_extname) 

@@ -27,7 +27,7 @@ class Shop::CategoriesController < ApplicationController
     @shop_category = Shop::Category.new(shop_category_params)
     @shop_category.account_id = session[:account_id]
     if upload_file_is_permitted && @shop_category.save
-      @shop_category.picture_path = upload(params[:category][:picture_path])
+      @shop_category.picture_path = Utils::FileUtil.upload(params[:category][:picture_path])
       @shop_category.save
       redirect_to shop.categories_url, notice: '类别已创建.'
     else
@@ -39,8 +39,8 @@ class Shop::CategoriesController < ApplicationController
   def update
     if upload_file_is_permitted && @shop_category.update(shop_category_params)
       if params[:category][:picture_path]
-         delete_file(@shop_category.picture_path) if !@shop_category.picture_path.blank?
-         @shop_category.picture_path = upload(params[:category][:picture_path]) 
+         Utils::FileUtil.delete_file(@shop_category.picture_path) if !@shop_category.picture_path.blank?
+         @shop_category.picture_path = Utils::FileUtil.upload(params[:category][:picture_path]) 
          @shop_category.save
       end
       redirect_to shop.categories_url, notice: '类别已更新.'
@@ -54,7 +54,7 @@ class Shop::CategoriesController < ApplicationController
    if @shop_category.products.size > 0
       flash[:error] = "该类别还有信息数据，不可以删除"
     else
-      delete_file(@shop_category.picture_path) if !@shop_category.picture_path.blank?
+      Utils::FileUtil.delete_file(@shop_category.picture_path) if !@shop_category.picture_path.blank?
       @shop_category.destroy
       flash[:notice] = '类别已删除.'
     end
@@ -63,7 +63,7 @@ class Shop::CategoriesController < ApplicationController
 
   private
     def upload_file_is_permitted
-        file_forbid = !check_ext(params[:category][:picture_path]) 
+        file_forbid = !Utils::FileUtil.check_ext(params[:category][:picture_path]) 
         if file_forbid
            @shop_category.errors.add(:picture_path, "无效的文件类型，只允许:" + 
                   Rails.configuration.upload_extname) 

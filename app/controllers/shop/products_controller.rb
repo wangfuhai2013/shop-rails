@@ -70,7 +70,7 @@ class Shop::ProductsController < ApplicationController
   # DELETE /shop/products/1
   def destroy
     @shop_product.pictures.each do |picture|
-        delete_file(picture.path) if !picture.path.blank?
+        Utils::FileUtil.delete_file(picture.path) if !picture.path.blank?
     end   
     @shop_product.destroy
     redirect_to shop.products_url, notice: '产品已删除.'
