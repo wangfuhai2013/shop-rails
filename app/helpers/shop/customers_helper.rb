@@ -72,6 +72,7 @@ module Shop::CustomersHelper
   end
 
   def customer_login
+    session[:original_url] = params[:from] if params[:from]
     if request.post?
      @is_success = false
       customer = Shop::Customer.authenticate(@site.account_id,params[:email],params[:password])
@@ -98,8 +99,8 @@ module Shop::CustomersHelper
     session[:customer_id] = customer.id
     session[:customer_name] = customer.name       
     
-    @uri = session[:original_uri]
-    session[:original_uri] = nil
+    @url = session[:original_url]
+    session[:original_url] = nil
   end
 
   def customer_logout
