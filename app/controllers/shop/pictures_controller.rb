@@ -81,7 +81,7 @@ class Shop::PicturesController < ApplicationController
   private
 
    def create_thumb_image
-      if @shop_picture.vaild? && upload_file_is_permitted && params[:picture][:path]
+      if @shop_picture.valid? && upload_file_is_permitted && params[:picture][:path]
         Utils::FileUtil.thumb_image (Rails.root.join("public",@shop_picture.path).to_s) 
       end
     end
