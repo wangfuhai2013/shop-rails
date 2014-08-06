@@ -6,6 +6,7 @@ class Shop::Customer < ActiveRecord::Base
   belongs_to :area, class_name:"Shop::District"
 
   has_many  :orders
+  has_many  :promotion_histories
   
   validates_presence_of :email,:name,:customer_type,:mobile,:address
   validates_format_of :email, :with => /\A[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]+\z/ ,:allow_blank => true

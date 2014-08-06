@@ -64,6 +64,11 @@ class Shop::Order < ActiveRecord::Base
     def transport_fee_yuan=(value)
       self.transport_fee = (value.to_f * 100).round
     end  
+    
+    def promotion_fee_yuan
+      format("%.2f",self.promotion_fee.to_i / 100.00)    
+    end        
+
     def receiver_full_address
       address = ""
       address += self.receiver_province.name if self.receiver_province
@@ -72,4 +77,14 @@ class Shop::Order < ActiveRecord::Base
       address += self.receiver_address
       address
     end      
+    
+    #计算积分，可覆盖
+    def count_promotion_points
+       self.total_fee.to_i / 100
+    end
+    #积分转换成抵扣金额
+    def promotion_points_to_fee(points)
+       points 
+    end
+
 end

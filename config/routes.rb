@@ -32,6 +32,7 @@ Shop::Engine.routes.draw do
     post "orders/delivery/:id",to: "orders#delivery",as: 'order_delivery'
     get "orders/print/:id" , to: "orders#print", as: 'order_print'
     get "orders/email/:id" , to: "orders#email", as: 'order_email'
+    get "orders/promotion/:id" , to: "orders#promotion", as: 'order_promotion'    
 
     get "pictures/set_cover_picture/:id" , to: "pictures#set_cover_picture", as: 'pictures_set_cover_picture'
     get "products/add_relation/:id" , to: "products#add_relation", as: 'products_add_relation'

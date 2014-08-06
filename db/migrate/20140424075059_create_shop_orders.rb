@@ -29,6 +29,8 @@ class CreateShopOrders < ActiveRecord::Migration
       t.references :receiver_city
       t.references :receiver_area
 
+      t.integer :promotion_fee
+
       t.timestamps
     end
   end

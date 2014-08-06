@@ -29,6 +29,8 @@ class CreateShopCustomers < ActiveRecord::Migration
       t.references :city
       t.references :area
 
+      t.integer :promotion_points
+
       t.timestamps
 
     end

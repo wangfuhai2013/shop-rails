@@ -31,6 +31,14 @@
     <%= f.label :transport_fee ,'订单运费'%>:
     <%= f.number_field :transport_fee_yuan ,:step => 0.01%>元
   </div>
+
+<% if @shop_order.promotion_fee > 0 %>  
+  <div class="field">
+    <%= f.label :promotion_fee ,'积分抵扣'%>:
+    <%= @shop_order.promotion_fee_yuan %>元
+  </div>  
+<% end %>
+
   <div class="field">
     <%= f.label :total_fee ,'订单总价'%>:
     <%= @shop_order.total_fee_yuan %>元

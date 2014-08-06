@@ -1,5 +1,5 @@
 class Shop::OrdersController < ApplicationController
-  before_action :set_shop_order, only: [:delivery,:show, :edit, :update, :destroy,:print,:email]
+  before_action :set_shop_order, only: [:delivery,:show, :edit, :update, :destroy,:print,:email,:promotion]
   skip_before_filter :authorize,:verify_authenticity_token, only: [:add_to_cart,
                      :remove_from_cart,:empty_cart,:change_product_quantity,:alipay_notify]
   layout  false, only: [:add_to_cart,:remove_from_cart,:empty_cart,
@@ -149,13 +149,43 @@ class Shop::OrdersController < ApplicationController
   def show
     @logistics = Shop::Logistic.where(account_id: session[:account_id])
   end
+  
   def print    
   end
+
   def email
     Mailer.order_email(@shop_order,request.host_with_port).deliver
     flash.now[:notice] = "已邮件通知客户"
-    render action: 'show'    
+    redirect_to @shop_order    
   end  
+
+  #确认积分给客户
+  def promotion
+    promotion_history = Shop::PromotionHistory.where(order:@shop_order,change_type:'A').take
+    if promotion_history || !@shop_order.is_paid 
+      flash[:error] = "该订单已确认过积分了" if promotion_history
+      flash[:error] = "该订单还未付款，不能确认积分" if !@shop_order.is_paid
+    else
+       customer = @shop_order.customer
+       promotion_history = Shop::PromotionHistory.new
+       promotion_history.order =  @shop_order
+       promotion_history.change_type = 'A'
+       promotion_history.change_points = @shop_order.count_promotion_points
+
+       if promotion_history.change_points > 0         
+         promotion_history.customer =  customer
+         promotion_history.save
+
+         customer.promotion_points = customer.promotion_points.to_i + promotion_history.change_points
+         customer.save
+         flash[:notice] = "积分确认完成"
+       else
+         flash[:error] = "该订单金额不足，不能确认积分"
+       end
+    end
+    redirect_to @shop_order   
+  end
+
   # GET /shop/orders/new
   def new
     @shop_order = Shop::Order.new
@@ -193,7 +223,8 @@ class Shop::OrdersController < ApplicationController
           product_fee += (item.price * item.quantity * item.discount / 100.0).round 
         end
         @shop_order.product_fee =  product_fee
-        @shop_order.total_fee = @shop_order.product_fee  + @shop_order.transport_fee
+        @shop_order.total_fee = @shop_order.product_fee  + @shop_order.transport_fee - 
+                                @shop_order.promotion_fee
         @shop_order.save
 
         redirect_to shop.orders_url, notice: '订单已更新.'

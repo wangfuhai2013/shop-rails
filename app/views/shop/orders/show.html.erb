@@ -31,6 +31,12 @@
   <strong>订单运费:</strong>
   <%= @shop_order.transport_fee_yuan  %>元
 </p>
+<% if @shop_order.promotion_fee.to_i > 0 %>
+<p>
+  <strong>积分抵扣:</strong>
+  <%= @shop_order.promotion_fee_yuan  %>元
+</p>
+<% end %>
 <p>
   <strong>订单总价:</strong>
   <%= @shop_order.total_fee_yuan %>元
@@ -94,7 +100,10 @@
 
 <%= link_to '打印订单', shop.order_print_path(@shop_order),:class => 'btn btn-info',:target => "_blank" %> 
 <%= link_to '邮件通知客户', shop.order_email_path(@shop_order),data: { confirm: '您确定要发邮件通知客户?',disable_with:'正在发送中...'},:class => 'btn btn-warning' if @shop_order.customer && @shop_order.customer.email %> 
-<%= link_to ' 修改 ', shop.edit_order_path(@shop_order) ,:class => 'btn btn-primary' unless @shop_order.is_paid%> 
+<%= link_to ' 修改 ', shop.edit_order_path(@shop_order) ,:class => 'btn btn-primary' unless @shop_order.is_paid%>
+<% if @shop_order.promotion_fee.to_i == 0 && @shop_order.is_paid && @shop_order.total_fee >= 0 %>
+<%= link_to ' 确认积分 ', shop.order_promotion_path(@shop_order),:class => 'btn btn-primary',data: { confirm: '您确定要确认积分吗?'} %> 
+<% end %>
 <%= link_to ' 返回 ', shop.orders_path ,:class => 'btn btn-default'%>
 
 <%= form_tag shop.order_delivery_path(@shop_order),onsubmit:"return check_from();" do %>  

@@ -106,7 +106,7 @@ $("#city_id").change(function() {
             alert('没有找到相关数据')
           }else{
             $("#area_id").empty();
-            $("#area_id").append('<option value="">请选择区域</option>')
+            $("#area_id").append('<option value="">请选择区县</option>')
             for (var i = msg.length - 1; i >= 0; i--) {              
                 $("#area_id").append('<option value="'+ msg[i].id+'">'+msg[i].name+'</option>')
             };

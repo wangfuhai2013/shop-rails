@@ -71,9 +71,37 @@
   <%= @shop_customer.created_at.strftime("%Y-%m-%d %H:%M") %>
 </p>
 <p>
+  <strong>可用积分:</strong>
+  <%= @shop_customer.promotion_points %>点
+</p>
+<p>
   <strong>是否可用:</strong>
   <%= bool_label(@shop_customer.is_enabled) %>
 </p>
 
 <%= link_to '修改', shop.edit_customer_path(@shop_customer), :class => 'btn btn-primary' %>
 <%= link_to '返回', shop.customers_path ,:class => 'btn btn-default'%>
+
+<h2>积分变化记录</h2>
+<table class="table table-striped table-bordered table-condensed">
+  <thead>
+    <tr>
+      <th>变化时间</th>
+      <th>变化数量</th> 
+      <th>相关订单</th>  
+    </tr>
+  </thead>
+
+  <tbody>
+    <%
+       @shop_customer.promotion_histories.order(created_at: :desc).each do |promotion_history| 
+    %>
+      <tr>     
+        <td><%= promotion_history.created_at.strftime("%Y-%m-%d %H:%M") %></td>
+        <td><%= (promotion_history.change_type == 'A' ? "+" : "-") + promotion_history.change_points.to_s %>点</td>
+        <td><%= link_to promotion_history.order.order_no,promotion_history.order %></td>           
+      </tr>
+    <% end %>
+    
+  </tbody>
+</table>

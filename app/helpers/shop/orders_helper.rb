@@ -36,9 +36,32 @@ module Shop::OrdersHelper
     if params[:transport_price] && params[:sum_volume]
        @order.transport_fee = (params[:transport_price].to_i * params[:sum_volume].to_i / 1000000000.0).round
     end
+
+    #积分的使用
+    promotion_points = 0
+    @order.promotion_fee = 0
+    promotion_points = params[:promotion_points].to_i if params[:promotion_points]
+    promotion_points = customer.promotion_points.to_i if promotion_points > customer.promotion_points.to_i
+    if promotion_points > 0
+      #积分使用不超过订单金额
+      promotion_points = product_fee + @order.transport_fee if 
+                         promotion_points > product_fee + @order.transport_fee
+
+      #订单使用积分，同时扣除用户积分，未付款也扣除，避免重复使用积分或造成支付失败
+      @order.promotion_fee = @order.promotion_points_to_fee(promotion_points)
+      customer.promotion_points = customer.promotion_points.to_i - promotion_points
+      customer.save
+      #积分使用记录
+      promotion_history = Shop::PromotionHistory.new
+      promotion_history.order =  @order
+      promotion_history.change_type = 'D'
+      promotion_history.change_points = promotion_points  
+      promotion_history.customer =  customer
+      promotion_history.save
+    end
      
     @order.product_fee = product_fee     
-    @order.total_fee = @order.product_fee + @order.transport_fee
+    @order.total_fee = @order.product_fee + @order.transport_fee - @order.promotion_fee
     @order.discount = discount
     @order.customer = customer
     #收货信息
