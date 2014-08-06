@@ -160,8 +160,9 @@
           
         <% end %>
         </td>        
-        <td><%= item.product_sku.code %></td>
-        <td><%= item.product_sku.product.name + "(" + item.product_sku.product_sku_property_list +  ")" %></td>
+        <td><%= item.product_sku.code if item.product_sku %></td>
+        <td><%= item.product_sku.product.name + "(" + 
+                 item.product_sku.product_sku_property_list +  ")" if item.product_sku %></td>
         <td><%= item.quantity %></td>      
         <td><%= item.price_yuan %>元</td>   
         <td><%= item.discount %>%</td>   
