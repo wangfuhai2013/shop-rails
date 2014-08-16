@@ -1,5 +1,6 @@
 class Shop::OrdersController < ApplicationController
-  before_action :set_shop_order, only: [:delivery,:show, :edit, :update, :destroy,:print,:email,:promotion]
+  before_action :set_shop_order, only: [:delivery,:show, :edit, :update, :destroy,
+                                        :paid,:print,:email,:promotion]
   skip_before_filter :authorize,:verify_authenticity_token, only: [:add_to_cart,
                      :remove_from_cart,:empty_cart,:change_product_quantity,:alipay_notify]
   layout  false, only: [:add_to_cart,:remove_from_cart,:empty_cart,
@@ -151,6 +152,21 @@ class Shop::OrdersController < ApplicationController
   end
   
   def print    
+  end
+
+    #收款
+  def paid
+    if  @shop_order.is_paid == false    
+        @shop_order.is_paid = true
+        @shop_order.paid_date = Time.now
+        @shop_order.pay_way = params[:pay_way] unless params[:pay_way].blank?
+        @shop_order.trade_no = params[:trade_no] unless params[:trade_no].blank?
+        @shop_order.save
+        flash[:notice] = '已确认收款.'
+    else
+      flash[:error] = '确认失败，只有已下单且未收款的订单才能进行确认收款.'
+    end
+    redirect_to @shop_order
   end
 
   def email

@@ -5,18 +5,10 @@
   <%= flash[:notice] %><%= flash[:error] %>
 </div>
 <% end %>
-
+<%= form_tag shop.order_paid_path(@shop_order),method: :post do %>  
 <p>
   <strong>订单编号:</strong>
   <%= @shop_order.order_no %>
-</p>
-<p>
-  <strong>支付方式:</strong>
-  <%= @shop_order.pay_way_name %>
-</p>
-<p>
-  <strong>交易编号:</strong>
-  <%= @shop_order.trade_no %>
 </p>
 <p>
   <strong>订单折扣:</strong>
@@ -26,7 +18,6 @@
   <strong>产品费用:</strong>
   <%= @shop_order.product_fee_yuan  %>元
 </p>
-
 <p>
   <strong>订单运费:</strong>
   <%= @shop_order.transport_fee_yuan  %>元
@@ -45,7 +36,15 @@
   <strong>是否支付:</strong>
   <%= bool_label(@shop_order.is_paid) %>
 </p>
-<p>
+ <% if @shop_order.is_paid %>
+ <p>
+  <strong>支付方式:</strong>
+  <%= @shop_order.pay_way_name  %>
+</p>
+  <strong>交易编号:</strong>
+  <%= @shop_order.trade_no  %>
+</p>
+ <p>
   <strong>支付时间:</strong>
   <%= @shop_order.paid_date.strftime('%Y-%m-%d %H:%M') if @shop_order.paid_date  %>
 </p>
@@ -76,6 +75,17 @@
   <strong>邮政编码:</strong>
   <%= @shop_order.receiver_zip %>
 </p>
+
+<% else %>
+ <p>
+  <strong>收款方式:</strong>
+    <%= select_tag :pay_way, options_for_select(Shop::Order.pay_way_options,@shop_order.pay_way)  %>
+</p>
+ <p>
+  <strong>交易编号:</strong>
+    <%= text_field_tag :trade_no  %>
+</p>
+ <% end %>
 <p>
   <strong>是否需要发票:</strong>
   <%= bool_label(@shop_order.require_invoice) %>
@@ -98,13 +108,18 @@
   <%= link_to @shop_order.customer.name,@shop_order.customer if @shop_order.customer %>
 </p>
 
-<%= link_to '打印订单', shop.order_print_path(@shop_order),:class => 'btn btn-info',:target => "_blank" %> 
-<%= link_to '邮件通知客户', shop.order_email_path(@shop_order),data: { confirm: '您确定要发邮件通知客户?',disable_with:'正在发送中...'},:class => 'btn btn-warning' if @shop_order.customer && @shop_order.customer.email %> 
-<%= link_to ' 修改 ', shop.edit_order_path(@shop_order) ,:class => 'btn btn-primary' unless @shop_order.is_paid%>
-<% if @shop_order.promotion_fee.to_i == 0 && @shop_order.is_paid && @shop_order.total_fee >= 0 %>
-<%= link_to ' 确认积分 ', shop.order_promotion_path(@shop_order),:class => 'btn btn-primary',data: { confirm: '您确定要确认积分吗?'} %> 
+<% if  @shop_order.is_paid == false  %>
+   <%= submit_tag "确认收款", data: { confirm: '您确定已收款?' },:class => "btn btn-success" %>
 <% end %>
-<%= link_to ' 返回 ', shop.orders_path ,:class => 'btn btn-default'%>
+  <%= link_to '打印订单', shop.order_print_path(@shop_order),:class => 'btn btn-info',:target => "_blank" %> 
+  <%= link_to '邮件通知客户', shop.order_email_path(@shop_order),data: { confirm: '您确定要发邮件通知客户?',disable_with:'正在发送中...'},:class => 'btn btn-warning' if @shop_order.customer && @shop_order.customer.email %> 
+  <%= link_to ' 修改 ', shop.edit_order_path(@shop_order) ,:class => 'btn btn-primary' unless @shop_order.is_paid%>
+  <% if @shop_order.promotion_fee.to_i == 0 && @shop_order.is_paid && @shop_order.total_fee >= 0 %>
+  <%= link_to ' 确认积分 ', shop.order_promotion_path(@shop_order),:class => 'btn btn-primary',data: { confirm: '您确定要确认积分吗?'} %> 
+  <% end %>
+  <%= link_to ' 返回 ', shop.orders_path ,:class => 'btn btn-default'%>
+
+<% end %>
 
 <%= form_tag shop.order_delivery_path(@shop_order),onsubmit:"return check_from();" do %>  
 <h2>订单条目列表 
