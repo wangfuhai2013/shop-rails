@@ -73,6 +73,13 @@ module Shop::OrdersHelper
     @order.receiver_city_id = params[:city_id]    
     @order.receiver_area_id = params[:area_id]    
 
+    #更新客户地址信息
+    customer.address = params[:address] if params[:address]
+    customer.zip = params[:zip]  if params[:zip]
+    customer.province_id = params[:province_id]  if  params[:province_id]
+    customer.city_id = params[:city_id]  if params[:city_id] 
+    customer.area_id = params[:area_id]  if params[:area_id]  
+    customer.save
     #发票信息
     @order.require_invoice = true  if params[:require_invoice]
     @order.invoice_title = params[:invoice_title]    

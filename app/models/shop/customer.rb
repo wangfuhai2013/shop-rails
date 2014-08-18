@@ -8,7 +8,7 @@ class Shop::Customer < ActiveRecord::Base
   has_many  :orders
   has_many  :promotion_histories
   
-  validates_presence_of :email,:name,:customer_type,:mobile,:address
+  validates_presence_of :email,:name,:customer_type,:mobile
   validates_format_of :email, :with => /\A[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]+\z/ ,:allow_blank => true
   validates_uniqueness_of :email,uniqueness: { scope: :account_id, message: "客户邮箱不可重复" }
 
