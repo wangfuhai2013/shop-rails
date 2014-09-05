@@ -1,5 +1,5 @@
 
-<%= form_tag nil,method: :get do %>  
+<%= form_tag nil,method: :get,id:"search_form" do %>  
 <div class="row">
 <div class="col-sm-4">
 <h1>产品列表
@@ -18,6 +18,9 @@
     <div class="col-sm-1" style="margin-top: 30px;margin-bottom: 0px; padding-left: 15px;">
      <%= submit_tag "搜索" ,:class => "btn btn-info" %>
   </div>
+    <div class="col-md-1" style="margin-top: 30px;margin-bottom: 0px; padding-left: 15px;">
+     <%= button_tag "全部" ,:class => "btn btn-success",:id=>"search_all" %>     
+  </div>  
 </div>
 <% end %> 
 
@@ -73,3 +76,14 @@
  <%= page_entries_info @shop_products %>
  <%= will_paginate @shop_products ,:container => false%>
 </div>
+
+<script type="text/javascript">
+  $(document).ready(function(){
+      $("#search_all").click(function(){
+         $("#category_id").val("");
+         $("#code").val("");
+         $("#name").val("");
+         $("#search_form").submit();
+      });
+  });
+</script>

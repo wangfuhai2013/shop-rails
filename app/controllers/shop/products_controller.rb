@@ -12,6 +12,9 @@ class Shop::ProductsController < ApplicationController
 
   # GET /shop/products
   def index
+    
+    search_params_in_session
+
     where = "1"
     where += " AND code like '%#{params[:code].upcase}%'" unless params[:code].blank?
     where += " AND name like '%#{params[:name]}%'" unless params[:name].blank?
@@ -19,6 +22,16 @@ class Shop::ProductsController < ApplicationController
 
     @shop_products = Shop::Product.where(account_id: session[:account_id]).where(where).
                                    order("the_order ASC,id DESC").page(params[:page])
+  end
+
+  def search_params_in_session
+    session[:shop_product_code] = params[:code] unless params[:code].nil?
+    session[:shop_product_name] = params[:name] unless params[:name].nil?
+    session[:shop_product_category_id] = params[:category_id] unless params[:category_id].nil?
+
+    params[:code] = session[:shop_product_code] 
+    params[:name] = session[:shop_product_name]
+    params[:category_id] = session[:shop_product_category_id]
   end
 
   # GET /shop/products/1
