@@ -193,13 +193,15 @@ module Shop::OneProductsHelper
 
     #通过微信标识获取用户身份
     def get_customer
-      if @weixin_user.nil? && session["openid"].blank?
+      session_key = "openid"
+      session_key = @openid_key unless @openid_key.blank? #兼容微站多个站点共用组件
+      if @weixin_user.nil? && session[session_key].blank?
           #render text:'请在微信中访问'
-          Utils::Weixin.set_session_openid
+          Utils::Weixin.set_session_openid(params,session,session_key)
           return 
       end
 
-      openid = session["openid"] unless session["openid"].blank?
+      openid = session[session_key] unless session[session_key].blank?
       openid = @weixin_user.openid if @weixin_user      
 
       customer = Shop::Customer.where(openid:openid).take
