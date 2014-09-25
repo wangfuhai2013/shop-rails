@@ -10,7 +10,7 @@ module Shop
     belongs_to :receiver_area, class_name:"Shop::District"
     belongs_to :logistic
 
-    validates_presence_of :account_id,:product
+    validates_presence_of :product
     validates :price, numericality: { only_integer: true ,greater_than: 0}  
 
     def self.new_one_product(product_id,account_id)

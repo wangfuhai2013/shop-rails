@@ -5,7 +5,7 @@ module Shop
 
     has_many :one_codes
 
-    validates_presence_of :account_id,:one_product,:customer
+    validates_presence_of :one_product,:customer
 
 	  def pay_way_name
 	    name = "未知:" + self.pay_way.to_s
@@ -61,6 +61,18 @@ module Shop
      str = self.pay_time.strftime("%Y-%m-%d %H:%M:%S") if self.pay_time
      str
     end
+
+
+  def generate_trade_no
+      trade_no_prefx =  Time.now.strftime('%Y%m%d') 
+      trade_no_sn = '0001'
+      #TODO 查询条件增加store.id
+      form = Shop::OneOrder.where("trade_no like '#{trade_no_prefx}%'").order("trade_no DESC").take
+      if form
+        trade_no_sn = "0000" + (form.trade_no[-4,4].to_i + 1).to_s
+      end    
+      self.trade_no = trade_no_prefx + trade_no_sn[-4,4]  
+  end
 
   end
 end

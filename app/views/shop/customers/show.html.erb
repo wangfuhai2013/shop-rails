@@ -4,12 +4,10 @@
   <strong>客户编号:</strong>
   <%= @shop_customer.customer_no %>
 </p>
-<% if @shop_customer.has_attribute?(:weixin_user_id) && @shop_customer.weixin_user_id 
-   weixin_user = Weixin::User.find(@shop_customer.weixin_user_id)
-%>
+<% unless @shop_customer.openid.blank? %>
 <p>
   <strong>微信ID:</strong>
-  <%= weixin_user.openid %>
+  <%= @shop_customer.openid %>
 </p>
 <% end %>
 <p>

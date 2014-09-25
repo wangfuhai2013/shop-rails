@@ -17,7 +17,8 @@ class CreateShopCustomers < ActiveRecord::Migration
       t.integer :login_count      
       t.references :customer_type, index: true
       t.references :account, index: true
-      t.references :weixin_user, index: true
+      
+      t.string :openid, index: true
 
       t.string :birth_date
       t.string :forgot_pwd_code
