@@ -197,7 +197,7 @@ module Shop::OneProductsHelper
       session_key = @openid_key unless @openid_key.blank? #兼容微站多个站点共用组件
       if @weixin_user.nil? && session[session_key].blank?
           #render text:'请在微信中访问'
-          Utils::Weixin.set_session_openid(params,session,session_key)
+          Utils::Weixin.set_session_openid(params,session,request.original_url,session_key)
           return 
       end
 
