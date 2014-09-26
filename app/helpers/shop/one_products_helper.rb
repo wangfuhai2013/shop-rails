@@ -1,4 +1,11 @@
 module Shop::OneProductsHelper
+  
+  #引入Utils::WeixinHelper中的set_session_openid方法
+  def self.included klass
+    klass.class_eval do
+      include Utils::WeixinHelper
+    end
+  end
 
   	def one  		
       @recommend_one_products = Shop::OneProduct.joins(:product).where(
@@ -25,9 +32,7 @@ module Shop::OneProductsHelper
     def one_order_post
       if request.post?
          customer = get_customer
-         if customer.nil?
-            return
-         end
+         return if customer.nil?
          @one_order = Shop::OneOrder.new
          @one_order.account_id = @site.account_id if @site.has_attribute?(:account_id)
          @one_order.customer = customer
@@ -139,6 +144,7 @@ module Shop::OneProductsHelper
     #个人订单列表
     def one_my_order_list
       @customer = get_customer
+      return if @customer.nil?
       @my_one_orders = Shop::OneOrder.where(customer_id:@customer.id,is_paid:true).
                                       order("id DESC").page(params[:page]).per_page(5) if @customer 
 
@@ -151,12 +157,14 @@ module Shop::OneProductsHelper
     #个人订单查看
     def one_my_order_view
       @customer = get_customer
+      return if @customer.nil?
       @my_one_order = Shop::OneOrder.find(params[:id])                                          
     end
 
     #获得的商品
     def one_my_product_list
       @customer = get_customer
+      return if @customer.nil?
       @my_one_products = Shop::OneProduct.where(result_customer_id:@customer.id).
                                           order("id DESC").page(params[:page]).per_page(2) if @customer 
 
@@ -170,6 +178,7 @@ module Shop::OneProductsHelper
     #获得商品查看及收货地址确认
     def one_my_product_view
       @customer = get_customer
+      return if @customer.nil?
       @my_one_product = Shop::OneProduct.find(params[:id]) 
       if @my_one_product.result_customer_id != @customer.id
         render text:'此商品不是您所获得，不可以查看或修改'
@@ -197,7 +206,7 @@ module Shop::OneProductsHelper
       session_key = @openid_key unless @openid_key.blank? #兼容微站多个站点共用组件
       if @weixin_user.nil? && session[session_key].blank?
           #render text:'请在微信中访问'
-          Utils::Weixin.set_session_openid(params,session,request.original_url,session_key)
+          set_session_openid(session_key)
           return 
       end
 
