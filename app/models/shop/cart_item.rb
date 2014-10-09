@@ -1,10 +1,11 @@
 class Shop::CartItem
 
-    attr_reader :product_sku, :quantity
+    attr_reader :product,:product_sku, :quantity
 
-    def initialize(product_sku,quantity=1)
+    def initialize(product,product_sku,quantity=1)
+      @product = product
       @product_sku = product_sku
-      @quantity = quantity     
+      @quantity = quantity
     end
 
     def increment_quantity(quantity=1)
@@ -16,10 +17,15 @@ class Shop::CartItem
     end
 
     def subtotal
-       @product_sku.price * @quantity.to_i 
+       total = 0
+       total = @product.price * @quantity.to_i unless @product.nil?
+       total = @product_sku.price * @quantity.to_i unless @product_sku.nil?
+       total
     end
 
     def volume
-      @product_sku.product.volume * @quantity.to_i 
+       val = 0
+       val = @product.product.volume * @quantity.to_i unless @product.nil?
+       val = @product_sku.product.volume * @quantity.to_i unless @product_sku.nil?
     end
 end

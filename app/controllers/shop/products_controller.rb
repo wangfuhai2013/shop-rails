@@ -64,6 +64,8 @@ class Shop::ProductsController < ApplicationController
   def create
     @shop_product = Shop::Product.new(shop_product_params)
     @shop_product.account_id = session[:account_id]
+    @shop_product.transport_fee = 0  if @shop_product.transport_fee.nil?
+    @shop_product.discount = 100 if @shop_product.discount.nil?
     if check_required_properties && @shop_product.save
       redirect_to @shop_product, notice: '产品已创建.'
     else

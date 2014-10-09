@@ -89,9 +89,11 @@ module Shop::OrdersHelper
     cart.items.each do |item|
       order_item = Shop::OrderItem.new
       order_item.order = @order
+      order_item.product = item.product
       order_item.product_sku = item.product_sku
       order_item.quantity = item.quantity
-      order_item.price = item.product_sku.price
+      order_item.price = item.product.price if item.product
+      order_item.price = item.product_sku.price if item.product_sku
       order_item.discount = discount
       order_item.is_delivered = false
       order_item.save
@@ -117,7 +119,7 @@ module Shop::OrdersHelper
       notify_url = "http://"+request.host_with_port + "/shop/orders/alipay_notify"
       redirect_to @order.alipay_url(subject,return_url,notify_url)
     else
-       render text: '支付失败，支付不方式不支持:' + @order.pay_way
+       #render text: '支付失败，支付不方式不支持:' + params[:pay_way].to_s
     end
   end
   #支付结果

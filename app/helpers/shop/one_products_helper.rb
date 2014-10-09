@@ -1,5 +1,5 @@
 module Shop::OneProductsHelper
-  
+
   #引入Utils::WeixinHelper中的set_session_openid方法
   def self.included klass
     klass.class_eval do
@@ -104,7 +104,8 @@ module Shop::OneProductsHelper
 
     pay_sign_key = @site.account.pay_sign_key if @site.has_attribute?(:account_id)
     pay_sign_key = Rails.configuration.weixin_pay_sign_key if pay_sign_key.nil?
-
+   #转换xml内容数据为params[:xml]数组，需在config/application.rb中配置
+   # config.middleware.insert_after ActionDispatch::ParamsParser, ActionDispatch::XmlParamsParser
     notify_sign = Utils::Weixin.pay_sign({
           :appid     => params[:xml][:AppId],
           :appkey    => pay_sign_key,
