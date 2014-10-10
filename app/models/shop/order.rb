@@ -21,13 +21,15 @@ class Shop::Order < ActiveRecord::Base
       when 'transfer'
         name = '银行转账'   
       when 'cash'
-        name = '现金支付'                
+        name = '现金支付'    
+      when 'cod'
+        name = '货到付款'                        
     end
     name
   end  
     
   def self.pay_way_options
-      [['微信支付', 'weixin'], ['支付宝', 'alipay'], ['银行转账', 'transfer'], ['现金支付', 'cash']]
+      [['微信支付', 'weixin'], ['支付宝', 'alipay'], ['银行转账', 'transfer'], ['现金支付', 'cash'], ['货到付款', 'cod']]
   end
 
   def generate_order_no

@@ -3,6 +3,10 @@ module Shop::OrdersHelper
   #购物车
   def order_cart  	
   end
+  
+  #结算，选择收货地址、支付方式等
+  def order_checkout    
+  end
 
   #生成订单并使用支付
   def order_create
@@ -122,6 +126,7 @@ module Shop::OrdersHelper
        #render text: '支付失败，支付不方式不支持:' + params[:pay_way].to_s
     end
   end
+
   #支付结果
   def order_pay_end
     # 提示当前订单的状态
