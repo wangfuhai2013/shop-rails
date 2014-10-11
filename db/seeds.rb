@@ -11,6 +11,8 @@ role = Ums::Role.all.first
 role.functions.push(function)
 role.save
 
+Shop::CustomerType.create([{name:"普通会员",discount:100,level:1}])
+
 product = Cms::Function.create(name:"产品管理",method:'product')
 Cms::Function.create([{name:"产品列表",method:'list',parent_function:product},
 	                  {name:"产品查看",method:'show',parent_function:product},

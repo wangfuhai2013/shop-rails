@@ -143,6 +143,8 @@ module Shop::OrdersHelper
 	     	@order.is_paid = true
 	     	@order.paid_date = Time.now
 	     	@order.save
+
+        @order.create_promotion_points
 	     	@is_paid = true 
 	     end	     
     else

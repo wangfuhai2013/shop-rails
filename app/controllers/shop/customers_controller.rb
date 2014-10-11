@@ -2,7 +2,20 @@ class Shop::CustomersController < ApplicationController
   before_action :set_shop_customer, only: [:show, :edit, :update, :destroy]
   before_action :set_customer_types,only: [:new,:edit,:update,:create]
 
-  skip_before_filter :authorize, :only => [:get_districts]
+  skip_before_filter :authorize, :only => [:get_districts,:register_check]
+
+  #检查手机号或邮箱是否已存在
+  def register_check
+     where = "email = " + params[:value] if params[:type] == 'email'
+     where = "mobile = " + params[:value] if params[:type] == 'mobile'
+     cnt = Shop::Customer.where(where).count   
+     if cnt > 0
+       render json: {is_success:"false",message:"已存在"}
+     else
+       render json: {is_success:"true",message:"不存在"} 
+     end
+  end
+
   # GET /shop/customers
   def index
     account_id = session[:account_id]

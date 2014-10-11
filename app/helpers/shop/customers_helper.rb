@@ -1,7 +1,7 @@
 module Shop::CustomersHelper
 
   def customer
-    @customer = Shop::Customer.where(session[:customer_id]) if session[:customer_id]
+    @customer = Shop::Customer.find(session[:customer_id]) if session[:customer_id]
   end
   
   def customer_order_list
@@ -50,7 +50,9 @@ module Shop::CustomersHelper
        if @customer.errors.empty?
          update_customer_session(@customer)
 
-         Mailer.register_email(@customer).deliver
+         if !@customer.email.blank? && params[:email_notice] == 1
+           Mailer.register_email(@customer).deliver
+         end
 
        	 flash.now[:notice] = "您的已成功注册!"    
        	 @is_success = true 	
@@ -59,6 +61,7 @@ module Shop::CustomersHelper
        	#logger.debug("errors:"+site_feedback.errors[:email].to_s)
        	#logger.debug("errors:"+site_feedback.errors[:content].to_s)
 
+          flash.now[:error] += "手机号已存在或格式不正确;" unless @customer.errors[:mobile].blank?
           flash.now[:error] += "邮箱已存在或格式不正确;" unless @customer.errors[:email].blank?
           flash.now[:error] += "会员类型不存在;" unless @customer.errors[:customer_type].blank?
           flash.now[:error] += "未填写公司名称;" unless @customer.errors[:company].blank?
@@ -74,14 +77,21 @@ module Shop::CustomersHelper
   def customer_login
     session[:original_url] = params[:from] if params[:from]
     if request.post?    
-     @is_success = false
-      customer = Shop::Customer.authenticate(@site.account_id,params[:email],params[:password])
+      @is_success = false
+      if params[:email].blank? && params[:mobile].blank?
+        flash.now[:error] = "账号不能为空"
+        return
+      end
+      account = params[:email] unless params[:email].blank?
+      account = params[:mobile] unless params[:mobile].blank?
+
+      customer = Shop::Customer.authenticate(@site.account_id,account,params[:password])
       if customer 
         update_customer_session(customer)
         @is_success = true
         #log_info("login",params[:email] + " login success",request.remote_ip)     
       else
-         flash.now[:error] = "邮箱地址或密码不正确"
+         flash.now[:error] = "账号或密码不正确"
       end
     end		
   end	
@@ -163,5 +173,45 @@ module Shop::CustomersHelper
          flash.now[:error] = "没有找到您所输入邮箱地址对应的账号"
     end
   end  
+
+  def customer_change_profile
+     @customer = Shop::Customer.find(session[:customer_id])
+     if request.post?
+      @is_success = false
+      
+      @customer.update(params.permit(:name,:gender,:address, :zip,
+                                     :company,:province_id,:city_id,:area_id))
+      birth_date = ""
+      birth_date = params[:birth_year] + "." if params[:birth_year]
+      birth_date += params[:birth_month] + "." if params[:birth_month]
+      birth_date += params[:birth_day] if params[:birth_day]
+      @customer.birth_date = birth_date unless birth_date.blank?
+
+      @customer.save
+      @is_success = true
+    end
+  end
+
+  def customer_change_password
+     if request.post?
+      @is_success = false
+      if params[:password] != params[:confirm_password] 
+        flash.now[:error] = "两次密码输入不一样"
+        return
+      end
+
+      customer = Shop::Customer.find(session[:customer_id])
+      if customer.verify_password(params[:old_password]) 
+         #修改密码
+         customer.password = params[:password]
+         customer.save
+         @is_success = true
+        #log_info("login",params[:email] + " login success",request.remote_ip)     
+      else
+         flash.now[:error] = "旧密码不正确"
+      end
+    end
+  end
+
 
 end

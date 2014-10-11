@@ -8,14 +8,29 @@ class Shop::Customer < ActiveRecord::Base
   has_many  :orders
   has_many  :promotion_histories
   
-  validates_presence_of :email,:name,:customer_type,:mobile
+  validates_presence_of :name,:customer_type
+  validate :mobile_or_email_presence
+
   validates_format_of :email, :with => /\A[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]+\z/ ,:allow_blank => true
-  validates_uniqueness_of :email,uniqueness: { scope: :account_id, message: "客户邮箱不可重复" }
+  validates_uniqueness_of :email,allow_blank: true,uniqueness: { scope: :account_id, message: "邮箱不可重复" }
+  validates_uniqueness_of :mobile,allow_blank: true,uniqueness: { scope: :account_id, message: "手机号不可重复" }
 
   validate :password_non_blank
 
-    def self.authenticate(account_id,email,password)
-      user = Shop::Customer.where(account_id:account_id,email:email).take
+    def mobile_or_email_presence
+      if !(mobile.blank? ^ email.blank?)
+        errors.add(:base, "邮箱或手机号至少填写一个")
+      end
+    end
+
+    def self.authenticate(account_id,email_or_mobile,password)
+      
+      if email_or_mobile.include?('@')
+        user = Shop::Customer.where(account_id:account_id,email:email_or_mobile).take
+      else
+        user = Shop::Customer.where(account_id:account_id,mobile:email_or_mobile).take
+      end
+
       if user
         expected_password = encrypted_password(password,user.salt)
         #logger.debug("user.hashed_password:" + user.hashed_password + ",expected_password:" + expected_password)

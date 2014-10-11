@@ -16,6 +16,7 @@ Shop::Engine.routes.draw do
     resources :customer_types
     resources :customers
     get "customers/get_districts/:id",to: "customers#get_districts"
+    get "customers/register_check/:value",to: "customers#register_check"
 
     resources :tags
     resources :product_skus

@@ -83,8 +83,10 @@ class Shop::Order < ActiveRecord::Base
       address += self.receiver_address
       address
     end      
-    
-    #计算积分，可覆盖
+    #计算处理，在完成支付时调用，但默认不做处理，可覆盖实现
+    def create_promotion_points       
+    end
+    #计算积分，1元=1积分，可覆盖
     def count_promotion_points
        self.total_fee.to_i / 100
     end

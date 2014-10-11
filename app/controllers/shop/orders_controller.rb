@@ -126,6 +126,7 @@ class Shop::OrdersController < ApplicationController
         delivery_item = Shop::DeliveryItem.new
         delivery_item.delivery = delivery
         delivery_item.product_sku_id = item.product_sku_id
+        delivery_item.product_id = item.product_id
         delivery_item.quantity = item.quantity
         delivery_item.save
         
@@ -169,6 +170,8 @@ class Shop::OrdersController < ApplicationController
         @shop_order.pay_way = params[:pay_way] unless params[:pay_way].blank?
         @shop_order.trade_no = params[:trade_no] unless params[:trade_no].blank?
         @shop_order.save
+        
+        @shop_order.create_promotion_points
         flash[:notice] = '已确认收款.'
     else
       flash[:error] = '确认失败，只有已下单且未收款的订单才能进行确认收款.'
