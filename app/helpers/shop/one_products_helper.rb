@@ -61,12 +61,12 @@ module Shop::OneProductsHelper
     end
 
     def one_weixin_pay
-
-      @app_id = @site.account.app_id  if  @site.has_attribute?(:account_id)
-      @app_secret = @site.account.app_secret if @site.has_attribute?(:account_id)
-      @partner_id = @site.account.partner_id if @site.has_attribute?(:account_id)
-      @partner_key = @site.account.partner_key if @site.has_attribute?(:account_id)
-      @pay_sign_key= @site.account.pay_sign_key if @site.has_attribute?(:account_id)
+      #logger.debug("@site.account_id:" + @site.account_id.to_s)
+      @app_id = @site.account.app_id  if  @site.account_id
+      @app_secret = @site.account.app_secret if  @site.account_id
+      @partner_id = @site.account.partner_id if  @site.account_id
+      @partner_key = @site.account.partner_key if  @site.account_id
+      @pay_sign_key= @site.account.pay_sign_key if  @site.account_id
 
       @app_id = Rails.configuration.weixin_app_id  if @app_id.nil?
       @app_secret = Rails.configuration.weixin_app_secret  if @app_secret.nil?
