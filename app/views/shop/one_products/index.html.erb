@@ -32,7 +32,7 @@
   <tbody>
     <% @shop_one_products.each do |shop_one_product| %>
       <tr>
-        <td><%= shop_one_product.product.name %></td>
+        <td><%= shop_one_product.product.name if shop_one_product.product %></td>
         <td><%= shop_one_product.issue_no %></td>
         <td><%= shop_one_product.price %> 元</td>
         <td><%= shop_one_product.join_person_time %>人次</td>

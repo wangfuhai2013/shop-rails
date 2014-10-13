@@ -34,6 +34,7 @@ module Shop::OrdersHelper
     @order.require_invoice = false
 
     @order.pay_way = params[:pay_way]
+    @order.remark =  params[:remark]
 
     #运费计算
     @order.transport_fee = 0

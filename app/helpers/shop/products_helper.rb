@@ -14,7 +14,7 @@ module Shop::ProductsHelper
 		@product_category = Shop::Category.where(account_id:@site.account_id,name:params[:id]).take unless !!(params[:id] =~ /\A[0-9]+\z/)
 		where = " 1 "
 		where += " AND category_id = " + @product_category.id.to_s if @product_category
-        where += " AND name like '%#{params[:name]}%'" unless params[:name].blank?
+        where += " AND (name like '%#{params[:name]}%' OR code like '#{params[:name].upcase}')" unless params[:name].blank?
 
 		@category_products = Shop::Product.where(account_id:@site.account_id,is_enabled:true).where(where).
 		                       order("the_order ASC,id DESC").page(params[:page]).per_page(15)
