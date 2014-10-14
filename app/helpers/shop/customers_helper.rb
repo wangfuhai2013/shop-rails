@@ -50,7 +50,7 @@ module Shop::CustomersHelper
        if @customer.errors.empty?
          update_customer_session(@customer)
 
-         if !@customer.email.blank? && params[:email_notice] == 1
+         if !@customer.email.blank? && params[:email_notice].to_i == 1
            Mailer.register_email(@customer).deliver
          end
 

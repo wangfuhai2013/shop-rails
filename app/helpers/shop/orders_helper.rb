@@ -105,7 +105,20 @@ module Shop::OrdersHelper
     end
     #清空购物车
     session[:cart] = nil
+
+    logger.debug("customer.email:" + customer.email.to_s)
+    #邮件通知客户
+    if !customer.email.blank? && params[:email_notice_customer].to_i == 1
+      logger.debug("call Mailer.order_notice_customer")
+      Mailer.order_notice_customer(@order).deliver
+    end
+    #邮件通知销售
+    if  params[:email_notice_sales].to_i == 1
+      logger.debug("call Mailer.order_notice_sales")
+      Mailer.order_notice_sales(@order).deliver
+    end
   end   	
+
   #开始支付
   def order_pay_start
   	if params[:pay_way] == 'alipay'
