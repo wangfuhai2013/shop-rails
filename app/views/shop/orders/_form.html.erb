@@ -32,7 +32,7 @@
     <%= f.number_field :transport_fee_yuan ,:step => 0.01%>元
   </div>
 
-<% if @shop_order.promotion_fee > 0 %>  
+<% if @shop_order.promotion_fee.to_i > 0 %>  
   <div class="field">
     <%= f.label :promotion_fee ,'积分抵扣'%>:
     <%= @shop_order.promotion_fee_yuan %>元
