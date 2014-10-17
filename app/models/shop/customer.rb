@@ -18,7 +18,8 @@ class Shop::Customer < ActiveRecord::Base
   validate :password_non_blank
 
     def mobile_or_email_presence
-      if !(mobile.blank? ^ email.blank?)
+     # if !(mobile.blank? ^ email.blank?) #二选一
+      if mobile.blank? && email.blank？
         errors.add(:base, "邮箱或手机号至少填写一个")
       end
     end
