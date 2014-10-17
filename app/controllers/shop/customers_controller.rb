@@ -16,6 +16,30 @@ class Shop::CustomersController < ApplicationController
      end
   end
 
+  #发送验证码
+  def send_verify_code
+     if session[:shop_verify_code_time] && 
+          (session[:shop_verify_code_time].to_i + 60 > Time.now.to_i)
+       render json: {is_success:"false",message:"未到发送时间间隔"}
+       return
+     end
+     if params[:mobile].blank?
+       render json: {is_success:"false",message:"未提供手机号码"}
+       return
+     end
+     verify_code = '000000' + Random.rand(999999).to_s
+     verify_code = verify_code[-6,6]
+     session[:shop_verify_code] = verify_code
+     session[:shop_verify_code_time] = Time.now.to_i
+     result = Utils::Sms.send_verify_code(params[:mobile],verify_code)
+     if result
+       render json: {is_success:"true",message:"发送成功"}
+     else
+       render json: {is_success:"false",message:"发送失败"}
+     end
+
+  end
+
   # GET /shop/customers
   def index
     account_id = session[:account_id]

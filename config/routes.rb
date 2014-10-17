@@ -17,6 +17,8 @@ Shop::Engine.routes.draw do
     resources :customers
     get "customers/get_districts/:id",to: "customers#get_districts"
     get "customers/register_check/:value",to: "customers#register_check"
+    post "customers/send_verify_code",to: "customers#send_verify_code"
+    
 
     resources :tags
     resources :product_skus

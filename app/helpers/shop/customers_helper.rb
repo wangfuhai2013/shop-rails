@@ -33,6 +33,21 @@ module Shop::CustomersHelper
   	  	flash.now[:error] = "两次密码输入不一样"
   	  	return
   	  end
+      #要求检查验证码
+      require_verify_code = false
+      require_verify_code = Rails.configuration.shop_require_verify_code if Rails.configuration.respond_to?('shop_require_verify_code')
+      if require_verify_code 
+         if params[:verify_code].blank? || session[:shop_verify_code].blank? ||  
+                        (session[:shop_verify_code_time].to_i + 60*10 < Time.now.to_i) || #10分钟内有效
+                        params[:verify_code].to_i !=  session[:shop_verify_code].to_i   
+           #logger.debug("shop_verify_code:" + session[:shop_verify_code])                    
+           #logger.debug("shop_verify_code_time+600:" + (session[:shop_verify_code_time].to_i + 60*10).to_s)                    
+           #logger.debug("Time.now:" + Time.now.to_i.to_s)                    
+           flash.now[:error] = "验证码无效"
+           return     
+         end      
+      end
+
   	  @customer = Shop::Customer.new(params.permit(:email,:name,:gender,:mobile, :address, :zip,
   	  	                                           :company,:password,:province_id,:city_id,:area_id))
   	  @customer.customer_type = Shop::CustomerType.where(account_id: @site.account_id).
