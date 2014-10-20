@@ -20,6 +20,7 @@ Cms::Function.create([{name:"产品列表",method:'list',parent_function:product
 
 order = Cms::Function.create(name:"订单管理",method:'order')
 Cms::Function.create([{name:"购物车",method:'cart',parent_function:order},
+	                  {name:"结算",method:'checkout',parent_function:order},
 	                  {name:"订单创建",method:'create',parent_function:order},
 	                  {name:"支付开始",method:'pay_start',parent_function:order},
 	                  {name:"支付结果",method:'pay_end',parent_function:order}])

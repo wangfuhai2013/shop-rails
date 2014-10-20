@@ -2,7 +2,7 @@ class Shop::CustomersController < ApplicationController
   before_action :set_shop_customer, only: [:show, :edit, :update, :destroy]
   before_action :set_customer_types,only: [:new,:edit,:update,:create]
 
-  skip_before_filter :authorize, :only => [:get_districts,:register_check]
+  skip_before_filter :authorize, :only => [:get_districts,:register_check,:send_verify_code]
 
   #检查手机号或邮箱是否已存在
   def register_check
