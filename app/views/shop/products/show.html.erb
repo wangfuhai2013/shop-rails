@@ -125,7 +125,7 @@
 <%= form_tag shop.products_add_relation_path(@shop_product),method: :get do %>  
 <h3>相关产品列表 
   <small>
-<%= text_field_tag :proudct_codes,"",placeholder:"输入相磁产品编号" %>
+<%= text_field_tag :proudct_codes,"",placeholder:"输入相关产品编号" %>
   <%= submit_tag "添加相关产品",:class => "btn btn-primary" %>(可用,号分隔多个产品)
 </small>
 </h3>

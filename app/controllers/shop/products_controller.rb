@@ -84,6 +84,17 @@ class Shop::ProductsController < ApplicationController
 
   # DELETE /shop/products/1
   def destroy
+    #有订单、一元产品关联，不可删除
+    if Shop::OrderItem.where(product:@shop_product).count > 0
+      redirect_to shop.products_url, error: '该产品有关联订单，不可删除.'
+    end
+    if Shop::OneProduct.where(product:@shop_product).count > 0
+      redirect_to shop.products_url, error: '该产品有关联微购产品，不可删除.'
+    end  
+    #删除被相关的记录
+    Shop::ProductRelation.where(relation_product:@shop_product).each do |relation|
+      relation.destroy
+    end
     @shop_product.pictures.each do |picture|
         Utils::FileUtil.delete_file(picture.path) if !picture.path.blank?
     end   

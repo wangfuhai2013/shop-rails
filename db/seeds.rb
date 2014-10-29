@@ -31,6 +31,8 @@ Cms::Function.create([{name:"会员注册",method:'register',parent_function:cus
 	                  {name:"会员登出",method:'logout',parent_function:customer},
 	                  {name:"找回密码申请",method:'forgot_pwd_apply',parent_function:customer},
 	                  {name:"找回密码修改",method:'forgot_pwd_change',parent_function:customer},
+	                  {name:"密码修改",method:'change_password',parent_function:customer},
+	                  {name:"资料修改",method:'change_profile',parent_function:customer},
 	                  {name:"我的订单",method:'order_list',parent_function:customer},
 	                  {name:"订单查看",method:'order_show',parent_function:customer},
 	                  {name:"订单删除",method:'order_delete',parent_function:customer}])
