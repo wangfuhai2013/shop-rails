@@ -143,7 +143,9 @@
   </thead>
 
   <tbody>
-    <% @shop_product.product_relations.each do |relation| %>
+    <% @shop_product.product_relations.each do |relation|
+       next if relation.relation_product.nil?
+     %>
       <tr>
         <td><%= relation.relation_product.code %></td>
         <td><%= relation.relation_product.name %></td>      
