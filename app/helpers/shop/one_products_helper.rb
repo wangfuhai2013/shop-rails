@@ -127,7 +127,7 @@ module Shop::OneProductsHelper
   	#结果列表
   	def one_result_list
   		@one_products = Shop::OneProduct.where(is_closed:true).order("id DESC").page(params[:page]).per_page(5)
-      @one_products = @one_products..where(account_id:@site.account_id) if @site.has_attribute?(:account_id)
+      @one_products = @one_products.where(account_id:@site.account_id) if @site.has_attribute?(:account_id)
       #logger.debug("request.format:" + request.format)                                       
       if request.format == 'application/json'
         render json: @one_products.to_json(methods: :result_time_str,
