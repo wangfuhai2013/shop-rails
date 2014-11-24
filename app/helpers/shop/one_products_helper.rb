@@ -31,7 +31,7 @@ module Shop::OneProductsHelper
     #订单提交
     def one_order_post
       if request.post?
-         customer = get_customer
+         customer = get_customer         
          return if customer.nil?
          @one_order = Shop::OneOrder.new
          @one_order.account_id = @site.account_id if @site.has_attribute?(:account_id)
@@ -42,7 +42,7 @@ module Shop::OneProductsHelper
          @one_order.got_code_quantity = 0
          @one_order.is_got_all_code = false
          @one_order.generate_trade_no #生成支付交易号
-         @one_order.save
+         @one_order.save         
          if ! @one_order.persisted?
            render text:'订单创建失败，请联系网站管理员'
            logger.info("one_order_post.error" + @one_order.errors.inspect) if @one_order.errors.size > 0
@@ -61,7 +61,7 @@ module Shop::OneProductsHelper
     end
 
     def one_weixin_pay
-      #logger.debug("@site.account_id:" + @site.account_id.to_s)
+      logger.debug("@site.account_id:" + @site.account_id.to_s)
       @app_id = @site.account.app_id  if  @site.account_id
       @app_secret = @site.account.app_secret if  @site.account_id
       @partner_id = @site.account.partner_id if  @site.account_id
@@ -207,18 +207,19 @@ module Shop::OneProductsHelper
       session_key = @openid_key unless @openid_key.blank? #兼容微站多个站点共用组件
       if @weixin_user.nil? && session[session_key].blank?
           #render text:'请在微信中访问'
-          set_session_openid(session_key)
+          app_id = @site.account.app_id  if  @site.account_id
+          app_secret = @site.account.app_secret if  @site.account_id
+          #开发环境使用默认openid，避免跳入微信环境
+          params[:openid] = 'o6hyyjlRoyQelo6YgWstsRJjSBb8' if Rails.env == 'development' 
+          set_session_openid(session_key,app_id,app_secret)
           return 
       end
-
       openid = session[session_key] unless session[session_key].blank?
-      openid = @weixin_user.openid if @weixin_user      
-
+      openid = @weixin_user.openid if @weixin_user   #微站获取的数据   
       customer = Shop::Customer.where(openid:openid).take
       if customer.nil?
         customer = Shop::Customer.new
         customer.account_id = @site.account_id if @site.has_attribute?(:account_id)        
-        
         customer.openid = openid
         if @weixin_user      
           customer.name = @weixin_user.nickname
@@ -227,10 +228,13 @@ module Shop::OneProductsHelper
            weixin_userinfo = Utils::Weixin.get_userinfo(openid)     
            customer.name = weixin_userinfo["nickname"] if weixin_userinfo["nickname"]
            customer.headimgurl = weixin_userinfo["headimgurl"]  if weixin_userinfo["headimgurl"]   
-        end
-
-        customer.name = '微购网友' + (10000000 + customer.id).to_s if customer.name.nil?
+        end        
         customer.save(validate: false)
+        #logger.debug("customer.error:" + customer.errors.full_messages)
+        if customer.name.nil?
+           customer.name = '微购网友' + (10000000 + customer.id.to_i).to_s 
+           customer.save(validate: false)
+        end
       end
       return customer
     end
