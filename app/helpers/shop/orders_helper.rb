@@ -138,8 +138,9 @@ module Shop::OrdersHelper
   def order_pay_start
     if params[:pay_way] == 'weixin'
        customer = Shop::Customer.where(id:session[:customer_id]).take if  session[:customer_id] 
-       customer = get_weixin_customer(customer)         
-       return if customer.nil? #应该在前一页面通过网页授权获取到openid，否在此会显示空页面  
+       customer = get_weixin_customer(customer) 
+
+       return if performed?        
     end
 
     subject = "商品购买"
@@ -165,11 +166,11 @@ module Shop::OrdersHelper
         notify_url +="?site_key=" + @site.site_key if @site  #兼容微站
         result =  weixin_pay(@order.order_no,@order.total_fee,subject,notify_url,@order.customer.openid) 
 
-
+        logger.info("result:" + result.to_s)
         render json: {is_success:"false",message:'订单支付失败，请联系网站管理员'} if result == false
         render json: {is_success:"true",package:@package_params} if result == true
       else
-       #render text: '支付失败，支付不方式不支持:' + params[:pay_way].to_s
+        render text: '支付失败，支付不方式不支持:' + params[:pay_way].to_s
     end
   end
 
