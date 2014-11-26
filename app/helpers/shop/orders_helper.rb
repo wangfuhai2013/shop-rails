@@ -13,10 +13,11 @@ module Shop::OrdersHelper
   
   #结算，选择收货地址、支付方式等
   def order_checkout    
+
   end
 
   #生成订单并使用支付
-  def order_create
+  def order_create    
     if params[:order_id]
       @order = Shop::Order.find(params[:order_id])
       return
@@ -26,6 +27,13 @@ module Shop::OrdersHelper
        render text: '购物车为空，不能创建订单'
        return
     end
+
+    if params[:pay_way] == 'weixin'
+       customer = Shop::Customer.where(id:session[:customer_id]).take if  session[:customer_id] 
+       customer = get_weixin_customer(customer) 
+       return if performed?        
+    end
+
     #计算折扣
     discount = 100
     customer = Shop::Customer.where(id:session[:customer_id]).take if customer.nil? && session[:customer_id] 
@@ -136,12 +144,6 @@ module Shop::OrdersHelper
 
   #开始支付
   def order_pay_start
-    if params[:pay_way] == 'weixin'
-       customer = Shop::Customer.where(id:session[:customer_id]).take if  session[:customer_id] 
-       customer = get_weixin_customer(customer) 
-
-       return if performed?        
-    end
 
     subject = "商品购买"
     subject = params[:subject] unless params[:subject].blank?

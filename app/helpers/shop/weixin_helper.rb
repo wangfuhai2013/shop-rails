@@ -67,8 +67,11 @@ module Shop
       openid = session[session_key] unless session[session_key].blank?
       openid = @weixin_user.openid if @weixin_user   #微站获取的数据   
 
-      return if customer && customer.openid == openid #已登录用户的openid与接口获取的一致
-
+      if customer && customer.openid != openid #已登录用户的openid与接口获取的不一致
+        customer.openid = openid
+        customer.save(validate: false)
+      end
+      
       customer = Shop::Customer.where(openid:openid).take if customer.nil?
       if customer.nil?
         customer = Shop::Customer.new
