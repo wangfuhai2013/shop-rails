@@ -64,14 +64,15 @@ module Shop
 
 
   def generate_trade_no
-      trade_no_prefx =  Time.now.strftime('%Y%m%d') 
+      trade_no_prefix =  Time.now.strftime('%Y%m%d') 
       trade_no_sn = '0001'
+      trade_no_suffix = '000' + Random.rand(999).to_s  #三随机数后缀，避免编号重复
       #TODO 查询条件增加store.id
-      form = Shop::OneOrder.where("trade_no like '#{trade_no_prefx}%'").order("trade_no DESC").take
+      form = Shop::OneOrder.where("trade_no like '#{trade_no_prefix}%'").order("trade_no DESC").take
       if form
         trade_no_sn = "0000" + (form.trade_no[-4,4].to_i + 1).to_s
       end    
-      self.trade_no = trade_no_prefx + trade_no_sn[-4,4]  
+      self.trade_no = trade_no_prefix + trade_no_sn[-4,4] + trade_no_suffix[-3,3]
   end
 
   end

@@ -108,7 +108,7 @@ module Shop::OneProductsHelper
       pay_order = Utils::Wxpay.unifiedorder(pay_params,@pay_sign_key)
       if pay_order["return_code"][0] == 'SUCCESS' && pay_order["result_code"][0] == 'SUCCESS'
         @package_params = {
-          :appid => @app_id,
+          :appId => @app_id,
           :timeStamp => Time.now.to_i,
           :nonceStr => Digest::MD5.hexdigest(Time.now.to_s).to_s,
           :package => "prepay_id=" + pay_order["prepay_id"][0],
@@ -137,20 +137,26 @@ module Shop::OneProductsHelper
     notify_sign = Utils::Wxpay.pay_sign(@package_params,pay_sign_key)
     logger.debug("notify_sign:" + notify_sign)
     if notify_sign != params[:xml][:sign]
-       logger.info("weixin pay notify fail: sign error or " + params[:xml][:err_code_des].to_s) 
-        render :text => '<xml><return_code>FAIL</return_code><return_msg>签名失败</return_msg></xml>'
+       logger.info("weixin pay notify fail: sign error or " + params[:xml].to_s) 
+       render :text => '<xml><return_code>FAIL</return_code><return_msg>签名失败</return_msg></xml>'
+       return
     end
 
-    if params[:xml][:result_code] != 'SUCCESS'
+    if params[:xml][:result_code] == 'SUCCESS'
       order = Shop::OneOrder.where(trade_no:params[:xml][:out_trade_no]).take
       if order.nil?
-         logger.info("weixin pay notify fail: trade_no is not found")
+         logger.info("weixin pay notify fail: trade_no is not found: " + params[:xml].to_s)
+         render :text => '<xml><return_code>FAIL</return_code><return_msg>订单不存在</return_msg></xml>'
       else
-        order.pay_success('weixin',params[:out_trade_no])
+        order.pay_success('weixin',params[:xml][:out_trade_no])
+        render :text => '<xml><return_code>SUCCESS</return_code></xml>'
       end
+    else
+       logger.info("weixin pay notify result fail:  " + params[:xml].to_s)
+       render :text => '<xml><return_code>SUCCESS</return_code></xml>'  
     end
     
-    render :text => '<xml><return_code>SUCCESS</return_code></xml>'
+    
   end
 
   	#结果列表
@@ -241,7 +247,7 @@ module Shop::OneProductsHelper
           #开发环境使用默认openid，避免跳入微信环境 o6hyyjlRoyQelo6YgWstsRJjSBb8
           params[:openid] = 'oLJPFuPaNInbz4s8486pxoRiTSqk' if Rails.env == 'development' 
           set_session_openid(session_key,app_id,app_secret)
-          return 
+          return if performed?
       end
       logger.debug("@weixin_user:" + @weixin_user.to_s)
       openid = session[session_key] unless session[session_key].blank?

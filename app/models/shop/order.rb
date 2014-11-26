@@ -33,15 +33,16 @@ class Shop::Order < ActiveRecord::Base
   end
 
   def generate_order_no
-      #order_no_prefx = store.code + Time.now.strftime('%Y%m%d') 
-      order_no_prefx =  Time.now.strftime('%Y%m%d') 
+      #order_no_prefix = store.code + Time.now.strftime('%Y%m%d') 
+      order_no_prefix =  Time.now.strftime('%Y%m%d') 
       order_no_sn = '0001'
+      order_no_suffix = '000' + Random.rand(999).to_s  #三随机数后缀，避免编号重复
       #TODO 查询条件增加store.id
-      form = Shop::Order.where("order_no like '#{order_no_prefx}%'").order("order_no DESC").take
+      form = Shop::Order.where("order_no like '#{order_no_prefix}%'").order("order_no DESC").take
       if form
         order_no_sn = "0000" + (form.order_no[-4,4].to_i + 1).to_s
       end    
-      self.order_no = order_no_prefx + order_no_sn[-4,4]  
+      self.order_no = order_no_prefix + order_no_sn[-4,4] + order_no_suffix[-3,3]
   end
 
 
