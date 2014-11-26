@@ -1,9 +1,10 @@
 module Shop::OneProductsHelper
 
-  #引入Utils::WeixinHelper中的set_session_openid方法
+  
   def self.included klass
     klass.class_eval do
-      include Utils::WeixinHelper
+      include Utils::WeixinHelper #引入Utils::WeixinHelper中的set_session_openid方法
+      include Shop::WeixinHelper #引入Shop::WeixinHelper中的get_weixin_user方法
     end
   end
 
@@ -30,7 +31,7 @@ module Shop::OneProductsHelper
 
     #订单提交
     def one_order_post
-       customer = get_customer         
+       customer = get_weixin_customer         
        return if customer.nil? #应该在前一页面通过网页授权获取到openid，否在此会显示空页面
 
        @one_order = Shop::OneOrder.new
@@ -58,22 +59,9 @@ module Shop::OneProductsHelper
     end
 
     def one_weixin_pay
-      customer = get_customer         
+      customer = get_weixin_customer         
       return if customer.nil?
 
-      @app_id = @site.account.app_id  if  @site.account_id
-      @app_secret = @site.account.app_secret if  @site.account_id
-      @partner_id = @site.account.partner_id if  @site.account_id
-      @partner_key = @site.account.partner_key if  @site.account_id
-      @pay_sign_key= @site.account.pay_sign_key if  @site.account_id
-      @mch_id = @site.account.mch_id if  @site.account_id
-
-      @app_id = Rails.configuration.weixin_app_id  if @app_id.nil?
-      @app_secret = Rails.configuration.weixin_app_secret  if @app_secret.nil?
-      @partner_id = Rails.configuration.weixin_partner_id  if @partner_id.nil?
-      @partner_key = Rails.configuration.weixin_partner_key  if @partner_key.nil?
-      @pay_sign_key= Rails.configuration.weixin_pay_sign_key  if @pay_sign_key.nil?    
-      @mch_id= Rails.configuration.weixin_mch_id  if @mch_id.nil?  
       #@access_token = Utils::Weixin.get_access_token(@app_id,@secert)
      
       @return_url = "/"
@@ -91,40 +79,9 @@ module Shop::OneProductsHelper
         @total_fee = @one_order.order_person_time #* 100 #1元转换成100分
       end      
 
-      #构造支付订单接口参数
-      pay_params = {
-        :appid => @app_id,
-        :mch_id => @mch_id,
-        :body => @body,           
-        :nonce_str => Digest::MD5.hexdigest(Time.now.to_s).to_s,
-        :notify_url => @notify_url, #'http://szework.com/weixin/pay/notify',#get_notify_url(),
-        :out_trade_no => @out_trade_no, #out_trade_no, #'2014041311110001'
-        :total_fee => @total_fee, 
-        :trade_type => 'JSAPI',   
-        :openid =>  customer.openid,
-        :spbill_create_ip => request.remote_ip #TODO 支持反向代理
-      }
-
-      pay_order = Utils::Wxpay.unifiedorder(pay_params,@pay_sign_key)
-      if pay_order["return_code"][0] == 'SUCCESS' && pay_order["result_code"][0] == 'SUCCESS'
-        @package_params = {
-          :appId => @app_id,
-          :timeStamp => Time.now.to_i,
-          :nonceStr => Digest::MD5.hexdigest(Time.now.to_s).to_s,
-          :package => "prepay_id=" + pay_order["prepay_id"][0],
-          :signType => "MD5" 
-        }
-        @package_params[:paySign] = Utils::Wxpay.pay_sign(@package_params,@pay_sign_key)
-      else
-         render text:'订单支付失败，请联系网站管理员'
-         logger.info("one_weixin_pay.error:" + pay_order["return_msg"].to_s + ";" + 
-             pay_order["err_code_des"].to_s )
-         return
-      end
+      weixin_pay(@out_trade_no,@total_fee,@body,@notify_url,customer.openid)
 
     end
-
-
 
  #支付结果通知
   def one_weixin_pay_notify
@@ -158,8 +115,7 @@ module Shop::OneProductsHelper
        logger.info("weixin pay notify result fail:  " + params[:xml].to_s)
        render :text => '<xml><return_code>SUCCESS</return_code></xml>'  
     end
-    
-    
+        
   end
 
   	#结果列表
@@ -182,7 +138,7 @@ module Shop::OneProductsHelper
 
     #个人订单列表
     def one_my_order_list
-      @customer = get_customer
+      @customer = get_weixin_customer
       return if @customer.nil?
       @my_one_orders = Shop::OneOrder.where(customer_id:@customer.id,is_paid:true).
                                       order("id DESC").page(params[:page]).per_page(5) if @customer 
@@ -195,14 +151,14 @@ module Shop::OneProductsHelper
 
     #个人订单查看
     def one_my_order_view
-      @customer = get_customer
+      @customer = get_weixin_customer
       return if @customer.nil?
       @my_one_order = Shop::OneOrder.find(params[:id])                                          
     end
 
     #获得的商品
     def one_my_product_list
-      @customer = get_customer
+      @customer = get_weixin_customer
       return if @customer.nil?
       @my_one_products = Shop::OneProduct.where(result_customer_id:@customer.id).
                                           order("id DESC").page(params[:page]).per_page(2) if @customer 
@@ -216,7 +172,7 @@ module Shop::OneProductsHelper
 
     #获得商品查看及收货地址确认
     def one_my_product_view
-      @customer = get_customer
+      @customer = get_weixin_customer
       return if @customer.nil?
       @my_one_product = Shop::OneProduct.find(params[:id]) 
       if @my_one_product.result_customer_id != @customer.id
@@ -238,44 +194,5 @@ module Shop::OneProductsHelper
           @my_one_product.save                                              
       end                                       
     end    
-
-    #通过微信标识获取用户身份
-    def get_customer
-      session_key = "openid"
-      session_key = @openid_key unless @openid_key.blank? #兼容微站多个站点共用组件      
-      if @weixin_user.nil? && session[session_key].blank?
-          #render text:'请在微信中访问'
-          app_id = @site.account.app_id  if  @site.account_id
-          app_secret = @site.account.app_secret if  @site.account_id
-          #开发环境使用默认openid，避免跳入微信环境 o6hyyjlRoyQelo6YgWstsRJjSBb8
-          params[:openid] = 'oLJPFuPaNInbz4s8486pxoRiTSqk' if Rails.env == 'development' 
-          set_session_openid(session_key,app_id,app_secret)
-          return if performed?
-      end
-      logger.debug("@weixin_user:" + @weixin_user.to_s)
-      openid = session[session_key] unless session[session_key].blank?
-      openid = @weixin_user.openid if @weixin_user   #微站获取的数据   
-      customer = Shop::Customer.where(openid:openid).take
-      if customer.nil?
-        customer = Shop::Customer.new
-        customer.account_id = @site.account_id if @site.has_attribute?(:account_id)        
-        customer.openid = openid
-        if @weixin_user      
-          customer.name = @weixin_user.nickname
-          customer.headimgurl = @weixin_user.headimgurl_size
-        else
-           weixin_userinfo = Utils::Weixin.get_userinfo(openid)     
-           customer.name = weixin_userinfo["nickname"] if weixin_userinfo["nickname"]
-           customer.headimgurl = weixin_userinfo["headimgurl"]  if weixin_userinfo["headimgurl"]   
-        end        
-        customer.save(validate: false)
-        #logger.debug("customer.error:" + customer.errors.full_messages)
-        if customer.name.nil?
-           customer.name = '微购网友' + (10000000 + customer.id.to_i).to_s 
-           customer.save(validate: false)
-        end
-      end
-      return customer
-    end
 
 end

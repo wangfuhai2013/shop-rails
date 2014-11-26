@@ -1,5 +1,12 @@
 module Shop::OrdersHelper
 
+  def self.included klass
+    klass.class_eval do
+      include Utils::WeixinHelper #引入Utils::WeixinHelper中的set_session_openid方法
+      include Shop::WeixinHelper #引入Shop::WeixinHelper中的get_weixin_user方法
+    end
+  end
+
   #购物车
   def order_cart  	
   end
@@ -21,10 +28,16 @@ module Shop::OrdersHelper
     end
     #计算折扣
     discount = 100
-    customer = Shop::Customer.where(id:session[:customer_id]).take if session[:customer_id] 
-    if customer
-      discount = customer.customer_type.discount    
+    customer = Shop::Customer.where(id:session[:customer_id]).take if customer.nil? && session[:customer_id] 
+    if customer.nil?
+       customer = Shop::Customer.new
+       customer = "匿名客户"
+       customer.save(validate: false)
     end
+
+    discount = 100.0
+    discount = customer.customer_type.discount  if customer.customer_type  
+    
     product_fee = (cart.total * discount / 100.0).round 
     #创建订单
     @order = Shop::Order.new
@@ -32,6 +45,8 @@ module Shop::OrdersHelper
     @order.is_paid = false
     @order.is_delivered = false
     @order.require_invoice = false
+
+    @order.account_id = @site.account_id if @site #兼容微站
 
     @order.pay_way = params[:pay_way]
     @order.remark =  params[:remark]
@@ -121,22 +136,39 @@ module Shop::OrdersHelper
 
   #开始支付
   def order_pay_start
-  	if params[:pay_way] == 'alipay'
-      @order = Shop::Order.find(params[:order_id])
-      if @order.is_paid
-        render text: '该订单已付款，不可重复付款'
-        return
-      end
-  	  @order.pay_way = 'alipay'
-      @order.save      
+    if params[:pay_way] == 'weixin'
+       customer = Shop::Customer.where(id:session[:customer_id]).take if  session[:customer_id] 
+       customer = get_weixin_customer(customer)         
+       return if customer.nil? #应该在前一页面通过网页授权获取到openid，否在此会显示空页面  
+    end
 
-      subject = "商品购买"
-      subject = params[:subject] unless params[:subject].blank?
-      return_url = ""
-      return_url = params[:return_url] unless params[:return_url].blank?
-      notify_url = "http://"+request.host_with_port + "/shop/orders/alipay_notify"
-      redirect_to @order.alipay_url(subject,return_url,notify_url)
-    else
+    subject = "商品购买"
+    subject = params[:subject] unless params[:subject].blank?
+    @order = Shop::Order.find(params[:order_id])
+
+    @order.customer =  customer  if params[:pay_way] == 'weixin'
+
+    if @order.is_paid
+      render text: '该订单已付款，不可重复付款'
+      return
+    end
+
+  	case params[:pay_way] 
+      when 'alipay'
+        return_url = ""
+        return_url = params[:return_url] unless params[:return_url].blank?
+        notify_url = "http://"+request.host_with_port + "/shop/orders/alipay_notify"
+        notify_url +="?site_key=" + @site.site_key if @site  #兼容微站
+        redirect_to @order.alipay_url(subject,return_url,notify_url)
+      when 'weixin'
+        notify_url = "http://"+request.host_with_port + "/shop/orders/weixin_notify"
+        notify_url +="?site_key=" + @site.site_key if @site  #兼容微站
+        result =  weixin_pay(@order.order_no,@order.total_fee,subject,notify_url,@order.customer.openid) 
+
+
+        render json: {is_success:"false",message:'订单支付失败，请联系网站管理员'} if result == false
+        render json: {is_success:"true",package:@package_params} if result == true
+      else
        #render text: '支付失败，支付不方式不支持:' + params[:pay_way].to_s
     end
   end

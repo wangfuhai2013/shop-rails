@@ -63,12 +63,19 @@ class Shop::OrdersController < ApplicationController
 
   #接收支付宝支付结果通知
   def alipay_notify
+
+    account_id = nil
+    if !params[:site_key].blank? #兼容微站
+       site = Site::Site.find_by_site_key(params[:site_key])
+       account_id = site.account_id
+    end
+
      notify_params = params.except(*request.path_parameters.keys)
    # 先校验消息的真实性
     if Alipay::Sign.verify?(notify_params) && Alipay::Notify.verify?(notify_params)
       # 获取交易关联的订单
       order = Shop::Order.where(order_no:params[:out_trade_no],
-                                 account_id: session[:account_id],is_paid:false).take
+                                 account_id: account_id,is_paid:false).take
       logger.error("can't find unpaid order_no:" + params[:out_trade_no]) unless order
       logger.info("order_no:" + params[:out_trade_no] + " trade_status:" + params[:trade_status])
       case params[:trade_status]
@@ -93,6 +100,53 @@ class Shop::OrdersController < ApplicationController
     else
       render :text => 'error'
     end
+  end
+
+  #微信支付结果通知
+  def weixin_notify
+    #转换xml内容数据为params[:xml]数组，需在config/application.rb中配置
+    # config.middleware.insert_after ActionDispatch::ParamsParser, ActionDispatch::XmlParamsParser    
+
+    account_id = nil
+    if !params[:site_key].blank? #兼容微站
+       site = Site::Site.find_by_site_key(params[:site_key])
+       pay_sign_key= site.account.pay_sign_key if  site.account_id
+       account_id = site.account_id
+    end
+     
+    
+    pay_sign_key= Rails.configuration.weixin_pay_sign_key  if pay_sign_key.nil?  
+
+    xml_sign = params[:xml][:sign]
+    params[:xml][:sign] = ""
+    logger.debug(params[:xml])
+    notify_sign = Utils::Wxpay.pay_sign(params[:xml],pay_sign_key)
+    logger.debug("notify_sign:" + notify_sign)
+    if notify_sign != xml_sign       
+       logger.info("weixin pay notify fail: sign error or " + params[:xml].to_s) 
+       logger.info("xml_sign:" + xml_sign + ",notify_sign:" + notify_sign) 
+       render :text => '<xml><return_code>FAIL</return_code><return_msg>签名失败</return_msg></xml>'
+       return
+    end
+
+    if params[:xml][:result_code] == 'SUCCESS'
+      order = Shop::Order.where(order_no:params[:xml][:out_trade_no],
+                                 account_id: account_id,is_paid:false).take
+      if order.nil?
+        logger.info("weixin pay notify fail: trade_no is not found: " + params[:xml].to_s)
+        render :text => '<xml><return_code>FAIL</return_code><return_msg>订单不存在</return_msg></xml>'
+      else
+        order.trade_no = params[:xml][:transaction_id] 
+        order.paid_date = Time.now if order
+        order.is_paid = true
+        order.save
+        render :text => '<xml><return_code>SUCCESS</return_code></xml>'
+      end
+    else
+       logger.info("weixin pay notify result fail:  " + params[:xml].to_s)
+       render :text => '<xml><return_code>SUCCESS</return_code></xml>'  
+    end
+        
   end
 
  #发货
