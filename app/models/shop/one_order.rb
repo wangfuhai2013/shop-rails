@@ -70,7 +70,7 @@ module Shop
       #TODO 查询条件增加store.id
       form = Shop::OneOrder.where("trade_no like '#{trade_no_prefix}%'").order("trade_no DESC").take
       if form
-        trade_no_sn = "0000" + (form.trade_no[-4,4].to_i + 1).to_s
+        trade_no_sn = "0000" + (form.trade_no[-7,4].to_i + 1).to_s
       end    
       self.trade_no = trade_no_prefix + trade_no_sn[-4,4] + trade_no_suffix[-3,3]
   end

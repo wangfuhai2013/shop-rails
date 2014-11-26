@@ -40,7 +40,7 @@ class Shop::Order < ActiveRecord::Base
       #TODO 查询条件增加store.id
       form = Shop::Order.where("order_no like '#{order_no_prefix}%'").order("order_no DESC").take
       if form
-        order_no_sn = "0000" + (form.order_no[-4,4].to_i + 1).to_s
+        order_no_sn = "0000" + (form.order_no[-7,4].to_i + 1).to_s
       end    
       self.order_no = order_no_prefix + order_no_sn[-4,4] + order_no_suffix[-3,3]
   end

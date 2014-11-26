@@ -134,7 +134,7 @@ module Shop::OneProductsHelper
     pay_sign_key= Rails.configuration.weixin_pay_sign_key  if pay_sign_key.nil?  
 
     data = params[:xml].delete(:sign)
-    notify_sign = Utils::Wxpay.pay_sign(@package_params,pay_sign_key)
+    notify_sign = Utils::Wxpay.pay_sign(data,pay_sign_key)
     logger.debug("notify_sign:" + notify_sign)
     if notify_sign != params[:xml][:sign]
        logger.info("weixin pay notify fail: sign error or " + params[:xml].to_s) 
