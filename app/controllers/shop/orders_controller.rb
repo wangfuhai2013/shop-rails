@@ -92,6 +92,7 @@ class Shop::OrdersController < ApplicationController
       when 'TRADE_CLOSED'
         # 交易被关闭
       end
+      order.pay_way = 'alipay'
       order.trade_no = params[:trade_no] if order
       order.paid_date = Time.now if order
       order.save if order
@@ -136,6 +137,7 @@ class Shop::OrdersController < ApplicationController
         logger.info("weixin pay notify fail: trade_no is not found: " + params[:xml].to_s)
         render :text => '<xml><return_code>FAIL</return_code><return_msg>订单不存在</return_msg></xml>'
       else
+        order.pay_way = 'weixin'
         order.trade_no = params[:xml][:transaction_id] 
         order.paid_date = Time.now if order
         order.is_paid = true

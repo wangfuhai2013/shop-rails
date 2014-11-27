@@ -31,7 +31,7 @@ module Shop::OrdersHelper
     if params[:pay_way] == 'weixin'
        customer = Shop::Customer.where(id:session[:customer_id]).take if  session[:customer_id] 
        customer = get_weixin_customer(customer) 
-       return if performed?        
+       return if performed?   #订单提交需要使用get方式，否则取openid跳转后，参数丢失
     end
 
     #计算折扣
@@ -149,8 +149,6 @@ module Shop::OrdersHelper
     subject = params[:subject] unless params[:subject].blank?
     @order = Shop::Order.find(params[:order_id])
 
-    @order.customer =  customer  if params[:pay_way] == 'weixin'
-
     if @order.is_paid
       render text: '该订单已付款，不可重复付款'
       return
@@ -168,7 +166,6 @@ module Shop::OrdersHelper
         notify_url +="?site_key=" + @site.site_key if @site  #兼容微站
         result =  weixin_pay(@order.order_no,@order.total_fee,subject,notify_url,@order.customer.openid) 
 
-        logger.info("result:" + result.to_s)
         render json: {is_success:"false",message:'订单支付失败，请联系网站管理员'} if result == false
         render json: {is_success:"true",package:@package_params} if result == true
       else
