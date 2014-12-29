@@ -171,7 +171,7 @@ module Shop::OrdersHelper
 
         package_params =  Utils::Wxpay.jsapi2(order.order_no,order.total_fee,subject,notify_url,order.customer.openid,
                                                request.remote_ip,app_id,mch_id,pay_sign_key)
-        logger.debug("weixin pay package:"package_params.to_s)
+        logger.debug("weixin pay package:" + package_params.to_s)
         render json: {is_success:"false",message:'订单支付失败，请联系网站管理员'} if package_params.nil?
         render json: {is_success:"true",package:package_params} unless package_params.nil?
       else
