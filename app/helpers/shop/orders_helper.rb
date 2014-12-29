@@ -147,9 +147,9 @@ module Shop::OrdersHelper
 
     subject = "商品购买"
     subject = params[:subject] unless params[:subject].blank?
-    @order = Shop::Order.find(params[:order_id])
+    order = Shop::Order.find(params[:order_id])
 
-    if @order.is_paid
+    if order.is_paid
       render text: '该订单已付款，不可重复付款'
       return
     end
@@ -160,21 +160,20 @@ module Shop::OrdersHelper
         return_url = params[:return_url] unless params[:return_url].blank?
         notify_url = "http://"+request.host_with_port + "/shop/orders/alipay_notify"
         notify_url +="?site_key=" + @site.site_key if @site  #兼容微站
-        redirect_to @order.alipay_url(subject,return_url,notify_url)
+        redirect_to order.alipay_url(subject,return_url,notify_url)
       when 'weixin'
         notify_url = "http://"+request.host_with_port + "/shop/orders/weixin_notify"
         notify_url +="?site_key=" + @site.site_key if @site  #兼容微站
-        #@package_params =  weixin_pay(@order.order_no,@order.total_fee,subject,notify_url,@order.customer.openid) 
         app_id = mch_id = pay_sign_key = nil
         app_id = @site.account.app_id  if  @site.account_id
         pay_sign_key= @site.account.pay_sign_key if  @site.account_id
         mch_id = @site.account.mch_id if  @site.account_id
 
-        @package_params =  Utils::Wxpay.jsapi2(@order.order_no,@order.total_fee,subject,notify_url,@order.customer.openid,
+        package_params =  Utils::Wxpay.jsapi2(order.order_no,order.total_fee,subject,notify_url,order.customer.openid,
                                                request.remote_ip,app_id,mch_id,pay_sign_key)
-
-        render json: {is_success:"false",message:'订单支付失败，请联系网站管理员'} if @package_params.nil?
-        render json: {is_success:"true",package:@package_params} unless @package_params.nil?
+        logger.debug("weixin pay package:"package_params.to_s)
+        render json: {is_success:"false",message:'订单支付失败，请联系网站管理员'} if package_params.nil?
+        render json: {is_success:"true",package:package_params} unless package_params.nil?
       else
         render text: '支付失败，支付不方式不支持:' + params[:pay_way].to_s
     end
