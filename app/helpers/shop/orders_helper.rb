@@ -164,10 +164,17 @@ module Shop::OrdersHelper
       when 'weixin'
         notify_url = "http://"+request.host_with_port + "/shop/orders/weixin_notify"
         notify_url +="?site_key=" + @site.site_key if @site  #兼容微站
-        result =  weixin_pay(@order.order_no,@order.total_fee,subject,notify_url,@order.customer.openid) 
+        #@package_params =  weixin_pay(@order.order_no,@order.total_fee,subject,notify_url,@order.customer.openid) 
+        app_id = mch_id = pay_sign_key = nil
+        app_id = @site.account.app_id  if  @site.account_id
+        pay_sign_key= @site.account.pay_sign_key if  @site.account_id
+        mch_id = @site.account.mch_id if  @site.account_id
 
-        render json: {is_success:"false",message:'订单支付失败，请联系网站管理员'} if result == false
-        render json: {is_success:"true",package:@package_params} if result == true
+        @package_params =  Utils::Wxpay.jsapi2(@order.order_no,@order.total_fee,subject,notify_url,@order.customer.openid,
+                                               request.remote_ip,app_id,mch_id,pay_sign_key)
+
+        render json: {is_success:"false",message:'订单支付失败，请联系网站管理员'} if @package_params.nil?
+        render json: {is_success:"true",package:@package_params} unless @package_params.nil?
       else
         render text: '支付失败，支付不方式不支持:' + params[:pay_way].to_s
     end
