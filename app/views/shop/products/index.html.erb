@@ -3,7 +3,8 @@
 <div class="row">
 <div class="col-sm-4">
 <h1>产品列表
- <small><%= link_to '新建产品', shop.new_product_path ,:class => "btn btn-primary" %></small>
+ <small><%= link_to '新建产品', shop.new_product_path ,:class => "btn btn-primary" %>
+        <%= link_to '批量导入', shop.products_batch_path ,:class => "btn btn-success" %></small>
 </h1>
 </div>
   <div class="col-sm-2" style="margin-top: 30px;margin-bottom: 0px;padding-left: 80px;line-height:34px;">
@@ -37,6 +38,7 @@
       <th>产品名称</th>
       <th>产品编码</th>
       <th>产品类别</th>
+      <th>产品规格</th>      
       <th>SKU属性</th>      
       <th>产品价格</th>
       <th>产品数量</th>
@@ -57,7 +59,8 @@
         <td><%= shop_product.name %></td>
         <td><%= shop_product.code %></td>
         <td><%= shop_product.category.name %></td>
-        <td><%= shop_product.sku_properties_list %></td>
+        <td><%= shop_product.spec %></td>
+        <td><%= shop_product.sku_properties_list %></td>        
         <td><%= shop_product.price_yuan %>元</td>
         <td><%= shop_product.quantity %></td>        
         <td><%= thumbnail shop_product.picture.path if shop_product.picture %></td>
