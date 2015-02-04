@@ -129,8 +129,23 @@ class Shop::ProductsController < ApplicationController
 
 
 
-  # 产品批量导入
+  # 产品批量修改(状态)
   def batch
+     product_ids = []
+     product_ids = params[:product_ids] if params[:product_ids]
+     is_enabled = false
+     is_enabled = true if params[:is_enabled] == "1"
+     product_ids.each do |id|
+        product = Shop::Product.find(id)
+        product.is_enabled = is_enabled
+        product.save
+     end
+     redirect_to products_url, notice: '修改 ' + product_ids.size.to_s  + " 个产品"
+
+  end
+
+  # 产品导入
+  def import
   end
 
   # 使用exel文件批量导入产品数据
@@ -163,7 +178,7 @@ class Shop::ProductsController < ApplicationController
           item.transport_fee = 0    
           item.discount = 100
           item.is_recommend = false
-          item.is_enabled =true
+          item.is_enabled =false
 
           is_error = false
           error_info = ''
@@ -220,6 +235,7 @@ class Shop::ProductsController < ApplicationController
       picture.path = Utils::FileUtil.upload(image_file)
       picture.product = item
       picture.save
+      Utils::FileUtil.thumb_image (Rails.root.join("public",picture.path).to_s) 
 
       if item.picture.nil?
         item.picture = picture

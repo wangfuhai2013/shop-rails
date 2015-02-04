@@ -42,9 +42,10 @@ Shop::Engine.routes.draw do
     get "products/add_relation/:id" , to: "products#add_relation", as: 'products_add_relation'
     delete "products/del_relation/:id" , to: "products#del_relation", as: 'products_del_relation'
     
-    get "products/batch"
+    get  "products/import"
     post "products/import_excel"
     post "products/import_images"    
+    post "products/batch"
 
     resources :order_items
     resources :orders
