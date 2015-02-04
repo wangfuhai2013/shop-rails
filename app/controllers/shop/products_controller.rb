@@ -127,8 +127,6 @@ class Shop::ProductsController < ApplicationController
        redirect_to product, notice: '相关产品已删除.'    
   end  
 
-
-
   # 产品批量修改(状态)
   def batch
      product_ids = []
@@ -214,7 +212,7 @@ class Shop::ProductsController < ApplicationController
         flash.now[:error] = "没有上传excel文件或文件格式不对(只支持Excel 97/2000)"
       end
     end
-    render action: 'batch'
+    render action: 'import'
   end
 
   # 批量导入图片
