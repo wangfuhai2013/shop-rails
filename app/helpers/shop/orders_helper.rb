@@ -14,6 +14,12 @@ module Shop::OrdersHelper
   #结算，选择收货地址、支付方式等
   def order_checkout    
 
+    if params[:require_openid] == '1' #在微信中通过网页授权接口获取openid
+       customer = Shop::Customer.where(id:session[:customer_id]).take if  session[:customer_id] 
+       customer = get_weixin_customer(customer) 
+       return if performed?   
+    end
+
   end
 
   #生成订单并使用支付
@@ -26,12 +32,6 @@ module Shop::OrdersHelper
     if cart.nil? || cart.items.size == 0
        render text: '购物车为空，不能创建订单'
        return
-    end
-
-    if params[:pay_way] == 'weixin'
-       customer = Shop::Customer.where(id:session[:customer_id]).take if  session[:customer_id] 
-       customer = get_weixin_customer(customer) 
-       return if performed?   #订单提交需要使用get方式，否则取openid跳转后，参数丢失
     end
 
     #计算折扣
