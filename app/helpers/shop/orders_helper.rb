@@ -179,7 +179,7 @@ module Shop::OrdersHelper
     end
   end
 
-  #支付结果
+  #支付宝支付结果
   def order_pay_end
     # 提示当前订单的状态
     @is_paid = false
