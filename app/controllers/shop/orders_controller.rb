@@ -2,7 +2,7 @@ class Shop::OrdersController < ApplicationController
   before_action :set_shop_order, only: [:delivery,:show, :edit, :update, :destroy,
                                         :paid,:print,:email,:promotion]
   skip_before_filter :authorize,:verify_authenticity_token, only: [:add_to_cart,
-                     :remove_from_cart,:empty_cart,:change_product_quantity,:alipay_notify]
+                     :remove_from_cart,:empty_cart,:change_product_quantity,:alipay_notify,:weixin_notify]
   layout  false, only: [:add_to_cart,:remove_from_cart,:empty_cart,
                         :change_product_quantity,:alipay_notify,:print]
 
