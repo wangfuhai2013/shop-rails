@@ -110,7 +110,8 @@ class Shop::OrdersController < ApplicationController
 
     account_id = nil
    # if !params[:site_key].blank? #兼容微站
-    if !params[:xml][:site_key].blank? #兼容微站
+    if !params[:xml][:site_key].blank? && 
+       (Object.const_get("Site::Site").is_a?(Class) rescue false) #兼容微站
        site = Site::Site.find_by_site_key(params[:site_key])
        pay_sign_key= site.account.pay_sign_key if  site.account_id
        account_id = site.account_id
