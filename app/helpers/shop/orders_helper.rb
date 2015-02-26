@@ -168,12 +168,17 @@ module Shop::OrdersHelper
         app_id = @site.account.app_id  if  @site.account_id
         pay_sign_key= @site.account.pay_sign_key if  @site.account_id
         mch_id = @site.account.mch_id if  @site.account_id
-
-        package_params =  Utils::Wxpay.jsapi2(order.order_no,order.total_fee,subject,notify_url,order.customer.openid,
-                                               request.remote_ip,app_id,mch_id,pay_sign_key)
+        if params[:trade_type] && params[:trade_type] == 'native'
+          package_params =  Utils::Wxpay.native(order.order_no,order.total_fee,subject,notify_url,order.customer.openid,
+                                               request.remote_ip,true,app_id,mch_id,pay_sign_key)
+        else
+          package_params =  Utils::Wxpay.jsapi2(order.order_no,order.total_fee,subject,notify_url,order.customer.openid,
+                                               request.remote_ip,app_id,mch_id,pay_sign_key)          
+        end
         logger.debug("weixin pay package:" + package_params.to_s)
         render json: {is_success:"false",message:'订单支付失败，请联系网站管理员'} if package_params.nil?
         render json: {is_success:"true",package:package_params} unless package_params.nil?
+
       else
         render text: '支付失败，支付不方式不支持:' + params[:pay_way].to_s
     end
