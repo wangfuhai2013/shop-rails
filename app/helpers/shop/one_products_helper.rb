@@ -88,7 +88,7 @@ module Shop::OneProductsHelper
       #weixin_pay(@out_trade_no,@total_fee,@body,@notify_url,customer.openid)
       @package_params =  Utils::Wxpay.jsapi2(@out_trade_no,@total_fee,@body,notify_url,customer.openid,
                                                request.remote_ip,app_id,mch_id,pay_sign_key)   
-      @package_params = [] if package_params.nil?
+      @package_params = [] if @package_params.nil?
     end
 
  #支付结果通知
