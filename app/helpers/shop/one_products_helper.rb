@@ -68,7 +68,13 @@ module Shop::OneProductsHelper
       @return_url = params[:return_url] unless params[:return_url].blank?
 
       url = request.original_url.split('?')[0]
-      @notify_url = url[0,url.rindex('/')] + "/weixin_pay_notify"   
+      notify_url = url[0,url.rindex('/')] + "/weixin_pay_notify"   
+      #notify_url = "http://"+request.host_with_port + "/shop/orders/weixin_notify"
+      notify_url +="?site_key=" + @site.site_key if @site  #兼容微站
+      app_id = mch_id = pay_sign_key = nil
+      app_id = @site.account.app_id  if  @site.account_id
+      pay_sign_key= @site.account.pay_sign_key if  @site.account_id
+      mch_id = @site.account.mch_id if  @site.account_id
 
       @out_trade_no= ""
       if params[:one_order_id]
@@ -79,8 +85,9 @@ module Shop::OneProductsHelper
         @total_fee = @one_order.order_person_time #* 100 #1元转换成100分
       end      
 
-      weixin_pay(@out_trade_no,@total_fee,@body,@notify_url,customer.openid)
-
+      #weixin_pay(@out_trade_no,@total_fee,@body,@notify_url,customer.openid)
+      @package_params =  Utils::Wxpay.jsapi2(@out_trade_no,@total_fee,@body,notify_url,customer.openid,
+                                               request.remote_ip,app_id,mch_id,pay_sign_key)   
     end
 
  #支付结果通知
