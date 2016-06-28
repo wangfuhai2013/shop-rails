@@ -118,7 +118,7 @@ class Shop::OrdersController < ApplicationController
     end
      
     
-    pay_sign_key= Rails.configuration.weixin_pay_sign_key  if pay_sign_key.nil?  
+    pay_sign_key= Utils::Weixin.pay_sign_key  if pay_sign_key.nil?  
 
     xml_sign = params[:xml][:sign]
     params[:xml][:sign] = ""

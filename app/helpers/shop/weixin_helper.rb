@@ -7,8 +7,8 @@ module Shop
     def get_weixin_customer(customer=nil)
       @app_id = @site.account.app_id  if  @site.account_id
       @app_secret = @site.account.app_secret if  @site.account_id
-      @app_id = Rails.configuration.weixin_app_id  if @app_id.nil?
-      @app_secret = Rails.configuration.weixin_app_secret  if @app_secret.nil?
+      @app_id = Utils::Weixin.app_id  if @app_id.nil?
+      @app_secret = Utils::Weixin.app_secret  if @app_secret.nil?
 
       session_key = "openid"
       session_key = @openid_key unless @openid_key.blank? #兼容微站多个站点共用组件      

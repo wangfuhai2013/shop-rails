@@ -88,7 +88,7 @@ module Shop::OneProductsHelper
     #转换xml内容数据为params[:xml]数组，需在config/application.rb中配置
     # config.middleware.insert_after ActionDispatch::ParamsParser, ActionDispatch::XmlParamsParser    
     pay_sign_key= @site.account.pay_sign_key if  @site.account_id
-    pay_sign_key= Rails.configuration.weixin_pay_sign_key  if pay_sign_key.nil?  
+    pay_sign_key= Utils::Weixin.pay_sign_key  if pay_sign_key.nil?  
 
     xml_sign = params[:xml][:sign]
     params[:xml][:sign] = ""
